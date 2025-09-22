@@ -1,4 +1,4 @@
-import { fi } from "zod/v4/locales";
+import { showModal } from "./modal";
 import { store } from "./store";
 
 export function setupBookmarks(element: HTMLDivElement) {
@@ -17,6 +17,18 @@ export function setupBookmarks(element: HTMLDivElement) {
       bookmarksList.appendChild(bookmarkItem);
     });
   }
+
+  element.appendChild(createAddButton());
+}
+
+function createAddButton(): HTMLButtonElement {
+  const button = document.createElement("button");
+  button.textContent = "Add Bookmark";
+  button.type = "button";
+  button.addEventListener("click", () => {
+    showModal("test");
+  });
+  return button;
 }
 
 /**
