@@ -26,7 +26,7 @@ function createAddButton(): HTMLButtonElement {
   button.textContent = "Add Bookmark";
   button.type = "button";
   button.addEventListener("click", () => {
-    showModal("test");
+    showModal(true, "test");
   });
   return button;
 }
