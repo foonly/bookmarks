@@ -1,5 +1,6 @@
-import { showModal } from "./modal";
+import { clearModal, setModalContent, showModal } from "./modal";
 import { store } from "./store";
+import { bookmarkSchema, type Bookmark } from "./types";
 
 export function setupBookmarks(element: HTMLDivElement) {
   const bookmarksList = document.createElement("ul");
@@ -26,7 +27,9 @@ function createAddButton(): HTMLButtonElement {
   button.textContent = "Add Bookmark";
   button.type = "button";
   button.addEventListener("click", () => {
-    showModal(true, "test");
+    clearModal();
+    setModalContent(showBookmarkForm());
+    showModal();
   });
   return button;
 }
@@ -34,7 +37,7 @@ function createAddButton(): HTMLButtonElement {
 /**
  * Create a form to add and edit bookmarks.
  */
-export function showBookmarkForm() {
+export function showBookmarkForm(): HTMLFormElement {
   const form = document.createElement("form");
   form.id = "bookmark-form";
 
@@ -48,14 +51,13 @@ export function showBookmarkForm() {
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
-    const title = titleInput.value;
-    const url = urlInput.value;
 
-    store.addBookmark({ title, url });
-
-    // Clear the form
-    titleInput.value = "";
-    urlInput.value = "";
+    addBookmark(
+      bookmarkSchema.parse({
+        title: form.title?.value ?? "",
+        url: form.url?.value ?? "",
+      }),
+    );
 
     // Re-render the bookmarks
     const bookmarksDiv = document.getElementById("bookmarks");
@@ -65,8 +67,7 @@ export function showBookmarkForm() {
     }
   });
 
-  // Append the form to the document body (or another appropriate element)
-  document.body.appendChild(form);
+  return form;
 }
 
 function createFormField(
@@ -78,9 +79,11 @@ function createFormField(
   const fieldElement = document.createElement("div");
 
   const labelElement = document.createElement("label");
+  labelElement.htmlFor = name;
   labelElement.textContent = label;
   const inputElement = document.createElement("input");
   inputElement.type = type;
+  inputElement.id = name;
   inputElement.name = name;
   inputElement.required = required;
 
@@ -88,4 +91,8 @@ function createFormField(
   fieldElement.appendChild(inputElement);
 
   return fieldElement;
+}
+
+function addBookmark(bookmark: Bookmark) {
+  console.log(bookmark);
 }

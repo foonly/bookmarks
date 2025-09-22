@@ -11,6 +11,8 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+
+    --bm-border-color: #333;
 }
 
 a {
@@ -44,19 +46,13 @@ body {
     bottom: 1rem;
 }
 
-#modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(5px);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    &.show {
-        display: flex;
+#modalDialog {
+    border: 2px solid var(--bm-border-color);
+    border-radius: 0.5rem;
+    padding: 2rem;
+    &::backdrop {
+        background-color: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
     }
 }
 

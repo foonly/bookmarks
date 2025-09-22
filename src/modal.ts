@@ -1,22 +1,23 @@
-export function initModal() {
-  const modal = document.getElementById("modal");
-  if (modal) {
-    const modalContent = document.createElement("div");
-    modalContent.classList.add("modalContent");
-    modal.appendChild(modalContent);
-    modal.addEventListener("click", () => {
-      showModal(false);
-    });
+const dialog: HTMLDialogElement | null =
+  document.querySelector<HTMLDialogElement>("#modalDialog");
+
+export function showModal(): void {
+  if (dialog) {
+    dialog.showModal();
   }
 }
 
-export function showModal(show: boolean, content: string = ""): void {
-  const modal = document.getElementById("modal");
-  if (modal) {
-    modal.classList.toggle("show", show);
-    const modalContent = document.getElementById("modalContent");
-    if (modalContent) {
-      modalContent.innerHTML = content;
+export function setModalContent(content: HTMLElement): void {
+  if (dialog) {
+    dialog.append(content);
+  }
+}
+
+export function clearModal(): void {
+  if (dialog) {
+    while (dialog.firstChild) {
+      dialog.removeChild(dialog.firstChild);
     }
+    dialog.close();
   }
 }
