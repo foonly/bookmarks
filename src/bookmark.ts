@@ -1,25 +1,34 @@
 import { clearModal, setModalContent, showModal } from "./modal";
-import { store } from "./store";
-import { bookmarkSchema, type Bookmark } from "./types";
+import { addBookmark, store } from "./store";
+import { bookmarkSchema } from "./types";
 
 export function setupBookmarks(element: HTMLDivElement) {
-  const bookmarksList = document.createElement("ul");
+  const bookmarksList = document.createElement("div");
   bookmarksList.id = "bookmarks-list";
   element.appendChild(bookmarksList);
 
   if (store.bookmarks.length === 0) {
-    const noBookmarks = document.createElement("li");
+    const noBookmarks = document.createElement("p");
     noBookmarks.textContent = "No bookmarks yet";
     bookmarksList.appendChild(noBookmarks);
   } else {
     store.bookmarks.forEach((bookmark) => {
-      const bookmarkItem = document.createElement("li");
-      bookmarkItem.textContent = bookmark.title ?? bookmark.url;
+      const bookmarkItem = document.createElement("div");
+      bookmarkItem.appendChild(createLink(bookmark.title, bookmark.url));
       bookmarksList.appendChild(bookmarkItem);
     });
   }
 
   element.appendChild(createAddButton());
+}
+
+function createLink(title: string, url: string): HTMLAnchorElement {
+  const link = document.createElement("a");
+  link.title = url;
+  link.textContent = title ? title : url;
+  link.href = url;
+  link.target = "_blank";
+  return link;
 }
 
 function createAddButton(): HTMLButtonElement {
@@ -54,9 +63,7 @@ export function showBookmarkForm(): HTMLFormElement {
 
     const data = new FormData(form);
 
-    console.log(data);
-
-    addBookmark(data.get("title") as string, data.get("url") as string);
+    saveBookmark(0, data.get("title") as string, data.get("url") as string);
 
     // Re-render the bookmarks
     const bookmarksDiv = document.getElementById("bookmarks");
@@ -92,6 +99,18 @@ function createFormField(
   return fieldElement;
 }
 
-function addBookmark(title: string, url: string) {
-  console.log(title, url);
+function saveBookmark(id: number, title: string, url: string) {
+  if (id) {
+    console.log("Update bookmark");
+  } else {
+    console.log("Add bookmark");
+    const bookmark = bookmarkSchema.parse({
+      title,
+      url,
+      created: Date.now(),
+      modified: Date.now(),
+    });
+    console.log(bookmark);
+    addBookmark(bookmark);
+  }
 }

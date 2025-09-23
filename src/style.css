@@ -56,6 +56,13 @@ body {
     }
 }
 
+#bookmarks-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+}
+
 @media (prefers-color-scheme: light) {
     :root {
         color: #213547;

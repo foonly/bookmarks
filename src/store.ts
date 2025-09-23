@@ -1,5 +1,6 @@
 import { STORAGE_KEY } from "./constants";
 import { storageSchema } from "./types";
+import type { Bookmark } from "./types";
 
 export let store = storageSchema.parse({});
 
@@ -21,5 +22,10 @@ export function saveStore() {
 
 export function updateStore(newObject: object) {
   store = { ...store, ...newObject };
+  saveStore();
+}
+
+export function addBookmark(bookmark: Bookmark) {
+  store = { ...store, bookmarks: [...store.bookmarks, bookmark] };
   saveStore();
 }
