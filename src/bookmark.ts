@@ -52,12 +52,11 @@ export function showBookmarkForm(): HTMLFormElement {
   form.addEventListener("submit", (event) => {
     event.preventDefault();
 
-    addBookmark(
-      bookmarkSchema.parse({
-        title: form.title?.value ?? "",
-        url: form.url?.value ?? "",
-      }),
-    );
+    const data = new FormData(form);
+
+    console.log(data);
+
+    addBookmark(data.get("title") as string, data.get("url") as string);
 
     // Re-render the bookmarks
     const bookmarksDiv = document.getElementById("bookmarks");
@@ -93,6 +92,6 @@ function createFormField(
   return fieldElement;
 }
 
-function addBookmark(bookmark: Bookmark) {
-  console.log(bookmark);
+function addBookmark(title: string, url: string) {
+  console.log(title, url);
 }
