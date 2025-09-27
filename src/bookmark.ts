@@ -1,3 +1,4 @@
+import { FieldType } from "./constants";
 import { clearModal, setModalContent, showModal } from "./modal";
 import { addBookmark, store } from "./store";
 import { bookmarkSchema } from "./types";
@@ -46,7 +47,7 @@ function createAddButton(): HTMLButtonElement {
 /**
  * Create a form to add and edit bookmarks.
  */
-export function showBookmarkForm(): HTMLFormElement {
+export function showBookmarkForm(id: number = 0): HTMLFormElement {
   const form = document.createElement("form");
   form.id = "bookmark-form";
 
@@ -54,8 +55,9 @@ export function showBookmarkForm(): HTMLFormElement {
   submitButton.textContent = "Save Bookmark";
   submitButton.type = "submit";
 
-  form.appendChild(createFormField("title", "Title: "));
-  form.appendChild(createFormField("url", "URL: ", "url", true));
+  form.appendChild(createFormField("id", "", FieldType.HIDDEN, id));
+  form.appendChild(createFormField("title", "Title"));
+  form.appendChild(createFormField("url", "URL", FieldType.URL, "", true));
   form.appendChild(submitButton);
 
   form.addEventListener("submit", (event) => {
@@ -79,21 +81,29 @@ export function showBookmarkForm(): HTMLFormElement {
 function createFormField(
   name: string,
   label: string,
-  type: string = "text",
+  type: string = FieldType.TEXT,
+  value: string | number = "",
   required = false,
-) {
+): HTMLElement {
   const fieldElement = document.createElement("div");
 
-  const labelElement = document.createElement("label");
-  labelElement.htmlFor = name;
-  labelElement.textContent = label;
+  if (label && type !== FieldType.HIDDEN) {
+    const labelElement = document.createElement("label");
+    labelElement.htmlFor = name;
+    labelElement.textContent = label;
+    fieldElement.appendChild(labelElement);
+  }
   const inputElement = document.createElement("input");
   inputElement.type = type;
   inputElement.id = name;
   inputElement.name = name;
+  inputElement.value = typeof value !== "string" ? value.toString() : value;
   inputElement.required = required;
 
-  fieldElement.appendChild(labelElement);
+  if (type === FieldType.HIDDEN) {
+    return inputElement;
+  }
+
   fieldElement.appendChild(inputElement);
 
   return fieldElement;

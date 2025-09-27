@@ -25,7 +25,33 @@ export function updateStore(newObject: object) {
   saveStore();
 }
 
-export function addBookmark(bookmark: Bookmark) {
-  store = { ...store, bookmarks: [...store.bookmarks, bookmark] };
+/**
+ * Updates the 'bookmarks' array in the store by replacing an existing bookmark.
+ * The bookmark to replace is identified by its 'created' timestamp.
+ * If the bookmark is not found, it is added to the store.
+ *
+ * @param {Bookmark} updatedBookmark The updated bookmark object.
+ * @returns {void}
+ */
+export function updateBookmark(updatedBookmark: Bookmark): void {
+  const index = store.bookmarks.findIndex(
+    (bookmark) => bookmark.created === updatedBookmark.created,
+  );
+
+  if (index !== -1) {
+    store.bookmarks[index] = updatedBookmark;
+  } else {
+    store.bookmarks.push(updatedBookmark);
+  }
   saveStore();
+}
+
+/**
+ * Retrieves a bookmark from the store by its creation timestamp.
+ *
+ * @param {number} id The creation timestamp (id) of the bookmark to retrieve.
+ * @returns {Bookmark | undefined} The bookmark with the matching id, or undefined if not found.
+ */
+export function getBookmark(id: number): Bookmark | undefined {
+  return store.bookmarks.find((bookmark) => bookmark.created === id);
 }
