@@ -1,7 +1,9 @@
 :root {
-    font-family: system-ui, sans-serif;
+    --bm-font-family: system-ui, sans-serif;
+
     line-height: 1.5;
     font-weight: 400;
+    font-size: 1rem;
 
     color-scheme: light dark;
     color: rgba(255, 255, 255, 0.87);
@@ -13,6 +15,10 @@
     -moz-osx-font-smoothing: grayscale;
 
     --bm-border-color: #333;
+}
+
+* {
+    box-sizing: border-box;
 }
 
 a {
@@ -30,6 +36,7 @@ body {
     place-items: center;
     min-width: 320px;
     min-height: 100vh;
+    font-family: var(--bm-font-family);
 }
 
 #app {
@@ -47,12 +54,18 @@ body {
 }
 
 #modalDialog {
+    width: clamp(300px, 40vw, 640px);
     border: 2px solid var(--bm-border-color);
     border-radius: 0.5rem;
     padding: 2rem;
     &::backdrop {
         background-color: rgba(0, 0, 0, 0.5);
         backdrop-filter: blur(5px);
+    }
+    .buttonBar {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 2rem;
     }
 }
 
@@ -75,6 +88,40 @@ body {
             .bookmarkButtons {
                 opacity: 1;
             }
+        }
+    }
+}
+
+.formField {
+    display: flex;
+    flex-direction: row;
+    margin: 0.5rem 0;
+
+    &.formFieldTextarea {
+        flex-direction: column;
+    }
+
+    label {
+        width: 80px;
+        &::after {
+            content: ":";
+        }
+    }
+
+    input,
+    textarea {
+        width: 100%;
+        border: 0;
+        border-bottom: 1px solid var(--bm-border-color);
+        font-family: var(--bm-font-family);
+        font-size: 1em;
+        color: var(--bm-text-color);
+        background-color: var(--bm-background-color);
+        transition: border-color 0.3s ease-in-out;
+        &:focus {
+            outline: none;
+            background-color: rgba (128, 128, 128, 0.6);
+            border-color: var(--bm-border-color-focus);
         }
     }
 }

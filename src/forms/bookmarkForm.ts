@@ -1,5 +1,5 @@
 import { renderBookmarks } from "../bookmark";
-import { FieldType } from "../constants";
+import { BOOKMARK_FORM_ID, FieldType } from "../constants";
 import { clearModal, closeModal } from "../modal";
 import { getBookmark, updateBookmark } from "../store";
 import { bookmarkSchema } from "../types";
@@ -9,15 +9,20 @@ import { bookmarkSchema } from "../types";
  */
 export function showBookmarkForm(id: number = 0): HTMLFormElement {
   const form = document.createElement("form");
-  form.id = "bookmark-form";
+  form.id = BOOKMARK_FORM_ID;
+
+  const buttonBar = document.createElement("div");
+  buttonBar.className = "buttonBar";
 
   const submitButton = document.createElement("button");
   submitButton.textContent = "Save Bookmark";
   submitButton.type = "submit";
+  buttonBar.appendChild(submitButton);
 
   const cancelButton = document.createElement("button");
   cancelButton.textContent = "Cancel";
   cancelButton.type = "reset";
+  buttonBar.appendChild(cancelButton);
 
   const bookmark = getBookmark(id);
 
@@ -36,8 +41,8 @@ export function showBookmarkForm(id: number = 0): HTMLFormElement {
       bookmark?.description,
     ),
   );
-  form.appendChild(submitButton);
-  form.appendChild(cancelButton);
+
+  form.appendChild(buttonBar);
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -71,7 +76,9 @@ function createFormField(
   required = false,
 ): HTMLElement {
   const fieldElement = document.createElement("div");
-  fieldElement.classList.add("form-field", `form-field-${type}`);
+
+  const capitalizedType = type.charAt(0).toUpperCase() + type.slice(1);
+  fieldElement.classList.add("formField", `formField${capitalizedType}`);
 
   if (type !== FieldType.HIDDEN) {
     const labelElement = document.createElement("label");
