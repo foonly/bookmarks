@@ -21,3 +21,5 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           name: id_ed25519
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
+      - name: Deploy Files
+        run: rsync -rlci --delete dist webmaster@cloudberry.uplink.fi:/var/www/bookmarks.foonly.dev
