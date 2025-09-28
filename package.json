@@ -6,6 +6,7 @@
     "name": "Niklas Schönberg",
     "email": "niklas@uplink.fi"
   },
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "dev": "vite",
