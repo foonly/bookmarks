@@ -1,0 +1,133 @@
+import { renderBookmarks } from "../bookmark";
+import { FieldType } from "../constants";
+import { clearModal, closeModal } from "../modal";
+import { getBookmark, updateBookmark } from "../store";
+import { bookmarkSchema } from "../types";
+
+/**
+ * Create a form to add and edit bookmarks.
+ */
+export function showBookmarkForm(id: number = 0): HTMLFormElement {
+  const form = document.createElement("form");
+  form.id = "bookmark-form";
+
+  const submitButton = document.createElement("button");
+  submitButton.textContent = "Save Bookmark";
+  submitButton.type = "submit";
+
+  const cancelButton = document.createElement("button");
+  cancelButton.textContent = "Cancel";
+  cancelButton.type = "reset";
+
+  const bookmark = getBookmark(id);
+
+  form.appendChild(createFormField("id", "", FieldType.HIDDEN, id));
+  form.appendChild(
+    createFormField("title", "Title", FieldType.TEXT, bookmark?.title),
+  );
+  form.appendChild(
+    createFormField("url", "URL", FieldType.URL, bookmark?.url, true),
+  );
+  form.appendChild(
+    createFormField(
+      "description",
+      "Description",
+      FieldType.TEXTAREA,
+      bookmark?.description,
+    ),
+  );
+  form.appendChild(submitButton);
+  form.appendChild(cancelButton);
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const data = new FormData(form);
+    form.reset();
+    closeModal();
+
+    saveBookmark(
+      id,
+      data.get("title") as string,
+      data.get("url") as string,
+      data.get("description") as string,
+    );
+
+    // Re-render the bookmarks
+    renderBookmarks();
+  });
+  form.addEventListener("reset", () => {
+    clearModal();
+  });
+
+  return form;
+}
+
+function createFormField(
+  name: string,
+  label: string,
+  type: string = FieldType.TEXT,
+  value: string | number = "",
+  required = false,
+): HTMLElement {
+  const fieldElement = document.createElement("div");
+  fieldElement.classList.add("form-field", `form-field-${type}`);
+
+  if (type !== FieldType.HIDDEN) {
+    const labelElement = document.createElement("label");
+    labelElement.htmlFor = name;
+    labelElement.textContent = label;
+    fieldElement.appendChild(labelElement);
+  }
+  const sanitizedValue = value
+    .toString()
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+
+  const inputElement =
+    type === FieldType.TEXTAREA
+      ? document.createElement("textarea")
+      : document.createElement("input");
+  if (inputElement instanceof HTMLInputElement) {
+    inputElement.type = type;
+  }
+  inputElement.id = name;
+  inputElement.name = name;
+  inputElement.value = sanitizedValue;
+  inputElement.required = required;
+
+  if (type === FieldType.HIDDEN) {
+    return inputElement;
+  }
+
+  fieldElement.appendChild(inputElement);
+
+  return fieldElement;
+}
+
+function saveBookmark(
+  id: number,
+  title: string,
+  url: string,
+  description: string,
+) {
+  if (id) {
+    console.log("Update bookmark");
+    const bookmark = getBookmark(id);
+    if (bookmark) {
+      bookmark.title = title;
+      bookmark.url = url;
+      bookmark.description = description;
+      updateBookmark(bookmark);
+    }
+  } else {
+    console.log("Add bookmark");
+    const bookmark = bookmarkSchema.parse({
+      title,
+      url,
+      description,
+      created: Date.now(),
+    });
+    updateBookmark(bookmark);
+  }
+}

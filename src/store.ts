@@ -34,6 +34,7 @@ export function updateStore(newObject: object) {
  * @returns {void}
  */
 export function updateBookmark(updatedBookmark: Bookmark): void {
+  updatedBookmark.modified = Date.now();
   const index = store.bookmarks.findIndex(
     (bookmark) => bookmark.created === updatedBookmark.created,
   );
@@ -54,4 +55,20 @@ export function updateBookmark(updatedBookmark: Bookmark): void {
  */
 export function getBookmark(id: number): Bookmark | undefined {
   return store.bookmarks.find((bookmark) => bookmark.created === id);
+}
+
+/**
+ * Removes a bookmark from the store by its creation timestamp.
+ *
+ * @param {number} id The creation timestamp (id) of the bookmark to remove.
+ * @returns {void}
+ */
+export function removeBookmark(id: number): void {
+  const index = store.bookmarks.findIndex(
+    (bookmark) => bookmark.created === id,
+  );
+  if (index !== -1) {
+    store.bookmarks.splice(index, 1);
+  }
+  saveStore();
 }

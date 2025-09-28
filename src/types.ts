@@ -3,7 +3,7 @@ import { z } from "zod";
 export const bookmarkSchema = z.object({
   title: z.string().default(""),
   url: z.url(),
-  description: z.string().nullish(),
+  description: z.string().default(""),
   tags: z.array(z.string()).default([]),
   created: z.number().default(0),
   modified: z.number().default(0),

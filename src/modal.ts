@@ -7,6 +7,12 @@ export function showModal(): void {
   }
 }
 
+export function closeModal(): void {
+  if (dialog) {
+    dialog.close();
+  }
+}
+
 export function setModalContent(content: HTMLElement): void {
   if (dialog) {
     dialog.append(content);

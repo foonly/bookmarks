@@ -56,11 +56,46 @@ body {
     }
 }
 
-#bookmarks-list {
+#bookmarksList {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
     align-items: flex-start;
+
+    .bookmarkItem {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+
+        .bookmarkButtons {
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        &:hover {
+            .bookmarkButtons {
+                opacity: 1;
+            }
+        }
+    }
+}
+
+.icon {
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    svg {
+        height: 16px;
+        fill: currentColor;
+    }
+}
+
+.card {
+    min-width: 300px;
+    border: 2px solid var(--bm-border-color);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    background-color: #333;
+    color: #fff;
 }
 
 @media (prefers-color-scheme: light) {
