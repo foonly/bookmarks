@@ -33,6 +33,7 @@ export function showBookmarkForm(id: number = 0): HTMLFormElement {
   form.appendChild(
     createFormField("url", "URL", FieldType.URL, bookmark?.url, true),
   );
+  form.appendChild(createTagsField(bookmark?.tags ?? []));
   form.appendChild(
     createFormField(
       "description",
@@ -110,6 +111,38 @@ function createFormField(
   fieldElement.appendChild(inputElement);
 
   return fieldElement;
+}
+
+function createTagsField(tags: string[]) {
+  const tagsElement = document.createElement("div");
+  tagsElement.classList.add("formField", "formFieldTags");
+
+  const dataList = document.createElement("datalist");
+  dataList.id = "tagsList";
+
+  const allTags = ["Test", "Foobar", "Testing"];
+  allTags.forEach((tag) => {
+    const optionElement = document.createElement("option");
+    optionElement.value = tag;
+    dataList.appendChild(optionElement);
+  });
+  tagsElement.appendChild(dataList);
+
+  const labelElement = document.createElement("label");
+  labelElement.htmlFor = "tags";
+  labelElement.textContent = "Tags";
+  tagsElement.appendChild(labelElement);
+
+  const inputElement = document.createElement("input");
+  inputElement.setAttribute("list", "tagsList");
+  inputElement.id = "tags";
+  inputElement.name = "tags";
+  inputElement.value = tags.join(", ");
+  inputElement.required = false;
+
+  tagsElement.appendChild(inputElement);
+
+  return tagsElement;
 }
 
 function saveBookmark(
