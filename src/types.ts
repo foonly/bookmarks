@@ -13,7 +13,7 @@ export type Bookmark = z.infer<typeof bookmarkSchema>;
 
 export const storageSchema = z.object({
   testing: z.string().default(""),
-  counter: z.number().default(0),
+  favoriteTags: z.array(z.string()).default([]),
   bookmarks: z.array(bookmarkSchema).default([]),
 });
 

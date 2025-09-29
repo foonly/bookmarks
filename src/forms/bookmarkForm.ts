@@ -1,7 +1,7 @@
 import { renderBookmarks } from "../bookmark";
 import { BOOKMARK_FORM_ID, FieldType } from "../constants";
 import { clearModal, closeModal } from "../modal";
-import { getBookmark, updateBookmark } from "../store";
+import { getBookmark, getTags, updateBookmark } from "../store";
 import { bookmarkSchema } from "../types";
 
 /**
@@ -120,11 +120,12 @@ function createTagsField(tags: string[]) {
   const dataList = document.createElement("datalist");
   dataList.id = "tagsList";
 
-  const allTags = ["Test", "Foobar", "Testing"];
-  allTags.forEach((tag) => {
-    const optionElement = document.createElement("option");
-    optionElement.value = tag;
-    dataList.appendChild(optionElement);
+  getTags().forEach((tag) => {
+    if (!tags.includes(tag)) {
+      const optionElement = document.createElement("option");
+      optionElement.value = tag;
+      dataList.appendChild(optionElement);
+    }
   });
   tagsElement.appendChild(dataList);
 
@@ -136,13 +137,50 @@ function createTagsField(tags: string[]) {
   const inputElement = document.createElement("input");
   inputElement.setAttribute("list", "tagsList");
   inputElement.id = "tags";
-  inputElement.name = "tags";
-  inputElement.value = tags.join(", ");
   inputElement.required = false;
 
   tagsElement.appendChild(inputElement);
 
+  const tagContainer = document.createElement("div");
+  tagsElement.appendChild(tagContainer);
+  renderTags(tagContainer, tags);
+
+  inputElement.addEventListener("input", (event) => {
+    if (event instanceof InputEvent) {
+      if (event.inputType === "insertReplacementText") {
+        addTag(tags, inputElement.value);
+        renderTags(tagContainer, tags);
+        inputElement.value = "";
+      }
+    }
+  });
+
+  inputElement.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      addTag(tags, inputElement.value);
+      renderTags(tagContainer, tags);
+      inputElement.value = "";
+    }
+  });
+
   return tagsElement;
+}
+
+function addTag(tags: string[], tag: string) {
+  if (!tag) return;
+  if (!tags.includes(tag)) tags.push(tag);
+}
+
+function renderTags(container: HTMLDivElement, tags: string[]) {
+  while (container.firstChild) {
+    container.removeChild(container.firstChild);
+  }
+  tags.forEach((tag) => {
+    const tagElement = document.createElement("button");
+    tagElement.textContent = tag;
+    container.appendChild(tagElement);
+  });
 }
 
 function saveBookmark(

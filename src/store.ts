@@ -72,3 +72,16 @@ export function removeBookmark(id: number): void {
   }
   saveStore();
 }
+
+export function getTags(): Array<string> {
+  const tags = [...store.favoriteTags];
+  store.bookmarks.forEach((bookmark) => {
+    bookmark.tags.forEach((tag) => {
+      if (!tags.includes(tag)) {
+        tags.push(tag);
+      }
+    });
+  });
+
+  return tags.sort();
+}
