@@ -1,8 +1,9 @@
 import { renderBookmarks } from "../bookmark";
 import { BOOKMARK_FORM_ID, FieldType } from "../constants";
 import { clearModal, closeModal } from "../modal";
-import { getBookmark, getTags, updateBookmark } from "../store";
+import { getBookmark, updateBookmark } from "../store";
 import { bookmarkSchema } from "../types";
+import { createFormField, createTagsField } from "./formFields";
 
 /**
  * Create a form to add and edit bookmarks.
@@ -52,10 +53,19 @@ export function showBookmarkForm(id: number = 0): HTMLFormElement {
     form.reset();
     closeModal();
 
+    let tagData = [];
+    try {
+      tagData = JSON.parse(data.get("tags") as string);
+    } catch (error) {
+      console.error("Error parsing tags:", error);
+    }
+    console.log(tagData);
+
     saveBookmark(
       id,
       data.get("title") as string,
       data.get("url") as string,
+      tagData,
       data.get("description") as string,
     );
 
@@ -69,124 +79,11 @@ export function showBookmarkForm(id: number = 0): HTMLFormElement {
   return form;
 }
 
-function createFormField(
-  name: string,
-  label: string,
-  type: string = FieldType.TEXT,
-  value: string | number = "",
-  required = false,
-): HTMLElement {
-  const fieldElement = document.createElement("div");
-
-  const capitalizedType = type.charAt(0).toUpperCase() + type.slice(1);
-  fieldElement.classList.add("formField", `formField${capitalizedType}`);
-
-  if (type !== FieldType.HIDDEN) {
-    const labelElement = document.createElement("label");
-    labelElement.htmlFor = name;
-    labelElement.textContent = label;
-    fieldElement.appendChild(labelElement);
-  }
-  const sanitizedValue = value
-    .toString()
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
-
-  const inputElement =
-    type === FieldType.TEXTAREA
-      ? document.createElement("textarea")
-      : document.createElement("input");
-  if (inputElement instanceof HTMLInputElement) {
-    inputElement.type = type;
-  }
-  inputElement.id = name;
-  inputElement.name = name;
-  inputElement.value = sanitizedValue;
-  inputElement.required = required;
-
-  if (type === FieldType.HIDDEN) {
-    return inputElement;
-  }
-
-  fieldElement.appendChild(inputElement);
-
-  return fieldElement;
-}
-
-function createTagsField(tags: string[]) {
-  const tagsElement = document.createElement("div");
-  tagsElement.classList.add("formField", "formFieldTags");
-
-  const dataList = document.createElement("datalist");
-  dataList.id = "tagsList";
-
-  getTags().forEach((tag) => {
-    if (!tags.includes(tag)) {
-      const optionElement = document.createElement("option");
-      optionElement.value = tag;
-      dataList.appendChild(optionElement);
-    }
-  });
-  tagsElement.appendChild(dataList);
-
-  const labelElement = document.createElement("label");
-  labelElement.htmlFor = "tags";
-  labelElement.textContent = "Tags";
-  tagsElement.appendChild(labelElement);
-
-  const inputElement = document.createElement("input");
-  inputElement.setAttribute("list", "tagsList");
-  inputElement.id = "tags";
-  inputElement.required = false;
-
-  tagsElement.appendChild(inputElement);
-
-  const tagContainer = document.createElement("div");
-  tagsElement.appendChild(tagContainer);
-  renderTags(tagContainer, tags);
-
-  inputElement.addEventListener("input", (event) => {
-    if (event instanceof InputEvent) {
-      if (event.inputType === "insertReplacementText") {
-        addTag(tags, inputElement.value);
-        renderTags(tagContainer, tags);
-        inputElement.value = "";
-      }
-    }
-  });
-
-  inputElement.addEventListener("keydown", (event) => {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      addTag(tags, inputElement.value);
-      renderTags(tagContainer, tags);
-      inputElement.value = "";
-    }
-  });
-
-  return tagsElement;
-}
-
-function addTag(tags: string[], tag: string) {
-  if (!tag) return;
-  if (!tags.includes(tag)) tags.push(tag);
-}
-
-function renderTags(container: HTMLDivElement, tags: string[]) {
-  while (container.firstChild) {
-    container.removeChild(container.firstChild);
-  }
-  tags.forEach((tag) => {
-    const tagElement = document.createElement("button");
-    tagElement.textContent = tag;
-    container.appendChild(tagElement);
-  });
-}
-
 function saveBookmark(
   id: number,
   title: string,
   url: string,
+  tags: string[],
   description: string,
 ) {
   if (id) {
@@ -195,6 +92,7 @@ function saveBookmark(
     if (bookmark) {
       bookmark.title = title;
       bookmark.url = url;
+      bookmark.tags = tags;
       bookmark.description = description;
       updateBookmark(bookmark);
     }
@@ -203,6 +101,7 @@ function saveBookmark(
     const bookmark = bookmarkSchema.parse({
       title,
       url,
+      tags,
       description,
       created: Date.now(),
     });
