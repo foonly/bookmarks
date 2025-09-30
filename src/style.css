@@ -110,7 +110,7 @@ body {
 
     input,
     textarea {
-        width: 100%;
+        flex-grow: 1;
         border: 0;
         border-bottom: 1px solid var(--bm-border-color);
         font-family: var(--bm-font-family);
