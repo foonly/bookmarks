@@ -5,7 +5,12 @@ export default defineConfig({
 	plugins: [
 		VitePWA({
 			registerType: "autoUpdate",
-			includeAssets: ["bookmark.svg", "favicon.ico", "apple-touch-icon.png"],
+			includeAssets: [
+				"bookmark.svg",
+				"favicon.ico",
+				"apple-touch-icon.png",
+				"robots.txt",
+			],
 			manifest: {
 				name: "Bookmarks",
 				short_name: "Bookmarks",
@@ -33,7 +38,7 @@ export default defineConfig({
 				],
 			},
 			workbox: {
-				globPatterns: ["**/*.{js,css,html,ico,png,svg,json}"],
+				globPatterns: ["**/*.{js,css,html,ico,png,svg,json,txt}"],
 				runtimeCaching: [
 					{
 						urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
