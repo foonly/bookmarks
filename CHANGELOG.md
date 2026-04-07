@@ -1,6 +1,12 @@
 # Changelog
 
-## 0.6.0 (2026-04-07)
+## 0.7.0 (2026-04-07)
+
+#### Features
+- sync: Include registration secret when remote data is not found (415d42b)
+- sync: Implement HMAC-SHA256 authentication for backend uploads (934d89f)
+
+## v0.6.0 (2026-04-07)
 
 #### Features
 - views: Add About view and navigation (474c170)
