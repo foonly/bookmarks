@@ -12,10 +12,6 @@ export function renderSettingsView(): HTMLElement {
 	const container = document.createElement("div");
 	container.classList.add("card", "settings-view");
 
-	const title = document.createElement("h1");
-	title.textContent = "Settings";
-	container.appendChild(title);
-
 	// Sync Section
 	const syncSection = document.createElement("section");
 	syncSection.classList.add("settings-section");
