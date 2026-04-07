@@ -48,6 +48,8 @@ body {
 	min-width: 320px;
 	min-height: 100vh;
 	font-family: var(--bm-font-family);
+	padding: env(safe-area-inset-top) env(safe-area-inset-right)
+		env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
 #app {
@@ -578,4 +580,24 @@ body {
 	background-color: rgba(255, 68, 68, 0.2);
 	border-color: #ff4444;
 	color: #ff4444;
+}
+
+.offline-indicator {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	background-color: #ef4444;
+	color: white;
+	text-align: center;
+	padding: 0.25rem;
+	font-size: 0.75rem;
+	font-weight: 600;
+	z-index: 10000;
+	display: none;
+	pointer-events: none;
+}
+
+body.is-offline .offline-indicator {
+	display: block;
 }

@@ -1,4 +1,5 @@
 import "./style.css";
+import { registerSW } from "virtual:pwa-register";
 import { loadStore } from "./store.ts";
 import { showVersion } from "./version.ts";
 import { renderBookmarks } from "./bookmark.ts";
@@ -9,6 +10,33 @@ import { showBookmarkForm } from "./forms/bookmarkForm.ts";
 import { renderTagsView } from "./views/tags.ts";
 import { renderSettingsView } from "./views/settings.ts";
 import { initAutoSync } from "./sync.ts";
+
+// Register Service Worker
+registerSW({
+	onOfflineReady() {
+		console.log("App ready to work offline");
+	},
+	onNeedRefresh() {
+		if (confirm("New version available. Update now?")) {
+			location.reload();
+		}
+	},
+});
+
+// Offline status handling
+const updateOnlineStatus = () => {
+	document.body.classList.toggle("is-offline", !navigator.onLine);
+};
+
+window.addEventListener("online", updateOnlineStatus);
+window.addEventListener("offline", updateOnlineStatus);
+updateOnlineStatus();
+
+// Add offline indicator to body
+const offlineIndicator = document.createElement("div");
+offlineIndicator.className = "offline-indicator";
+offlineIndicator.textContent = "You are currently offline";
+document.body.prepend(offlineIndicator);
 
 loadStore();
 initAutoSync();

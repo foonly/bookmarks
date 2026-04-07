@@ -161,6 +161,13 @@ export function initAutoSync(intervalMs: number = 300000) {
 		}
 	}, intervalMs);
 
+	// Sync when coming back online
+	window.addEventListener("online", () => {
+		if (store.sync?.enabled) {
+			sync().catch(console.error);
+		}
+	});
+
 	// Debounced sync on local store updates
 	let debounceTimeout: number | undefined;
 	let lastState = JSON.stringify({
