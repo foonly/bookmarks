@@ -5,24 +5,24 @@ import type { Bookmark } from "./types";
 export let store = storageSchema.parse({});
 
 export function loadStore() {
-  console.log("Loading storage...");
-  const dataRaw = window.localStorage.getItem(STORAGE_KEY);
-  if (dataRaw) {
-    try {
-      store = storageSchema.parse(JSON.parse(dataRaw));
-    } catch (error) {
-      console.error("Error parsing storage:", error);
-    }
-  }
+	console.log("Loading storage...");
+	const dataRaw = window.localStorage.getItem(STORAGE_KEY);
+	if (dataRaw) {
+		try {
+			store = storageSchema.parse(JSON.parse(dataRaw));
+		} catch (error) {
+			console.error("Error parsing storage:", error);
+		}
+	}
 }
 
 export function saveStore() {
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
+	window.localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
 }
 
 export function updateStore(newObject: object) {
-  store = { ...store, ...newObject };
-  saveStore();
+	store = { ...store, ...newObject };
+	saveStore();
 }
 
 /**
@@ -34,17 +34,17 @@ export function updateStore(newObject: object) {
  * @returns {void}
  */
 export function updateBookmark(updatedBookmark: Bookmark): void {
-  updatedBookmark.modified = Date.now();
-  const index = store.bookmarks.findIndex(
-    (bookmark) => bookmark.created === updatedBookmark.created,
-  );
+	updatedBookmark.modified = Date.now();
+	const index = store.bookmarks.findIndex(
+		(bookmark) => bookmark.created === updatedBookmark.created,
+	);
 
-  if (index !== -1) {
-    store.bookmarks[index] = updatedBookmark;
-  } else {
-    store.bookmarks.push(updatedBookmark);
-  }
-  saveStore();
+	if (index !== -1) {
+		store.bookmarks[index] = updatedBookmark;
+	} else {
+		store.bookmarks.push(updatedBookmark);
+	}
+	saveStore();
 }
 
 /**
@@ -54,7 +54,7 @@ export function updateBookmark(updatedBookmark: Bookmark): void {
  * @returns {Bookmark | undefined} The bookmark with the matching id, or undefined if not found.
  */
 export function getBookmark(id: number): Bookmark | undefined {
-  return store.bookmarks.find((bookmark) => bookmark.created === id);
+	return store.bookmarks.find((bookmark) => bookmark.created === id);
 }
 
 /**
@@ -64,24 +64,34 @@ export function getBookmark(id: number): Bookmark | undefined {
  * @returns {void}
  */
 export function removeBookmark(id: number): void {
-  const index = store.bookmarks.findIndex(
-    (bookmark) => bookmark.created === id,
-  );
-  if (index !== -1) {
-    store.bookmarks.splice(index, 1);
-  }
-  saveStore();
+	const index = store.bookmarks.findIndex(
+		(bookmark) => bookmark.created === id,
+	);
+	if (index !== -1) {
+		store.bookmarks.splice(index, 1);
+	}
+	saveStore();
 }
 
 export function getTags(): Array<string> {
-  const tags = [...store.favoriteTags];
-  store.bookmarks.forEach((bookmark) => {
-    bookmark.tags.forEach((tag) => {
-      if (!tags.includes(tag)) {
-        tags.push(tag);
-      }
-    });
-  });
+	const tags = [...store.favoriteTags];
+	store.bookmarks.forEach((bookmark) => {
+		bookmark.tags.forEach((tag) => {
+			if (!tags.includes(tag)) {
+				tags.push(tag);
+			}
+		});
+	});
 
-  return tags.sort();
+	return tags.sort();
+}
+
+export function getTagsWithCounts(): Record<string, number> {
+	const counts: Record<string, number> = {};
+	store.bookmarks.forEach((bookmark) => {
+		bookmark.tags.forEach((tag) => {
+			counts[tag] = (counts[tag] || 0) + 1;
+		});
+	});
+	return counts;
 }

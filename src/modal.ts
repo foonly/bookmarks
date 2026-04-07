@@ -1,29 +1,40 @@
+import { router } from "./router.ts";
+
 const dialog: HTMLDialogElement | null =
-  document.querySelector<HTMLDialogElement>("#modalDialog");
+	document.querySelector<HTMLDialogElement>("#modalDialog");
+
+if (dialog) {
+	dialog.addEventListener("close", () => {
+		const hash = window.location.hash;
+		if (hash.startsWith("#/add") || hash.startsWith("#/edit/")) {
+			router.navigate("/");
+		}
+	});
+}
 
 export function showModal(): void {
-  if (dialog) {
-    dialog.showModal();
-  }
+	if (dialog) {
+		dialog.showModal();
+	}
 }
 
 export function closeModal(): void {
-  if (dialog) {
-    dialog.close();
-  }
+	if (dialog) {
+		dialog.close();
+	}
 }
 
 export function setModalContent(content: HTMLElement): void {
-  if (dialog) {
-    dialog.append(content);
-  }
+	if (dialog) {
+		dialog.append(content);
+	}
 }
 
 export function clearModal(): void {
-  if (dialog) {
-    while (dialog.firstChild) {
-      dialog.removeChild(dialog.firstChild);
-    }
-    dialog.close();
-  }
+	if (dialog) {
+		while (dialog.firstChild) {
+			dialog.removeChild(dialog.firstChild);
+		}
+		dialog.close();
+	}
 }
