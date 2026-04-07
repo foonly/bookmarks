@@ -21,7 +21,11 @@ export const storageSchema = z.object({
 			credentials: z.string().default(""), // format: "id:secret"
 			lastSynced: z.number().default(0),
 		})
-		.default({}),
+		.default({
+			enabled: false,
+			credentials: "",
+			lastSynced: 0,
+		}),
 });
 
 export type Storage = z.infer<typeof storageSchema>;
