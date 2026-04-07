@@ -2,13 +2,14 @@ import "./style.css";
 import { registerSW } from "virtual:pwa-register";
 import { loadStore } from "./store.ts";
 import { showVersion } from "./version.ts";
-import { renderBookmarks } from "./bookmark.ts";
+import { renderBookmarks } from "./views/bookmarks.ts";
 import { BOOKMARKS_ID } from "./constants.ts";
 import { router } from "./router.ts";
 import { clearModal, setModalContent, showModal } from "./modal.ts";
 import { showBookmarkForm } from "./forms/bookmarkForm.ts";
 import { renderTagsView } from "./views/tags.ts";
 import { renderSettingsView } from "./views/settings.ts";
+import { renderAboutView } from "./views/about.ts";
 import { initAutoSync } from "./sync.ts";
 
 // Register Service Worker
@@ -109,6 +110,10 @@ router
 		renderLayout(renderSettingsView());
 		clearModal();
 	})
+	.on("/about", () => {
+		renderLayout(renderAboutView());
+		clearModal();
+	})
 	.default(() => {
 		router.navigate("/");
 	});
@@ -141,6 +146,11 @@ function createNavigation() {
 				hash.startsWith("#/edit/"),
 		},
 		{ href: "#/tags", label: "Tags", active: hash.startsWith("#/tags") },
+		{
+			href: "#/about",
+			label: "About",
+			active: hash.startsWith("#/about"),
+		},
 		{
 			href: "#/settings",
 			label: "Settings",

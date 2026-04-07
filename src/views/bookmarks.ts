@@ -1,7 +1,7 @@
-import { BOOKMARK_LIST_ID, BOOKMARKS_ID } from "./constants";
+import { BOOKMARK_LIST_ID, BOOKMARKS_ID } from "../constants";
 
-import { getTags, removeBookmark, store } from "./store";
-import type { Bookmark } from "./types";
+import { getTags, removeBookmark, store } from "../store";
+import type { Bookmark } from "../types";
 import remove from "/trash.svg?raw";
 import edit from "/pen-to-square.svg?raw";
 import add from "/bookmark-plus.svg?raw";
