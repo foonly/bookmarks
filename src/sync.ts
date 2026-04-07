@@ -117,9 +117,9 @@ export async function sync(): Promise<{ success: boolean; message: string }> {
 		const timestamp = Math.floor(Date.now() / 1000).toString();
 		const body: Record<string, string> = { data: encryptedLocal };
 
-		// If this is a new sync ID (remoteData was null and never successfully synced),
-		// include the signing secret for registration.
-		if (!remoteData && syncConfig.lastSynced === 0) {
+		// If this is a new sync ID (remoteData was null), include the
+		// signing secret for registration.
+		if (!remoteData) {
 			body.registration_secret = signSecret;
 		}
 

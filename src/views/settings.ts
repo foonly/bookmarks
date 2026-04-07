@@ -86,6 +86,7 @@ function setupEventListeners(container: HTMLElement) {
 			sync: {
 				...store.sync,
 				credentials: syncInput.value,
+				lastSynced: 0,
 			},
 		});
 	});
@@ -113,6 +114,7 @@ function setupEventListeners(container: HTMLElement) {
 					sync: {
 						...store.sync,
 						credentials: creds,
+						lastSynced: 0,
 					},
 				});
 			}
