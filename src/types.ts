@@ -7,6 +7,7 @@ export const bookmarkSchema = z.object({
 	tags: z.array(z.string()).default([]),
 	created: z.number().default(0),
 	modified: z.number().default(0),
+	deleted: z.boolean().default(false),
 });
 
 export type Bookmark = z.infer<typeof bookmarkSchema>;

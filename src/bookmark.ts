@@ -35,9 +35,9 @@ export function renderBookmarks(filterTag?: string): void {
 	bookmarksList.id = BOOKMARK_LIST_ID;
 	card.appendChild(bookmarksList);
 
-	let filteredBookmarks = store.bookmarks;
+	let filteredBookmarks = store.bookmarks.filter((b) => !b.deleted);
 	if (filterTag) {
-		filteredBookmarks = store.bookmarks.filter((b) =>
+		filteredBookmarks = filteredBookmarks.filter((b) =>
 			b.tags.includes(filterTag),
 		);
 	}

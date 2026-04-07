@@ -30,7 +30,7 @@ export function renderTagsView(): HTMLElement {
 		bookmarkList.classList.add("tag-bookmark-list");
 
 		const bookmarksWithTag = store.bookmarks
-			.filter((b) => b.tags.includes(tag))
+			.filter((b) => !b.deleted && b.tags.includes(tag))
 			.sort((a, b) => a.title.localeCompare(b.title));
 
 		bookmarksWithTag.forEach((bookmark) => {

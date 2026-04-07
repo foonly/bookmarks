@@ -1,4 +1,9 @@
-import { store, updateStore, mergeStores } from "../store";
+import {
+	store,
+	updateStore,
+	mergeStores,
+	purgeDeletedBookmarks,
+} from "../store";
 import { storageSchema } from "../types";
 import { generateCredentials } from "../crypto";
 import { sync } from "../sync";
@@ -54,6 +59,7 @@ export function renderSettingsView(): HTMLElement {
 		<div class="settings-actions">
 			<button type="button" id="export-data">Export JSON</button>
 			<button type="button" id="import-data">Import JSON</button>
+			<button type="button" id="purge-tombstones" title="Permanently remove bookmarks marked as deleted">Purge Deleted</button>
 			<button type="button" class="danger-button" id="clear-data">Clear All Data</button>
 		</div>
 	`;
@@ -77,6 +83,7 @@ function setupEventListeners(container: HTMLElement) {
 	const clearBtn = container.querySelector("#clear-data");
 	const exportBtn = container.querySelector("#export-data");
 	const importBtn = container.querySelector("#import-data");
+	const purgeBtn = container.querySelector("#purge-tombstones");
 
 	syncInput?.addEventListener("change", () => {
 		updateStore({
@@ -96,7 +103,9 @@ function setupEventListeners(container: HTMLElement) {
 	});
 
 	generateBtn?.addEventListener("click", () => {
+		const hasCredentials = !!store.sync?.credentials;
 		if (
+			!hasCredentials ||
 			confirm(
 				"Generating new credentials will replace your current ones. If you have synced data on the server, you will lose access to it unless you have backed up the old credentials. Continue?",
 			)
@@ -219,6 +228,18 @@ function setupEventListeners(container: HTMLElement) {
 			} else {
 				alert(result.message);
 			}
+		}
+	});
+
+	purgeBtn?.addEventListener("click", () => {
+		if (
+			confirm(
+				"Permanently remove all bookmarks marked as deleted? Only do this if you are sure all your devices have synced the deletions.",
+			)
+		) {
+			purgeDeletedBookmarks(true);
+			alert("Tombstones purged.");
+			window.location.reload();
 		}
 	});
 

@@ -14,10 +14,20 @@ export function loadStore() {
 			console.error("Error parsing storage:", error);
 		}
 	}
+	purgeDeletedBookmarks();
 }
+
+// Listen for changes from other tabs
+window.addEventListener("storage", (event) => {
+	if (event.key === STORAGE_KEY) {
+		loadStore();
+		window.dispatchEvent(new Event("store-updated"));
+	}
+});
 
 export function saveStore() {
 	window.localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
+	window.dispatchEvent(new Event("store-updated"));
 }
 
 export function updateStore(newObject: object) {
@@ -54,28 +64,31 @@ export function updateBookmark(updatedBookmark: Bookmark): void {
  * @returns {Bookmark | undefined} The bookmark with the matching id, or undefined if not found.
  */
 export function getBookmark(id: number): Bookmark | undefined {
-	return store.bookmarks.find((bookmark) => bookmark.created === id);
+	return store.bookmarks.find(
+		(bookmark) => bookmark.created === id && !bookmark.deleted,
+	);
 }
 
 /**
  * Removes a bookmark from the store by its creation timestamp.
+ * Marks it as deleted and updates the modified timestamp for syncing.
  *
  * @param {number} id The creation timestamp (id) of the bookmark to remove.
  * @returns {void}
  */
 export function removeBookmark(id: number): void {
-	const index = store.bookmarks.findIndex(
-		(bookmark) => bookmark.created === id,
-	);
-	if (index !== -1) {
-		store.bookmarks.splice(index, 1);
+	const bookmark = store.bookmarks.find((b) => b.created === id);
+	if (bookmark) {
+		bookmark.deleted = true;
+		bookmark.modified = Date.now();
+		saveStore();
 	}
-	saveStore();
 }
 
 export function getTags(): Array<string> {
 	const tags = [...store.favoriteTags];
 	store.bookmarks.forEach((bookmark) => {
+		if (bookmark.deleted) return;
 		bookmark.tags.forEach((tag) => {
 			if (!tags.includes(tag)) {
 				tags.push(tag);
@@ -89,6 +102,7 @@ export function getTags(): Array<string> {
 export function getTagsWithCounts(): Record<string, number> {
 	const counts: Record<string, number> = {};
 	store.bookmarks.forEach((bookmark) => {
+		if (bookmark.deleted) return;
 		bookmark.tags.forEach((tag) => {
 			counts[tag] = (counts[tag] || 0) + 1;
 		});
@@ -144,4 +158,26 @@ export function mergeStores(remoteStore: Storage): boolean {
 	}
 
 	return hasChanges;
+}
+
+/**
+ * Permanently removes bookmarks marked as deleted.
+ * By default, only removes those older than 30 days to allow sync propagation.
+ * Set forceAll to true to remove all deleted bookmarks immediately.
+ */
+export function purgeDeletedBookmarks(forceAll: boolean = false): void {
+	const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+	const now = Date.now();
+	const initialCount = store.bookmarks.length;
+
+	store.bookmarks = store.bookmarks.filter((bookmark) => {
+		if (!bookmark.deleted) return true;
+		if (forceAll === true) return false;
+		// Keep tombstones if they were modified recently (to allow sync propagation)
+		return now - bookmark.modified < THIRTY_DAYS_MS;
+	});
+
+	if (store.bookmarks.length !== initialCount) {
+		saveStore();
+	}
 }
