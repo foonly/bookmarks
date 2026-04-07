@@ -1,6 +1,16 @@
 # Changelog
 
-## 0.5.0 (2026-04-07)
+## 0.6.0 (2026-04-07)
+
+#### Features
+- views: Add About view and navigation (474c170)
+- bookmark: Display tags for bookmarks (454677a)
+- style: Introduce CSS variables for theming (6c402dd)
+
+#### Bug Fixes
+- bookmark: Add rel="noopener noreferrer" to external links (9d916f7)
+
+## v0.5.0 (2026-04-07)
 
 #### Features
 - pwa: Add PWA support and offline capabilities (7155d93)
