@@ -48,7 +48,6 @@ initAutoSync();
 const app = document.querySelector<HTMLDivElement>("#app")!;
 
 function renderLayout(content: HTMLElement | string) {
-	console.log("renderLayout: Rendering content to #app");
 	app.innerHTML = "";
 	const container = document.createElement("div");
 	container.classList.add("container");
@@ -71,7 +70,6 @@ function renderLayout(content: HTMLElement | string) {
 }
 
 function handleBookmarksRoute(tag?: string, modalId?: number) {
-	console.log(`handleBookmarksRoute: tag=${tag}, modalId=${modalId}`);
 	renderLayout(createBookmarks());
 	renderBookmarks(tag);
 	if (modalId !== undefined) {
@@ -124,25 +122,20 @@ router
 	});
 
 const init = async () => {
-	console.log("init: Starting app initialization");
-
 	// Initialize i18n in the background
 	initI18n(store.language)
 		.then(() => {
-			console.log("init: i18n initialization complete");
 			offlineIndicator.textContent = t("system.offline_indicator");
 			// Re-render when translations are loaded
 			router.handleRoute();
 		})
 		.catch((error) => {
-			console.error("init: i18n initialization failed", error);
+			console.error("i18n initialization failed", error);
 		});
 
 	// Trigger the initial route handling immediately (fallback to English)
-	console.log("init: Triggering initial route (sync)");
 	router.handleRoute();
 	showVersion(document.querySelector<HTMLElement>("#version")!);
-	console.log("init: App initialization started");
 };
 
 init();

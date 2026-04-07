@@ -20,9 +20,9 @@
 		"language": "Kieli",
 		"sync": {
 			"title": "Synkronointi",
-			"description": "Synkronoi kirjanmerkkisi laitteiden välillä käyttämällä tunnusta ja salainta. Tietosi salataan paikallisesti ennen palvelimelle lähettämistä.",
-			"credentials_label": "Synkronointitiedot (ID:Secret)",
-			"credentials_placeholder": "Liitä ID:Secret tähän...",
+			"description": "Synkronoi kirjanmerkkisi laitteiden välillä käyttämällä tunnusta, salausavainta ja jaettua salaisuutta. Tietosi salataan paikallisesti ennen palvelimelle lähettämistä.",
+			"credentials_label": "Synkronointitiedot (ID:EncKey:Secret)",
+			"credentials_placeholder": "Liitä ID:EncKey:Secret tähän...",
 			"show": "Näytä",
 			"hide": "Piilota",
 			"copy": "Kopioi",

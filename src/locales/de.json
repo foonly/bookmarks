@@ -20,9 +20,9 @@
 		"language": "Sprache",
 		"sync": {
 			"title": "Synchronisierung",
-			"description": "Synchronisieren Sie Ihre Lesezeichen über Geräte hinweg mit einer ID und einem Secret Key. Ihre Daten werden lokal verschlüsselt, bevor sie hochgeladen werden.",
-			"credentials_label": "Sync-Zugangsdaten (ID:Secret)",
-			"credentials_placeholder": "ID:Secret hier einfügen...",
+			"description": "Synchronisieren Sie Ihre Lesezeichen über Geräte hinweg mit einer ID, einem Verschlüsselungsschlüssel und einem Shared Secret. Ihre Daten werden lokal verschlüsselt, bevor sie hochgeladen werden.",
+			"credentials_label": "Sync-Zugangsdaten (ID:EncKey:Secret)",
+			"credentials_placeholder": "ID:EncKey:Secret hier einfügen...",
 			"show": "Anzeigen",
 			"hide": "Ausblenden",
 			"copy": "Kopieren",

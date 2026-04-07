@@ -20,9 +20,9 @@
 		"language": "Språk",
 		"sync": {
 			"title": "Synkronisering",
-			"description": "Synkronisera dina bokmärken mellan enheter med ett ID och en hemlig nyckel. Din data krypteras lokalt innan den laddas upp.",
-			"credentials_label": "Synkroniseringsuppgifter (ID:Secret)",
-			"credentials_placeholder": "Klistra in ditt ID:Secret här...",
+			"description": "Synkronisera dina bokmärken mellan enheter med ett ID, en krypteringsnyckel och en delad hemlighet. Din data krypteras lokalt innan den laddas upp.",
+			"credentials_label": "Synkroniseringsuppgifter (ID:EncKey:Secret)",
+			"credentials_placeholder": "Klistra in ditt ID:EncKey:Secret här...",
 			"show": "Visa",
 			"hide": "Dölj",
 			"copy": "Kopiera",

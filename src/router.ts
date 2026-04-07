@@ -60,12 +60,10 @@ export class Router {
 	public handleRoute(): void {
 		// Strip the '#' from the beginning of the hash
 		const hash = window.location.hash.slice(1) || "/";
-		console.log(`Router: Handling route for hash: "${hash}"`);
 
 		for (const route of this.routes) {
 			const match = hash.match(route.regex);
 			if (match) {
-				console.log(`Router: Matched route: "${route.path}"`);
 				const params: Record<string, string> = {};
 				route.keys.forEach((key, index) => {
 					params[key] = match[index + 1];
@@ -77,10 +75,7 @@ export class Router {
 
 		// If no match found, use default handler
 		if (this.defaultHandler) {
-			console.log("Router: No match found, using default handler");
 			this.defaultHandler({});
-		} else {
-			console.warn("Router: No match found and no default handler defined");
 		}
 	}
 }

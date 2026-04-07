@@ -20,9 +20,9 @@
 		"language": "Language",
 		"sync": {
 			"title": "Syncing",
-			"description": "Sync your bookmarks across devices using an ID and Secret key. Your data is encrypted locally before being uploaded.",
-			"credentials_label": "Sync Credentials (ID:Secret)",
-			"credentials_placeholder": "Paste your ID:Secret here...",
+			"description": "Sync your bookmarks across devices using an ID, encryption key, and shared secret. Your data is encrypted locally before being uploaded.",
+			"credentials_label": "Sync Credentials (ID:EncKey:Secret)",
+			"credentials_placeholder": "Paste your ID:EncKey:Secret here...",
 			"show": "Show",
 			"hide": "Hide",
 			"copy": "Copy",

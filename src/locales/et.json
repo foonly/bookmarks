@@ -20,9 +20,9 @@
 		"language": "Keel",
 		"sync": {
 			"title": "Sünkroonimine",
-			"description": "Sünkrooni oma järjehoidjaid seadmete vahel, kasutades ID-d ja saladust. Sinu andmed krüpteeritakse kohapeal enne üleslaadimist.",
-			"credentials_label": "Sünkroonimise andmed (ID:Saladus)",
-			"credentials_placeholder": "Kleebi oma ID:Saladus siia...",
+			"description": "Sünkrooni oma järjehoidjaid seadmete vahel, kasutades ID-d, krüpteerimisvõtit ja jagatud saladust. Sinu andmed krüpteeritakse kohapeal enne üleslaadimist.",
+			"credentials_label": "Sünkroonimise andmed (ID:EncKey:Secret)",
+			"credentials_placeholder": "Kleebi oma ID:EncKey:Secret siia...",
 			"show": "Näita",
 			"hide": "Peida",
 			"copy": "Kopeeri",
