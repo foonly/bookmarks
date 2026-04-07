@@ -1,6 +1,11 @@
 # Changelog
 
-## 0.8.0 (2026-04-07)
+### 0.8.1 (2026-04-07)
+
+#### Bug Fixes
+- i18n: Reorder locale labels alphabetically (b264662)
+
+## v0.8.0 (2026-04-07)
 
 #### Features
 - about: add detailed content to about view (f4ed8f3)
