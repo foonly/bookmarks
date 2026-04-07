@@ -1,32 +1,78 @@
 :root {
 	--bm-font-family: system-ui, sans-serif;
+	--bm-line-height: 1.5;
+	--bm-font-weight: 400;
+	--bm-font-size: 1rem;
 
-	line-height: 1.5;
-	font-weight: 400;
-	font-size: 1rem;
+	/* Color variables - Dark mode (default) */
+	--bm-bg-color: #242424;
+	--bm-text-color: rgba(255, 255, 255, 0.87);
+	--bm-text-secondary: #aaa;
+	--bm-text-dim: #888;
+	--bm-text-muted: #666;
+
+	--bm-primary-color: #646cff;
+	--bm-primary-hover: #535bf2;
+
+	--bm-border-color: #333;
+	--bm-card-bg: #333;
+	--bm-item-hover-bg: rgba(255, 255, 255, 0.05);
+
+	--bm-input-bg: rgba(0, 0, 0, 0.2);
+	--bm-input-focus-bg: rgba(0, 0, 0, 0.3);
+
+	--bm-button-secondary-bg: #444;
+	--bm-button-secondary-hover-bg: #555;
+	--bm-button-ghost-hover-bg: rgba(255, 255, 255, 0.1);
+
+	--bm-tag-bg: #444;
+	--bm-tag-section-hover-border: #444;
+
+	--bm-modal-backdrop: rgba(0, 0, 0, 0.5);
+	--bm-danger-color: #ff4444;
+	--bm-danger-bg-hover: rgba(255, 68, 68, 0.2);
+
+	--bm-nav-link-hover-bg: rgba(100, 108, 255, 0.1);
+	--bm-shadow-color: rgba(0, 0, 0, 0.2);
 
 	color-scheme: light dark;
-	color: rgba(255, 255, 255, 0.87);
-	background-color: #242424;
+	color: var(--bm-text-color);
+	background-color: var(--bm-bg-color);
 
 	font-synthesis: none;
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-
-	--bm-border-color: #333;
 }
 
 @media (prefers-color-scheme: light) {
 	:root {
-		color: #213547;
-		background-color: #ffffff;
-	}
-	a:hover {
-		color: #747bff;
-	}
-	button {
-		background-color: #f9f9f9;
+		--bm-bg-color: #ffffff;
+		--bm-text-color: #213547;
+		--bm-text-secondary: #4a5568;
+		--bm-text-dim: #718096;
+		--bm-text-muted: #a0aec0;
+
+		--bm-primary-hover: #747bff;
+
+		--bm-border-color: #e2e8f0;
+		--bm-card-bg: #f9f9f9;
+		--bm-item-hover-bg: rgba(0, 0, 0, 0.03);
+
+		--bm-input-bg: rgba(0, 0, 0, 0.05);
+		--bm-input-focus-bg: rgba(0, 0, 0, 0.08);
+
+		--bm-button-secondary-bg: #f9f9f9;
+		--bm-button-secondary-hover-bg: #edf2f7;
+		--bm-button-ghost-hover-bg: rgba(0, 0, 0, 0.05);
+
+		--bm-tag-bg: #f1f5f9;
+		--bm-tag-section-hover-border: #cbd5e0;
+
+		--bm-modal-backdrop: rgba(0, 0, 0, 0.3);
+		--bm-danger-color: #ef4444;
+		--bm-danger-bg-hover: rgba(239, 68, 68, 0.1);
+		--bm-shadow-color: rgba(0, 0, 0, 0.1);
 	}
 }
 
@@ -36,11 +82,11 @@
 
 a {
 	font-weight: 500;
-	color: #646cff;
+	color: var(--bm-primary-color);
 	text-decoration: inherit;
 }
 a:hover {
-	color: #535bf2;
+	color: var(--bm-primary-hover);
 }
 
 body {
@@ -48,6 +94,8 @@ body {
 	min-width: 320px;
 	min-height: 100vh;
 	font-family: var(--bm-font-family);
+	font-size: var(--bm-font-size);
+	line-height: var(--bm-line-height);
 	padding: env(safe-area-inset-top) env(safe-area-inset-right)
 		env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
@@ -85,16 +133,16 @@ body {
 }
 
 .main-nav a:hover {
-	background-color: rgba(100, 108, 255, 0.1);
+	background-color: var(--bm-nav-link-hover-bg);
 }
 
 .main-nav a.active {
-	background-color: #646cff;
+	background-color: var(--bm-primary-color);
 	color: white;
 }
 
 #version {
-	color: #8888;
+	color: var(--bm-text-dim);
 	position: absolute;
 	right: 1rem;
 	bottom: 1rem;
@@ -107,10 +155,14 @@ body {
 	border: 2px solid var(--bm-border-color);
 	border-radius: 0.5rem;
 	padding: 1.5rem;
+	background-color: var(--bm-bg-color);
+	color: var(--bm-text-color);
+
 	&::backdrop {
-		background-color: rgba(0, 0, 0, 0.5);
+		background-color: var(--bm-modal-backdrop);
 		backdrop-filter: blur(5px);
 	}
+
 	.buttonBar {
 		display: flex;
 		flex-wrap: wrap;
@@ -127,23 +179,25 @@ body {
 			font-weight: 600;
 			font-size: 0.9rem;
 			transition: all 0.2s ease;
+			background-color: var(--bm-button-secondary-bg);
+			color: var(--bm-text-color);
 		}
 
 		button[type="submit"] {
-			background-color: #646cff;
+			background-color: var(--bm-primary-color);
 			color: white;
-			border-color: #646cff;
+			border-color: var(--bm-primary-color);
 			&:hover {
-				background-color: #535bf2;
+				background-color: var(--bm-primary-hover);
 			}
 		}
 
 		button[type="reset"] {
 			background-color: transparent;
-			color: #888;
+			color: var(--bm-text-dim);
 			&:hover {
-				color: #fff;
-				background-color: rgba(255, 255, 255, 0.1);
+				color: var(--bm-text-color);
+				background-color: var(--bm-button-ghost-hover-bg);
 			}
 		}
 	}
@@ -165,7 +219,7 @@ body {
 		transition: background-color 0.2s ease;
 
 		&:hover {
-			background-color: rgba(255, 255, 255, 0.05);
+			background-color: var(--bm-item-hover-bg);
 
 			.bookmarkButtons {
 				opacity: 1;
@@ -188,7 +242,7 @@ body {
 
 		.bookmarkDescription {
 			font-size: 0.85rem;
-			color: #aaa;
+			color: var(--bm-text-secondary);
 			line-height: 1.4;
 			max-width: 800px;
 		}
@@ -212,7 +266,7 @@ body {
 	label {
 		font-weight: 600;
 		font-size: 0.75rem;
-		color: #888;
+		color: var(--bm-text-dim);
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
 	}
@@ -226,14 +280,14 @@ body {
 		font-family: var(--bm-font-family);
 		font-size: 0.95rem;
 		color: inherit;
-		background-color: rgba(0, 0, 0, 0.2);
+		background-color: var(--bm-input-bg);
 		transition:
 			border-color 0.2s ease,
 			background-color 0.2s ease;
 		&:focus {
 			outline: none;
-			background-color: rgba(0, 0, 0, 0.3);
-			border-color: #646cff;
+			background-color: var(--bm-input-focus-bg);
+			border-color: var(--bm-primary-color);
 		}
 	}
 
@@ -258,23 +312,24 @@ body {
 
 		.addTagButton {
 			padding: 0 1.25rem;
-			background-color: #444;
+			background-color: var(--bm-button-secondary-bg);
 			border: 1px solid var(--bm-border-color);
 			border-radius: 4px;
 			cursor: pointer;
 			font-size: 0.9rem;
 			font-weight: 500;
+			color: var(--bm-text-color);
 			transition: all 0.2s ease;
 			&:hover {
-				background-color: #555;
-				border-color: #888;
+				background-color: var(--bm-button-secondary-hover-bg);
+				border-color: var(--bm-text-dim);
 			}
 		}
 
 		.addedTagsSection {
 			margin-top: 1rem;
 			padding: 0.75rem;
-			background-color: rgba(0, 0, 0, 0.1);
+			background-color: var(--bm-input-bg);
 			border-radius: 6px;
 			width: 100%;
 		}
@@ -283,7 +338,7 @@ body {
 			font-size: 0.75rem;
 			text-transform: uppercase;
 			letter-spacing: 0.05em;
-			color: #888;
+			color: var(--bm-text-dim);
 			margin-bottom: 0.5rem;
 		}
 
@@ -298,24 +353,25 @@ body {
 			align-items: center;
 			gap: 0.4rem;
 			padding: 0.2rem 0.6rem;
-			background-color: #444;
+			background-color: var(--bm-tag-bg);
 			border-radius: 4px;
 			font-size: 0.85rem;
 			border: 1px solid var(--bm-border-color);
+			color: var(--bm-text-color);
 		}
 
 		.removeTagBtn {
 			cursor: pointer;
-			color: #888;
+			color: var(--bm-text-dim);
 			font-size: 1.2rem;
 			line-height: 1;
 			&:hover {
-				color: #ff4444;
+				color: var(--bm-danger-color);
 			}
 		}
 
 		.emptyTagsMsg {
-			color: #666;
+			color: var(--bm-text-muted);
 			font-style: italic;
 			font-size: 0.85rem;
 		}
@@ -326,6 +382,7 @@ body {
 	border: none;
 	background-color: transparent;
 	cursor: pointer;
+	color: inherit;
 	svg {
 		height: 16px;
 		fill: currentColor;
@@ -337,8 +394,8 @@ body {
 	border: 2px solid var(--bm-border-color);
 	border-radius: 0.5rem;
 	padding: 1rem;
-	background-color: #333;
-	color: #fff;
+	background-color: var(--bm-card-bg);
+	color: var(--bm-text-color);
 }
 
 .bookmarks-toolbar {
@@ -351,7 +408,7 @@ body {
 
 .bookmarkButton {
 	flex-shrink: 0;
-	background-color: #646cff;
+	background-color: var(--bm-primary-color);
 	color: white;
 	padding: 0.5rem;
 	border-radius: 50%;
@@ -360,12 +417,12 @@ body {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+	box-shadow: 0 2px 4px var(--bm-shadow-color);
 	transition: background-color 0.2s ease;
 }
 
 .bookmarkButton:hover {
-	background-color: #535bf2;
+	background-color: var(--bm-primary-hover);
 	color: white;
 }
 
@@ -383,7 +440,7 @@ body {
 }
 
 .tag-section {
-	background-color: #333;
+	background-color: var(--bm-card-bg);
 	border: 2px solid var(--bm-border-color);
 	border-radius: 0.5rem;
 	padding: 1.25rem;
@@ -395,7 +452,7 @@ body {
 }
 
 .tag-section:hover {
-	border-color: #444;
+	border-color: var(--bm-tag-section-hover-border);
 	transform: translateY(-2px);
 }
 
@@ -406,7 +463,7 @@ body {
 	font-size: 1rem;
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
-	color: #fff;
+	color: var(--bm-text-color);
 	display: flex;
 	justify-content: space-between;
 	align-items: baseline;
@@ -417,7 +474,7 @@ body {
 	padding: 2px 8px;
 	border-radius: 10px;
 	font-size: 0.9rem;
-	color: #888;
+	color: var(--bm-text-dim);
 	font-weight: normal;
 }
 
@@ -463,18 +520,19 @@ body {
 	border-radius: 1rem;
 	font-size: 0.9rem;
 	background-color: transparent;
+	color: var(--bm-text-color);
 	transition: all 0.2s ease;
 }
 
 .tag-filter-item:hover {
-	background-color: rgba(100, 108, 255, 0.1);
-	border-color: #646cff;
+	background-color: var(--bm-nav-link-hover-bg);
+	border-color: var(--bm-primary-color);
 }
 
 .tag-filter-item.active {
-	background-color: #646cff;
+	background-color: var(--bm-primary-color);
 	color: white;
-	border-color: #646cff;
+	border-color: var(--bm-primary-color);
 }
 
 .settings-view {
@@ -494,11 +552,11 @@ body {
 .settings-section h2 {
 	margin-top: 0;
 	font-size: 1.25rem;
-	color: #fff;
+	color: var(--bm-text-color);
 }
 
 .settings-description {
-	color: #888;
+	color: var(--bm-text-dim);
 	font-size: 0.9rem;
 	margin-bottom: 1.5rem;
 }
@@ -517,11 +575,12 @@ body {
 
 .sync-input-group button {
 	padding: 0 1rem;
-	background-color: #444;
+	background-color: var(--bm-button-secondary-bg);
 	border: 1px solid var(--bm-border-color);
 	border-radius: 4px;
 	cursor: pointer;
 	font-size: 0.9rem;
+	color: var(--bm-text-color);
 }
 
 #toggle-creds-visibility {
@@ -531,7 +590,7 @@ body {
 .sync-status {
 	margin-top: 1rem;
 	font-size: 0.85rem;
-	color: #888;
+	color: var(--bm-text-dim);
 	font-style: italic;
 }
 
@@ -552,13 +611,13 @@ body {
 	font-weight: 600;
 	font-size: 0.9rem;
 	background-color: transparent;
-	color: #ccc;
+	color: var(--bm-text-secondary);
 	transition: all 0.2s ease;
 }
 
 .settings-actions button:hover:not(:disabled) {
-	background-color: rgba(255, 255, 255, 0.1);
-	color: #fff;
+	background-color: var(--bm-button-ghost-hover-bg);
+	color: var(--bm-text-color);
 }
 
 .settings-actions button:disabled {
@@ -567,19 +626,19 @@ body {
 }
 
 .settings-actions .primary-button {
-	background-color: #646cff;
+	background-color: var(--bm-primary-color);
 	color: white;
-	border-color: #646cff;
+	border-color: var(--bm-primary-color);
 }
 
 .settings-actions .primary-button:hover:not(:disabled) {
-	background-color: #535bf2;
+	background-color: var(--bm-primary-hover);
 }
 
 .settings-actions .danger-button:hover:not(:disabled) {
-	background-color: rgba(255, 68, 68, 0.2);
-	border-color: #ff4444;
-	color: #ff4444;
+	background-color: var(--bm-danger-bg-hover);
+	border-color: var(--bm-danger-color);
+	color: var(--bm-danger-color);
 }
 
 .offline-indicator {
@@ -587,7 +646,7 @@ body {
 	top: 0;
 	left: 0;
 	right: 0;
-	background-color: #ef4444;
+	background-color: var(--bm-danger-color);
 	color: white;
 	text-align: center;
 	padding: 0.25rem;
