@@ -108,6 +108,7 @@ function createLink(bookmark: Bookmark): HTMLAnchorElement {
 	link.textContent = bookmark.title ? bookmark.title : bookmark.url;
 	link.href = bookmark.url;
 	link.target = "_blank";
+	link.rel = "noopener noreferrer";
 	return link;
 }
 function createButtons(bookmark: Bookmark, filterTag?: string) {

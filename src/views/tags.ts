@@ -38,6 +38,7 @@ export function renderTagsView(): HTMLElement {
 			const link = document.createElement("a");
 			link.href = bookmark.url;
 			link.target = "_blank";
+			link.rel = "noopener noreferrer";
 			link.textContent = bookmark.title || bookmark.url;
 
 			const editLink = document.createElement("a");
