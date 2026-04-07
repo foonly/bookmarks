@@ -1,0 +1,78 @@
+{
+	"nav": {
+		"bookmarks": "Bokmärken",
+		"tags": "Taggar",
+		"about": "Om",
+		"settings": "Inställningar"
+	},
+	"bookmarks": {
+		"add_button_title": "Lägg till bokmärke",
+		"filter_all": "Alla",
+		"no_bookmarks": "Inga bokmärken ännu",
+		"no_bookmarks_tag": "Inga bokmärken med taggen \"{tag}\"",
+		"delete_confirm": "Är du säker på att du vill ta bort detta bokmärke?"
+	},
+	"tags": {
+		"no_tags": "Inga taggar hittades.",
+		"edit": "redigera"
+	},
+	"settings": {
+		"language": "Språk",
+		"sync": {
+			"title": "Synkronisering",
+			"description": "Synkronisera dina bokmärken mellan enheter med ett ID och en hemlig nyckel. Din data krypteras lokalt innan den laddas upp.",
+			"credentials_label": "Synkroniseringsuppgifter (ID:Secret)",
+			"credentials_placeholder": "Klistra in ditt ID:Secret här...",
+			"show": "Visa",
+			"hide": "Dölj",
+			"copy": "Kopiera",
+			"copied": "Kopierat!",
+			"generate_new": "Generera ny",
+			"enable_sync": "Aktivera synkronisering",
+			"disable_sync": "Inaktivera synkronisering",
+			"sync_now": "Synkronisera nu",
+			"syncing": "Synkroniserar...",
+			"last_synced": "Senast synkroniserad: {date}",
+			"generate_confirm": "Att generera nya uppgifter kommer att ersätta dina nuvarande. Om du har synkroniserad data på servern kommer du att förlora åtkomst till den om du inte har säkerhetskopierat de gamla uppgifterna. Fortsätt?"
+		},
+		"data": {
+			"title": "Datahantering",
+			"export": "Exportera JSON",
+			"import": "Importera JSON",
+			"purge": "Rensa borttagna",
+			"purge_tooltip": "Ta permanent bort bokmärken markerade som raderade",
+			"clear_all": "Rensa all data",
+			"purge_confirm": "Ta permanent bort alla bokmärken som är markerade som raderade? Gör endast detta om du är säker på att alla dina enheter har synkroniserat raderingarna.",
+			"purge_success": "Raderade objekt rensade.",
+			"clear_confirm": "Är du säker på att du vill ta bort ALLA bokmärken och inställningar? Detta kan inte ångras.",
+			"import_invalid": "Ogiltigt format på säkerhetskopian.",
+			"import_success": "Bokmärken importerade och sammanfogade!",
+			"import_no_changes": "Inga nya ändringar hittades i säkerhetskopian.",
+			"import_error": "Misslyckades med att läsa säkerhetskopian."
+		}
+	},
+	"system": {
+		"offline_indicator": "Du är för närvarande offline",
+		"update_available": "Ny version tillgänglig. Uppdatera nu?",
+		"offline_ready": "Appen är redo att användas offline"
+	},
+	"form": {
+		"title": "Titel",
+		"url": "URL",
+		"tags": "Taggar",
+		"description": "Beskrivning",
+		"save": "Spara",
+		"cancel": "Avbryt",
+		"add_bookmark": "Lägg till bokmärke",
+		"edit_bookmark": "Redigera bokmärke",
+		"add_tag_placeholder": "Lägg till en tagg...",
+		"add_tag_button": "Lägg till",
+		"added_tags_label": "Tillagda taggar:",
+		"no_tags": "Inga",
+		"remove_tag_title": "Ta bort {tag}"
+	},
+	"about": {
+		"title": "Om Bokmärken",
+		"version": "Version"
+	}
+}

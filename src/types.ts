@@ -15,6 +15,7 @@ export type Bookmark = z.infer<typeof bookmarkSchema>;
 export const storageSchema = z.object({
 	favoriteTags: z.array(z.string()).default([]),
 	bookmarks: z.array(bookmarkSchema).default([]),
+	language: z.string().optional(),
 	sync: z
 		.object({
 			enabled: z.boolean().default(false),

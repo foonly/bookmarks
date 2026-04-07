@@ -1,5 +1,6 @@
 import { FieldType } from "../constants";
 import { getTags } from "../store";
+import { t } from "../i18n";
 
 export function createFormField(
 	name: string,
@@ -68,7 +69,7 @@ export function createTagsField(tags: string[]) {
 
 	const labelElement = document.createElement("label");
 	labelElement.htmlFor = "tags";
-	labelElement.textContent = "Tags";
+	labelElement.textContent = t("form.tags");
 	tagsElement.appendChild(labelElement);
 
 	const inputGroup = document.createElement("div");
@@ -77,12 +78,12 @@ export function createTagsField(tags: string[]) {
 	const inputElement = document.createElement("input");
 	inputElement.setAttribute("list", "tagsList");
 	inputElement.id = "tags";
-	inputElement.placeholder = "Add a tag...";
+	inputElement.placeholder = t("form.add_tag_placeholder");
 	inputElement.required = false;
 
 	const addButton = document.createElement("button");
 	addButton.type = "button";
-	addButton.textContent = "Add";
+	addButton.textContent = t("form.add_tag_button");
 	addButton.classList.add("addTagButton");
 
 	inputGroup.appendChild(inputElement);
@@ -100,7 +101,7 @@ export function createTagsField(tags: string[]) {
 
 	const tagSectionLabel = document.createElement("div");
 	tagSectionLabel.classList.add("tagSectionLabel");
-	tagSectionLabel.textContent = "Added tags:";
+	tagSectionLabel.textContent = t("form.added_tags_label");
 	tagSection.appendChild(tagSectionLabel);
 
 	const tagContainer = document.createElement("div");
@@ -165,7 +166,7 @@ function renderTags(
 	if (tags.length === 0) {
 		const emptyMsg = document.createElement("span");
 		emptyMsg.classList.add("emptyTagsMsg");
-		emptyMsg.textContent = "None";
+		emptyMsg.textContent = t("form.no_tags");
 		container.appendChild(emptyMsg);
 		return;
 	}
@@ -178,7 +179,7 @@ function renderTags(
 		const removeBtn = document.createElement("span");
 		removeBtn.classList.add("removeTagBtn");
 		removeBtn.innerHTML = "&times;";
-		removeBtn.title = `Remove ${tag}`;
+		removeBtn.title = t("form.remove_tag_title", { tag });
 
 		removeBtn.addEventListener("click", () => {
 			removeTag(tags, tag);

@@ -1,0 +1,78 @@
+{
+	"nav": {
+		"bookmarks": "Järjehoidjad",
+		"tags": "Sildid",
+		"about": "Teave",
+		"settings": "Seaded"
+	},
+	"bookmarks": {
+		"add_button_title": "Lisa järjehoidja",
+		"filter_all": "Kõik",
+		"no_bookmarks": "Järjehoidjaid veel pole",
+		"no_bookmarks_tag": "Sildiga \"{tag}\" järjehoidjaid ei leitud",
+		"delete_confirm": "Kas oled kindel, et soovid selle järjehoidja kustutada?"
+	},
+	"tags": {
+		"no_tags": "Silte ei leitud.",
+		"edit": "muuda"
+	},
+	"settings": {
+		"language": "Keel",
+		"sync": {
+			"title": "Sünkroonimine",
+			"description": "Sünkrooni oma järjehoidjaid seadmete vahel, kasutades ID-d ja saladust. Sinu andmed krüpteeritakse kohapeal enne üleslaadimist.",
+			"credentials_label": "Sünkroonimise andmed (ID:Saladus)",
+			"credentials_placeholder": "Kleebi oma ID:Saladus siia...",
+			"show": "Näita",
+			"hide": "Peida",
+			"copy": "Kopeeri",
+			"copied": "Kopeeritud!",
+			"generate_new": "Genereeri uus",
+			"enable_sync": "Luba sünkroonimine",
+			"disable_sync": "Keela sünkroonimine",
+			"sync_now": "Sünkrooni kohe",
+			"syncing": "Sünkroonimine...",
+			"last_synced": "Viimati sünkroonitud: {date}",
+			"generate_confirm": "Uute andmete genereerimine asendab sinu praegused andmed. Kui sul on serveris sünkroonitud andmeid, kaotad neile ligipääsu, kui sul pole vanadest andmetest varukoopiat. Kas jätkata?"
+		},
+		"data": {
+			"title": "Andmehaldus",
+			"export": "Ekspordi JSON",
+			"import": "Impordi JSON",
+			"purge": "Puhasta kustutatud",
+			"purge_tooltip": "Eemalda jäädavalt kustutatuks märgitud järjehoidjad",
+			"clear_all": "Kustuta kõik andmed",
+			"purge_confirm": "Kas eemaldada jäädavalt kõik kustutatuks märgitud järjehoidjad? Tee seda ainult siis, kui oled kindel, et kõik sinu seadmed on kustutamised sünkrooninud.",
+			"purge_success": "Kustutatud kirjed puhastatud.",
+			"clear_confirm": "Kas oled kindel, et soovid kustutada KÕIK järjehoidjad ja seaded? Seda toimingut ei saa tagasi võtta.",
+			"import_invalid": "Vigane varukoopia failivorming.",
+			"import_success": "Järjehoidjad imporditud ja ühendatud edukalt!",
+			"import_no_changes": "Varukoopia failist uusi muudatusi ei leitud.",
+			"import_error": "Varukoopia faili parsimine ebaõnnestus."
+		}
+	},
+	"system": {
+		"offline_indicator": "Oled praegu võrguühenduseta",
+		"update_available": "Uus versioon on saadaval. Kas uuendada kohe?",
+		"offline_ready": "Rakendus on valmis võrguühenduseta töötamiseks"
+	},
+	"form": {
+		"title": "Pealkiri",
+		"url": "URL",
+		"tags": "Sildid",
+		"description": "Kirjeldus",
+		"save": "Salvesta",
+		"cancel": "Tühista",
+		"add_bookmark": "Lisa järjehoidja",
+		"edit_bookmark": "Muuda järjehoidjat",
+		"add_tag_placeholder": "Lisa silt...",
+		"add_tag_button": "Lisa",
+		"added_tags_label": "Lisatud sildid:",
+		"no_tags": "Puuduvad",
+		"remove_tag_title": "Eemalda {tag}"
+	},
+	"about": {
+		"title": "Järjehoidjatest",
+		"version": "Versioon"
+	}
+}

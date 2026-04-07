@@ -1,6 +1,6 @@
 import "./style.css";
 import { registerSW } from "virtual:pwa-register";
-import { loadStore } from "./store.ts";
+import { loadStore, store } from "./store.ts";
 import { showVersion } from "./version.ts";
 import { renderBookmarks } from "./views/bookmarks.ts";
 import { BOOKMARKS_ID } from "./constants.ts";
@@ -11,14 +11,18 @@ import { renderTagsView } from "./views/tags.ts";
 import { renderSettingsView } from "./views/settings.ts";
 import { renderAboutView } from "./views/about.ts";
 import { initAutoSync } from "./sync.ts";
+import { initI18n, t } from "./i18n.ts";
+
+// Load store immediately to get language preference
+loadStore();
 
 // Register Service Worker
 registerSW({
 	onOfflineReady() {
-		console.log("App ready to work offline");
+		console.log(t("system.offline_ready"));
 	},
 	onNeedRefresh() {
-		if (confirm("New version available. Update now?")) {
+		if (confirm(t("system.update_available"))) {
 			location.reload();
 		}
 	},
@@ -36,15 +40,15 @@ updateOnlineStatus();
 // Add offline indicator to body
 const offlineIndicator = document.createElement("div");
 offlineIndicator.className = "offline-indicator";
-offlineIndicator.textContent = "You are currently offline";
+offlineIndicator.textContent = t("system.offline_indicator");
 document.body.prepend(offlineIndicator);
 
-loadStore();
 initAutoSync();
 
 const app = document.querySelector<HTMLDivElement>("#app")!;
 
 function renderLayout(content: HTMLElement | string) {
+	console.log("renderLayout: Rendering content to #app");
 	app.innerHTML = "";
 	const container = document.createElement("div");
 	container.classList.add("container");
@@ -67,6 +71,7 @@ function renderLayout(content: HTMLElement | string) {
 }
 
 function handleBookmarksRoute(tag?: string, modalId?: number) {
+	console.log(`handleBookmarksRoute: tag=${tag}, modalId=${modalId}`);
 	renderLayout(createBookmarks());
 	renderBookmarks(tag);
 	if (modalId !== undefined) {
@@ -118,7 +123,29 @@ router
 		router.navigate("/");
 	});
 
-showVersion(document.querySelector<HTMLElement>("#version")!);
+const init = async () => {
+	console.log("init: Starting app initialization");
+
+	// Initialize i18n in the background
+	initI18n(store.language)
+		.then(() => {
+			console.log("init: i18n initialization complete");
+			offlineIndicator.textContent = t("system.offline_indicator");
+			// Re-render when translations are loaded
+			router.handleRoute();
+		})
+		.catch((error) => {
+			console.error("init: i18n initialization failed", error);
+		});
+
+	// Trigger the initial route handling immediately (fallback to English)
+	console.log("init: Triggering initial route (sync)");
+	router.handleRoute();
+	showVersion(document.querySelector<HTMLElement>("#version")!);
+	console.log("init: App initialization started");
+};
+
+init();
 
 function createBookmarks() {
 	const bookmarks = document.createElement("div");
@@ -137,7 +164,7 @@ function createNavigation() {
 	const links = [
 		{
 			href: "#/",
-			label: "Bookmarks",
+			label: t("nav.bookmarks"),
 			active:
 				!hash ||
 				hash === "#/" ||
@@ -145,15 +172,15 @@ function createNavigation() {
 				hash.startsWith("#/add") ||
 				hash.startsWith("#/edit/"),
 		},
-		{ href: "#/tags", label: "Tags", active: hash.startsWith("#/tags") },
+		{ href: "#/tags", label: t("nav.tags"), active: hash.startsWith("#/tags") },
 		{
 			href: "#/about",
-			label: "About",
+			label: t("nav.about"),
 			active: hash.startsWith("#/about"),
 		},
 		{
 			href: "#/settings",
-			label: "Settings",
+			label: t("nav.settings"),
 			active: hash.startsWith("#/settings"),
 		},
 	];

@@ -1,6 +1,7 @@
 import { BOOKMARK_FORM_ID, FieldType } from "../constants";
 import { getBookmark, updateBookmark } from "../store";
 import { bookmarkSchema } from "../types";
+import { t } from "../i18n";
 import { createFormField, createTagsField } from "./formFields";
 
 /**
@@ -17,12 +18,12 @@ export function showBookmarkForm(
 	buttonBar.className = "buttonBar";
 
 	const submitButton = document.createElement("button");
-	submitButton.textContent = "Save Bookmark";
+	submitButton.textContent = t("form.save");
 	submitButton.type = "submit";
 	buttonBar.appendChild(submitButton);
 
 	const cancelButton = document.createElement("button");
-	cancelButton.textContent = "Cancel";
+	cancelButton.textContent = t("form.cancel");
 	cancelButton.type = "reset";
 	buttonBar.appendChild(cancelButton);
 
@@ -30,16 +31,16 @@ export function showBookmarkForm(
 
 	form.appendChild(createFormField("id", "", FieldType.HIDDEN, id));
 	form.appendChild(
-		createFormField("title", "Title", FieldType.TEXT, bookmark?.title),
+		createFormField("title", t("form.title"), FieldType.TEXT, bookmark?.title),
 	);
 	form.appendChild(
-		createFormField("url", "URL", FieldType.URL, bookmark?.url, true),
+		createFormField("url", t("form.url"), FieldType.URL, bookmark?.url, true),
 	);
 	form.appendChild(createTagsField(bookmark?.tags ?? defaultTags));
 	form.appendChild(
 		createFormField(
 			"description",
-			"Description",
+			t("form.description"),
 			FieldType.TEXTAREA,
 			bookmark?.description,
 		),

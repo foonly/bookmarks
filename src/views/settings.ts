@@ -7,6 +7,14 @@ import {
 import { storageSchema } from "../types";
 import { generateCredentials } from "../crypto";
 import { sync } from "../sync";
+import {
+	t,
+	formatDate,
+	SUPPORTED_LOCALES,
+	localeLabels,
+	getCurrentLocale,
+	initI18n,
+} from "../i18n";
 
 export function renderSettingsView(): HTMLElement {
 	const container = document.createElement("div");
@@ -20,43 +28,60 @@ export function renderSettingsView(): HTMLElement {
 	const syncCreds = store.sync?.credentials ?? "";
 
 	syncSection.innerHTML = `
-		<h2>Syncing</h2>
+		<h2>${t("settings.sync.title")}</h2>
 		<p class="settings-description">
-			Sync your bookmarks across devices using an ID and Secret key.
-			Your data is encrypted locally before being uploaded.
+			${t("settings.sync.description")}
 		</p>
 		<div class="formField">
-			<label for="sync-creds">Sync Credentials (ID:Secret)</label>
+			<label for="sync-creds">${t("settings.sync.credentials_label")}</label>
 			<div class="sync-input-group">
-				<input type="password" id="sync-creds" placeholder="Paste your ID:Secret here..." value="${syncCreds}">
-				<button type="button" id="toggle-creds-visibility">Show</button>
+				<input type="password" id="sync-creds" placeholder="${t("settings.sync.credentials_placeholder")}" value="${syncCreds}">
+				<button type="button" id="toggle-creds-visibility">${t("settings.sync.show")}</button>
 				${
 					syncEnabled
-						? '<button type="button" id="copy-creds">Copy</button>'
-						: '<button type="button" id="generate-creds">Generate New</button>'
+						? `<button type="button" id="copy-creds">${t("settings.sync.copy")}</button>`
+						: `<button type="button" id="generate-creds">${t("settings.sync.generate_new")}</button>`
 				}
 			</div>
 		</div>
 		<div class="settings-actions">
 			<button type="button" class="${syncEnabled ? "danger-button" : "primary-button"}" id="toggle-sync">
-				${syncEnabled ? "Disable Sync" : "Enable Sync"}
+				${syncEnabled ? t("settings.sync.disable_sync") : t("settings.sync.enable_sync")}
 			</button>
-			<button type="button" id="sync-now" ${!syncEnabled ? "disabled" : ""}>Sync Now</button>
+			<button type="button" id="sync-now" ${!syncEnabled ? "disabled" : ""}>${t("settings.sync.sync_now")}</button>
 		</div>
-		${store.sync?.lastSynced ? `<p class="sync-status">Last synced: ${new Date(store.sync.lastSynced).toLocaleString()}</p>` : ""}
+		${store.sync?.lastSynced ? `<p class="sync-status">${t("settings.sync.last_synced", { date: formatDate(store.sync.lastSynced) })}</p>` : ""}
 	`;
 	container.appendChild(syncSection);
+
+	// Language Section
+	const languageSection = document.createElement("section");
+	languageSection.classList.add("settings-section");
+
+	const currentLocale = getCurrentLocale();
+	languageSection.innerHTML = `
+		<h2>${t("settings.language")}</h2>
+		<div class="formField">
+			<select id="language-select">
+				${SUPPORTED_LOCALES.map(
+					(locale) =>
+						`<option value="${locale}" ${locale === currentLocale ? "selected" : ""}>${localeLabels[locale]}</option>`,
+				).join("")}
+			</select>
+		</div>
+	`;
+	container.appendChild(languageSection);
 
 	// Data Management Section
 	const dataSection = document.createElement("section");
 	dataSection.classList.add("settings-section");
 	dataSection.innerHTML = `
-		<h2>Data Management</h2>
+		<h2>${t("settings.data.title")}</h2>
 		<div class="settings-actions">
-			<button type="button" id="export-data">Export JSON</button>
-			<button type="button" id="import-data">Import JSON</button>
-			<button type="button" id="purge-tombstones" title="Permanently remove bookmarks marked as deleted">Purge Deleted</button>
-			<button type="button" class="danger-button" id="clear-data">Clear All Data</button>
+			<button type="button" id="export-data">${t("settings.data.export")}</button>
+			<button type="button" id="import-data">${t("settings.data.import")}</button>
+			<button type="button" id="purge-tombstones" title="${t("settings.data.purge_tooltip")}">${t("settings.data.purge")}</button>
+			<button type="button" class="danger-button" id="clear-data">${t("settings.data.clear_all")}</button>
 		</div>
 	`;
 	container.appendChild(dataSection);
@@ -80,6 +105,16 @@ function setupEventListeners(container: HTMLElement) {
 	const exportBtn = container.querySelector("#export-data");
 	const importBtn = container.querySelector("#import-data");
 	const purgeBtn = container.querySelector("#purge-tombstones");
+	const languageSelect =
+		container.querySelector<HTMLSelectElement>("#language-select");
+
+	languageSelect?.addEventListener("change", async () => {
+		const newLang = languageSelect.value;
+		updateStore({ language: newLang });
+		await initI18n(newLang);
+		// Reload to update navigation and other parts
+		window.location.reload();
+	});
 
 	syncInput?.addEventListener("change", () => {
 		updateStore({
@@ -95,18 +130,15 @@ function setupEventListeners(container: HTMLElement) {
 		if (syncInput) {
 			const isPassword = syncInput.type === "password";
 			syncInput.type = isPassword ? "text" : "password";
-			toggleVisibilityBtn.textContent = isPassword ? "Hide" : "Show";
+			toggleVisibilityBtn.textContent = isPassword
+				? t("settings.sync.hide")
+				: t("settings.sync.show");
 		}
 	});
 
 	generateBtn?.addEventListener("click", () => {
 		const hasCredentials = !!store.sync?.credentials;
-		if (
-			!hasCredentials ||
-			confirm(
-				"Generating new credentials will replace your current ones. If you have synced data on the server, you will lose access to it unless you have backed up the old credentials. Continue?",
-			)
-		) {
+		if (!hasCredentials || confirm(t("settings.sync.generate_confirm"))) {
 			const creds = generateCredentials();
 			if (syncInput) {
 				syncInput.value = creds;
@@ -126,7 +158,7 @@ function setupEventListeners(container: HTMLElement) {
 		if (creds) {
 			navigator.clipboard.writeText(creds).then(() => {
 				const originalText = copyBtn.textContent;
-				copyBtn.textContent = "Copied!";
+				copyBtn.textContent = t("settings.sync.copied");
 				setTimeout(() => {
 					copyBtn.textContent = originalText;
 				}, 2000);
@@ -185,19 +217,19 @@ function setupEventListeners(container: HTMLElement) {
 					// Validate the schema (partial is okay for import)
 					const result = storageSchema.safeParse(data);
 					if (!result.success) {
-						alert("Invalid backup file format.");
+						alert(t("settings.data.import_invalid"));
 						return;
 					}
 
 					if (mergeStores(result.data)) {
-						alert("Bookmarks imported and merged successfully!");
+						alert(t("settings.data.import_success"));
 						window.location.reload();
 					} else {
-						alert("No new changes found in the backup file.");
+						alert(t("settings.data.import_no_changes"));
 					}
 				} catch (err) {
 					console.error("Import error:", err);
-					alert("Failed to parse the backup file.");
+					alert(t("settings.data.import_error"));
 				}
 			};
 			reader.readAsText(file);
@@ -209,12 +241,12 @@ function setupEventListeners(container: HTMLElement) {
 	syncNowBtn?.addEventListener("click", async () => {
 		if (syncNowBtn instanceof HTMLButtonElement) {
 			syncNowBtn.disabled = true;
-			syncNowBtn.textContent = "Syncing...";
+			syncNowBtn.textContent = t("settings.sync.syncing");
 
 			const result = await sync();
 
 			syncNowBtn.disabled = false;
-			syncNowBtn.textContent = "Sync Now";
+			syncNowBtn.textContent = t("settings.sync.sync_now");
 
 			if (result.success) {
 				// Re-render to update the last synced timestamp
@@ -230,23 +262,15 @@ function setupEventListeners(container: HTMLElement) {
 	});
 
 	purgeBtn?.addEventListener("click", () => {
-		if (
-			confirm(
-				"Permanently remove all bookmarks marked as deleted? Only do this if you are sure all your devices have synced the deletions.",
-			)
-		) {
+		if (confirm(t("settings.data.purge_confirm"))) {
 			purgeDeletedBookmarks(true);
-			alert("Tombstones purged.");
+			alert(t("settings.data.purge_success"));
 			window.location.reload();
 		}
 	});
 
 	clearBtn?.addEventListener("click", () => {
-		if (
-			confirm(
-				"Are you sure you want to delete ALL bookmarks and settings? This cannot be undone.",
-			)
-		) {
+		if (confirm(t("settings.data.clear_confirm"))) {
 			window.localStorage.clear();
 			window.location.hash = "#/";
 			window.location.reload();

@@ -2,6 +2,7 @@ import { BOOKMARK_LIST_ID, BOOKMARKS_ID } from "../constants";
 
 import { getTags, removeBookmark, store } from "../store";
 import type { Bookmark } from "../types";
+import { t } from "../i18n";
 import remove from "/trash.svg?raw";
 import edit from "/pen-to-square.svg?raw";
 import add from "/bookmark-plus.svg?raw";
@@ -45,8 +46,8 @@ export function renderBookmarks(filterTag?: string): void {
 	if (filteredBookmarks.length === 0) {
 		const noBookmarks = document.createElement("p");
 		noBookmarks.textContent = filterTag
-			? `No bookmarks with tag "${filterTag}"`
-			: "No bookmarks yet";
+			? t("bookmarks.no_bookmarks_tag", { tag: filterTag })
+			: t("bookmarks.no_bookmarks");
 		bookmarksList.appendChild(noBookmarks);
 	} else {
 		const sortedBookmarks = filteredBookmarks.sort((a, b) => {
@@ -97,7 +98,7 @@ function createTagFilter(activeTag?: string): HTMLElement {
 
 	const allLink = document.createElement("a");
 	allLink.href = "#/";
-	allLink.textContent = "All";
+	allLink.textContent = t("bookmarks.filter_all");
 	allLink.classList.add("tag-filter-item");
 	if (!activeTag) allLink.classList.add("active");
 	container.appendChild(allLink);
@@ -141,7 +142,7 @@ function createButtons(bookmark: Bookmark, filterTag?: string) {
 	deleteButton.innerHTML = remove;
 	deleteButton.type = "button";
 	deleteButton.addEventListener("click", () => {
-		if (confirm("Are you sure you want to delete this bookmark?")) {
+		if (confirm(t("bookmarks.delete_confirm"))) {
 			removeBookmark(bookmark.created);
 			renderBookmarks();
 		}
@@ -154,7 +155,7 @@ function createButtons(bookmark: Bookmark, filterTag?: string) {
 function createAddButton(filterTag?: string): HTMLAnchorElement {
 	const link = document.createElement("a");
 	link.classList.add("bookmarkButton", "icon");
-	link.title = "Add Bookmark";
+	link.title = t("bookmarks.add_button_title");
 	link.innerHTML = add;
 	link.href = filterTag
 		? `#/tag/${encodeURIComponent(filterTag)}/add`

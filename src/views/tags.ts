@@ -1,4 +1,6 @@
 import { store, getTagsWithCounts } from "../store";
+import { t } from "../i18n";
+
 export function renderTagsView(): HTMLElement {
 	const container = document.createElement("div");
 	container.classList.add("tags-view");
@@ -10,7 +12,7 @@ export function renderTagsView(): HTMLElement {
 
 	if (sortedTags.length === 0) {
 		const noTags = document.createElement("p");
-		noTags.textContent = "No tags found.";
+		noTags.textContent = t("tags.no_tags");
 		container.appendChild(noTags);
 		return container;
 	}
@@ -44,7 +46,7 @@ export function renderTagsView(): HTMLElement {
 			const editLink = document.createElement("a");
 			editLink.href = `#/tags/edit/${bookmark.created}`;
 			editLink.classList.add("tag-edit-link");
-			editLink.textContent = "edit";
+			editLink.textContent = t("tags.edit");
 
 			item.appendChild(link);
 			item.appendChild(document.createTextNode(" "));

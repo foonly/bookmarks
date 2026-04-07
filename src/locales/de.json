@@ -1,0 +1,78 @@
+{
+	"nav": {
+		"bookmarks": "Lesezeichen",
+		"tags": "Tags",
+		"about": "Über",
+		"settings": "Einstellungen"
+	},
+	"bookmarks": {
+		"add_button_title": "Lesezeichen hinzufügen",
+		"filter_all": "Alle",
+		"no_bookmarks": "Noch keine Lesezeichen",
+		"no_bookmarks_tag": "Keine Lesezeichen mit dem Tag \"{tag}\"",
+		"delete_confirm": "Sind Sie sicher, dass Sie dieses Lesezeichen löschen möchten?"
+	},
+	"tags": {
+		"no_tags": "Keine Tags gefunden.",
+		"edit": "bearbeiten"
+	},
+	"settings": {
+		"language": "Sprache",
+		"sync": {
+			"title": "Synchronisierung",
+			"description": "Synchronisieren Sie Ihre Lesezeichen über Geräte hinweg mit einer ID und einem Secret Key. Ihre Daten werden lokal verschlüsselt, bevor sie hochgeladen werden.",
+			"credentials_label": "Sync-Zugangsdaten (ID:Secret)",
+			"credentials_placeholder": "ID:Secret hier einfügen...",
+			"show": "Anzeigen",
+			"hide": "Ausblenden",
+			"copy": "Kopieren",
+			"copied": "Kopiert!",
+			"generate_new": "Neu generieren",
+			"enable_sync": "Sync aktivieren",
+			"disable_sync": "Sync deaktivieren",
+			"sync_now": "Jetzt synchronisieren",
+			"syncing": "Synchronisierung läuft...",
+			"last_synced": "Zuletzt synchronisiert: {date}",
+			"generate_confirm": "Das Generieren neuer Zugangsdaten ersetzt Ihre aktuellen. Wenn Sie synchronisierte Daten auf dem Server haben, verlieren Sie den Zugriff darauf, sofern Sie die alten Zugangsdaten nicht gesichert haben. Fortfahren?"
+		},
+		"data": {
+			"title": "Datenverwaltung",
+			"export": "JSON exportieren",
+			"import": "JSON importieren",
+			"purge": "Gelöschte endgültig entfernen",
+			"purge_tooltip": "Lesezeichen, die als gelöscht markiert sind, dauerhaft entfernen",
+			"clear_all": "Alle Daten löschen",
+			"purge_confirm": "Möchten Sie alle als gelöscht markierten Lesezeichen dauerhaft entfernen? Tun Sie dies nur, wenn Sie sicher sind, dass alle Ihre Geräte die Löschungen synchronisiert haben.",
+			"purge_success": "Tombstones bereinigt.",
+			"clear_confirm": "Sind Sie sicher, dass Sie ALLE Lesezeichen und Einstellungen löschen möchten? Dies kann nicht rückgängig gemacht werden.",
+			"import_invalid": "Ungültiges Format der Sicherungsdatei.",
+			"import_success": "Lesezeichen erfolgreich importiert und zusammengeführt!",
+			"import_no_changes": "Keine neuen Änderungen in der Sicherungsdatei gefunden.",
+			"import_error": "Fehler beim Parsen der Sicherungsdatei."
+		}
+	},
+	"system": {
+		"offline_indicator": "Sie sind derzeit offline",
+		"update_available": "Neue Version verfügbar. Jetzt aktualisieren?",
+		"offline_ready": "App ist bereit für den Offline-Betrieb"
+	},
+	"form": {
+		"title": "Titel",
+		"url": "URL",
+		"tags": "Tags",
+		"description": "Beschreibung",
+		"save": "Speichern",
+		"cancel": "Abbrechen",
+		"add_bookmark": "Lesezeichen hinzufügen",
+		"edit_bookmark": "Lesezeichen bearbeiten",
+		"add_tag_placeholder": "Tag hinzufügen...",
+		"add_tag_button": "Hinzufügen",
+		"added_tags_label": "Hinzugefügte Tags:",
+		"no_tags": "Keine",
+		"remove_tag_title": "{tag} entfernen"
+	},
+	"about": {
+		"title": "Über Bookmarks",
+		"version": "Version"
+	}
+}

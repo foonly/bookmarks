@@ -1,0 +1,78 @@
+{
+	"nav": {
+		"bookmarks": "Kirjanmerkit",
+		"tags": "Tunnisteet",
+		"about": "Tietoja",
+		"settings": "Asetukset"
+	},
+	"bookmarks": {
+		"add_button_title": "Lisää kirjanmerkki",
+		"filter_all": "Kaikki",
+		"no_bookmarks": "Ei vielä kirjanmerkkejä",
+		"no_bookmarks_tag": "Ei kirjanmerkkejä tunnisteella \"{tag}\"",
+		"delete_confirm": "Haluatko varmasti poistaa tämän kirjanmerkin?"
+	},
+	"tags": {
+		"no_tags": "Tunnisteita ei löytynyt.",
+		"edit": "muokkaa"
+	},
+	"settings": {
+		"language": "Kieli",
+		"sync": {
+			"title": "Synkronointi",
+			"description": "Synkronoi kirjanmerkkisi laitteiden välillä käyttämällä tunnusta ja salainta. Tietosi salataan paikallisesti ennen palvelimelle lähettämistä.",
+			"credentials_label": "Synkronointitiedot (ID:Secret)",
+			"credentials_placeholder": "Liitä ID:Secret tähän...",
+			"show": "Näytä",
+			"hide": "Piilota",
+			"copy": "Kopioi",
+			"copied": "Kopioitu!",
+			"generate_new": "Luo uusi",
+			"enable_sync": "Ota synkronointi käyttöön",
+			"disable_sync": "Poista synkronointi käytöstä",
+			"sync_now": "Synkronoi nyt",
+			"syncing": "Synkronoidaan...",
+			"last_synced": "Viimeksi synkronoitu: {date}",
+			"generate_confirm": "Uusien tunnustietojen luominen korvaa nykyiset. Jos sinulla on synkronoitua dataa palvelimella, menetät pääsyn siihen, ellet ole varmuuskopioinut vanhoja tunnustietoja. Jatketaanko?"
+		},
+		"data": {
+			"title": "Tiedonhallinta",
+			"export": "Vie JSON",
+			"import": "Tuo JSON",
+			"purge": "Tyhjennä poistetut",
+			"purge_tooltip": "Poista pysyvästi poistetuksi merkityt kirjanmerkit",
+			"clear_all": "Tyhjennä kaikki tiedot",
+			"purge_confirm": "Poistetaanko kaikki poistetuksi merkityt kirjanmerkit pysyvästi? Tee tämä vain, jos olet varma, että kaikki laitteesi ovat synkronoineet poistot.",
+			"purge_success": "Poistomerkinnät tyhjennetty.",
+			"clear_confirm": "Haluatko varmasti poistaa KAIKKI kirjanmerkit ja asetukset? Tätä ei voi peruuttaa.",
+			"import_invalid": "Virheellinen varmuuskopiotiedoston muoto.",
+			"import_success": "Kirjanmerkit tuotu ja yhdistetty onnistuneesti!",
+			"import_no_changes": "Varmuuskopiotiedostosta ei löytynyt uusia muutoksia.",
+			"import_error": "Varmuuskopiotiedoston lukeminen epäonnistui."
+		}
+	},
+	"system": {
+		"offline_indicator": "Olet offline-tilassa",
+		"update_available": "Uusi versio saatavilla. Päivitä nyt?",
+		"offline_ready": "Sovellus on valmis toimimaan offline-tilassa"
+	},
+	"form": {
+		"title": "Otsikko",
+		"url": "Osoite",
+		"tags": "Tunnisteet",
+		"description": "Kuvaus",
+		"save": "Tallenna",
+		"cancel": "Peruuta",
+		"add_bookmark": "Lisää kirjanmerkki",
+		"edit_bookmark": "Muokkaa kirjanmerkkiä",
+		"add_tag_placeholder": "Lisää tunniste...",
+		"add_tag_button": "Lisää",
+		"added_tags_label": "Lisätyt tunnisteet:",
+		"no_tags": "Ei mitään",
+		"remove_tag_title": "Poista {tag}"
+	},
+	"about": {
+		"title": "Tietoja Bookmarks-sovelluksesta",
+		"version": "Versio"
+	}
+}

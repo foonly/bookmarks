@@ -1,9 +1,12 @@
+import { t } from "../i18n";
+import p from "../../package.json";
+
 export function renderAboutView(): HTMLElement {
 	const container = document.createElement("div");
 	container.classList.add("about-view", "card");
 
 	const content = `
-# About Bookmarks
+# ${t("about.title")}
 
 A simple, private, and encrypted bookmark manager. This app is designed to be lightweight, offline-first, and secure.
 
@@ -32,9 +35,11 @@ If you have any GDPR-related questions or requests, please contact us at [bookma
 This project is open-source and respects your privacy. You can find the source code and contribute on GitHub.
 
 [Bookmarks on GitHub](https://github.com/foonly/bookmarks)
+
+**${t("about.version")}**: ${p.version}
 	`;
 
-	container.innerHTML = parseMarkdown(content);
+	parseMarkdown(container, content);
 	return container;
 }
 
@@ -46,38 +51,56 @@ This project is open-source and respects your privacy. You can find the source c
  * - Simple unordered lists (starting with -)
  * - **bold** and [text](url) inline styles
  */
-function parseMarkdown(md: string): string {
-	return md
-		.trim()
+function parseMarkdown(container: HTMLElement, md: string) {
+	md.trim()
 		.split(/\n\n+/)
 		.map((block) => {
 			const trimmed = block.trim();
 
 			// Headings
 			if (trimmed.startsWith("### ")) {
-				return `<h3>${parseInline(trimmed.slice(4))}</h3>`;
+				const h3 = document.createElement("h3");
+				h3.innerText = trimmed.slice(4);
+				return h3;
 			}
 			if (trimmed.startsWith("## ")) {
-				return `<h2>${parseInline(trimmed.slice(3))}</h2>`;
+				const h2 = document.createElement("h2");
+				h2.innerText = trimmed.slice(3);
+				return h2;
 			}
 			if (trimmed.startsWith("# ")) {
-				return `<h1>${parseInline(trimmed.slice(2))}</h1>`;
+				const h1 = document.createElement("h1");
+				h1.innerText = trimmed.slice(2);
+				return h1;
 			}
 
 			// Unordered Lists
 			if (trimmed.startsWith("- ")) {
-				const items = trimmed
+				const ul = document.createElement("ul");
+
+				trimmed
 					.split("\n")
-					.map((line) => `<li>${parseInline(line.trim().slice(2))}</li>`)
-					.join("");
-				return `<ul>${items}</ul>`;
+					.map((line) => {
+						if (line.startsWith("- ")) {
+							const li = document.createElement("li");
+							li.innerHTML = parseInline(line.slice(2).trim());
+							return li;
+						}
+					})
+					.forEach((li) => {
+						if (li) ul.appendChild(li);
+					});
+				return ul;
 			}
 
 			// Default to Paragraph
 			// We replace single newlines with spaces to allow wrapping in the source
-			return `<p>${parseInline(trimmed.replace(/\n/g, " "))}</p>`;
+			const p = document.createElement("p");
+			p.innerHTML = parseInline(trimmed.replace(/\n/g, " "));
+
+			return p;
 		})
-		.join("");
+		.forEach((el) => container.append(el));
 }
 
 /**

@@ -1,0 +1,78 @@
+{
+	"nav": {
+		"bookmarks": "Bookmarks",
+		"tags": "Tags",
+		"about": "About",
+		"settings": "Settings"
+	},
+	"bookmarks": {
+		"add_button_title": "Add Bookmark",
+		"filter_all": "All",
+		"no_bookmarks": "No bookmarks yet",
+		"no_bookmarks_tag": "No bookmarks with tag \"{tag}\"",
+		"delete_confirm": "Are you sure you want to delete this bookmark?"
+	},
+	"tags": {
+		"no_tags": "No tags found.",
+		"edit": "edit"
+	},
+	"settings": {
+		"language": "Language",
+		"sync": {
+			"title": "Syncing",
+			"description": "Sync your bookmarks across devices using an ID and Secret key. Your data is encrypted locally before being uploaded.",
+			"credentials_label": "Sync Credentials (ID:Secret)",
+			"credentials_placeholder": "Paste your ID:Secret here...",
+			"show": "Show",
+			"hide": "Hide",
+			"copy": "Copy",
+			"copied": "Copied!",
+			"generate_new": "Generate New",
+			"enable_sync": "Enable Sync",
+			"disable_sync": "Disable Sync",
+			"sync_now": "Sync Now",
+			"syncing": "Syncing...",
+			"last_synced": "Last synced: {date}",
+			"generate_confirm": "Generating new credentials will replace your current ones. If you have synced data on the server, you will lose access to it unless you have backed up the old credentials. Continue?"
+		},
+		"data": {
+			"title": "Data Management",
+			"export": "Export JSON",
+			"import": "Import JSON",
+			"purge": "Purge Deleted",
+			"purge_tooltip": "Permanently remove bookmarks marked as deleted",
+			"clear_all": "Clear All Data",
+			"purge_confirm": "Permanently remove all bookmarks marked as deleted? Only do this if you are sure all your devices have synced the deletions.",
+			"purge_success": "Tombstones purged.",
+			"clear_confirm": "Are you sure you want to delete ALL bookmarks and settings? This cannot be undone.",
+			"import_invalid": "Invalid backup file format.",
+			"import_success": "Bookmarks imported and merged successfully!",
+			"import_no_changes": "No new changes found in the backup file.",
+			"import_error": "Failed to parse the backup file."
+		}
+	},
+	"system": {
+		"offline_indicator": "You are currently offline",
+		"update_available": "New version available. Update now?",
+		"offline_ready": "App ready to work offline"
+	},
+	"form": {
+		"title": "Title",
+		"url": "URL",
+		"tags": "Tags",
+		"description": "Description",
+		"save": "Save",
+		"cancel": "Cancel",
+		"add_bookmark": "Add Bookmark",
+		"edit_bookmark": "Edit Bookmark",
+		"add_tag_placeholder": "Add a tag...",
+		"add_tag_button": "Add",
+		"added_tags_label": "Added tags:",
+		"no_tags": "None",
+		"remove_tag_title": "Remove {tag}"
+	},
+	"about": {
+		"title": "About Bookmarks",
+		"version": "Version"
+	}
+}
