@@ -8,33 +8,9 @@ export function renderAboutView(): HTMLElement {
 	const content = `
 # ${t("about.title")}
 
-A simple, private, and encrypted bookmark manager. This app is designed to be lightweight, offline-first, and secure.
+${t("about.content")}
 
-## Features
-
-- **End-to-End Encryption**: Your data is encrypted in your browser using your sync credentials. Nobody else can read your bookmarks.
-- **Offline Access**: Works without an internet connection as a Progressive Web App (PWA).
-- **Fast & Minimal**: No bloat, no tracking, just your bookmarks.
-
-## Usage Tips
-
-- **Tags**: Use tags to categorize your bookmarks. You can filter by tags in the main view or the dedicated Tags tab.
-- **Sync**: Set up a sync URL and credentials in Settings to keep your bookmarks backed up and synced across devices.
-- **PWA**: Install this app on your home screen or desktop for a native-like experience.
-
-## Privacy and GDPR
-
-This app is built with privacy in mind. All data is stored locally in your browser and encrypted with your sync credentials on the server. We do not collect any personal data or analytics.
-
-If you don't enable sync, no data will ever leave your device. Even with sync enabled, your data is encrypted before it leaves your browser, so we have no access to it.
-
-If you have any GDPR-related questions or requests, please contact us at [bookmarks@foonly.dev](mailto:bookmarks@foonly.dev)
-
-## Open Source
-
-This project is open-source and respects your privacy. You can find the source code and contribute on GitHub.
-
-[Bookmarks on GitHub](https://github.com/foonly/bookmarks)
+---
 
 **${t("about.version")}**: ${p.version}
 	`;
@@ -50,12 +26,18 @@ This project is open-source and respects your privacy. You can find the source c
  * - Paragraphs separated by double newlines
  * - Simple unordered lists (starting with -)
  * - **bold** and [text](url) inline styles
+ * - --- for horizontal rule
  */
 function parseMarkdown(container: HTMLElement, md: string) {
 	md.trim()
 		.split(/\n\n+/)
 		.map((block) => {
 			const trimmed = block.trim();
+
+			// Horizontal Rule
+			if (trimmed === "---") {
+				return document.createElement("hr");
+			}
 
 			// Headings
 			if (trimmed.startsWith("### ")) {
@@ -81,9 +63,10 @@ function parseMarkdown(container: HTMLElement, md: string) {
 				trimmed
 					.split("\n")
 					.map((line) => {
-						if (line.startsWith("- ")) {
+						const listLine = line.trim();
+						if (listLine.startsWith("- ")) {
 							const li = document.createElement("li");
-							li.innerHTML = parseInline(line.slice(2).trim());
+							li.innerHTML = parseInline(listLine.slice(2).trim());
 							return li;
 						}
 					})

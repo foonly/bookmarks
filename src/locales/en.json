@@ -73,6 +73,7 @@
 	},
 	"about": {
 		"title": "About Bookmarks",
-		"version": "Version"
+		"version": "Version",
+		"content": "\nA simple, private, and encrypted bookmark manager. This app is designed to be lightweight, offline-first, and secure.\n\n## Features\n\n- **End-to-End Encryption**: Your data is encrypted in your browser using your sync credentials. Nobody else can read your bookmarks.\n- **Offline Access**: Works without an internet connection as a Progressive Web App (PWA).\n- **Fast & Minimal**: No bloat, no tracking, just your bookmarks.\n\n## Usage Tips\n\n- **Tags**: Use tags to categorize your bookmarks. You can filter by tags in the main view or the dedicated Tags tab.\n- **Sync**: Set up a sync URL and credentials in Settings to keep your bookmarks backed up and synced across devices.\n- **PWA**: Install this app on your home screen or desktop for a native-like experience.\n\n## Privacy and GDPR\n\nThis app is built with privacy in mind. All data is stored locally in your browser and encrypted with your sync credentials on the server. We do not collect any personal data or analytics.\n\nIf you don't enable sync, no data will ever leave your device. Even with sync enabled, your data is encrypted before it leaves your browser, so we have no access to it.\n\nIf you have any GDPR-related questions or requests, please contact us at [bookmarks@foonly.dev](mailto:bookmarks@foonly.dev)\n\n## Open Source\n\nThis project is open-source and respects your privacy. You can find the source code and contribute on GitHub.\n\n[Bookmarks on GitHub](https://github.com/foonly/bookmarks)\n"
 	}
 }
