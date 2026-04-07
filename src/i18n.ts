@@ -1,6 +1,6 @@
 import en from "./locales/en.json";
 
-export const SUPPORTED_LOCALES = ["en", "de", "sv", "fi", "et"] as const;
+export const SUPPORTED_LOCALES = ["de", "et", "en", "fi", "sv"] as const;
 export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
 
 export const localeLabels: Record<SupportedLocale, string> = {
