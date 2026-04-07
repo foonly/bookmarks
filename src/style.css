@@ -76,6 +76,74 @@
 	}
 }
 
+@media (prefers-contrast: more) {
+	:root {
+		color-scheme: dark;
+		--bm-bg-color: #000000;
+		--bm-text-color: #ffffff;
+		--bm-text-secondary: #ffffff;
+		--bm-text-dim: #eeeeee;
+		--bm-text-muted: #cccccc;
+
+		--bm-border-color: #ffffff;
+		--bm-card-bg: #000000;
+		--bm-item-hover-bg: rgba(255, 255, 255, 0.2);
+
+		--bm-primary-color: #8892ff;
+		--bm-primary-hover: #b0b8ff;
+
+		--bm-input-bg: #000000;
+		--bm-input-focus-bg: #000000;
+
+		--bm-button-secondary-bg: #000000;
+		--bm-button-secondary-hover-bg: #222222;
+		--bm-button-ghost-hover-bg: rgba(255, 255, 255, 0.2);
+
+		--bm-tag-bg: #000000;
+		--bm-tag-section-hover-border: #ffffff;
+
+		--bm-danger-color: #ff6666;
+		--bm-nav-link-hover-bg: rgba(255, 255, 255, 0.2);
+		--bm-shadow-color: rgba(255, 255, 255, 0.4);
+	}
+
+	@media (prefers-color-scheme: light) {
+		:root {
+			color-scheme: light;
+			--bm-bg-color: #ffffff;
+			--bm-text-color: #000000;
+			--bm-text-secondary: #000000;
+			--bm-text-dim: #111111;
+			--bm-text-muted: #333333;
+
+			--bm-border-color: #000000;
+			--bm-card-bg: #ffffff;
+			--bm-item-hover-bg: rgba(0, 0, 0, 0.15);
+
+			--bm-primary-color: #0000ee;
+			--bm-primary-hover: #000088;
+
+			--bm-input-bg: #ffffff;
+			--bm-input-focus-bg: #ffffff;
+
+			--bm-button-secondary-bg: #ffffff;
+			--bm-button-secondary-hover-bg: #eeeeee;
+			--bm-button-ghost-hover-bg: rgba(0, 0, 0, 0.15);
+
+			--bm-tag-bg: #ffffff;
+			--bm-tag-section-hover-border: #000000;
+
+			--bm-danger-color: #cc0000;
+			--bm-nav-link-hover-bg: rgba(0, 0, 0, 0.1);
+			--bm-shadow-color: rgba(0, 0, 0, 0.5);
+		}
+	}
+
+	#bookmarksList .bookmarkItem .bookmarkButtons {
+		opacity: 1 !important;
+	}
+}
+
 * {
 	box-sizing: border-box;
 }
