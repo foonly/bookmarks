@@ -13,7 +13,13 @@ const API_BASE =
  * 4. Check if the local state differs from the remote state.
  * 5. If differences exist, encrypt the new state and upload it.
  */
+let syncInProgress = false;
+
 export async function sync(): Promise<{ success: boolean; message: string }> {
+	if (syncInProgress) {
+		return { success: false, message: "Sync already in progress" };
+	}
+
 	const syncConfig = store.sync;
 
 	if (!syncConfig || !syncConfig.enabled || !syncConfig.credentials) {
@@ -31,6 +37,7 @@ export async function sync(): Promise<{ success: boolean; message: string }> {
 		};
 	}
 
+	syncInProgress = true;
 	try {
 		// 1. Fetch latest from backend
 		const response = await fetch(`${API_BASE}/sync/${id}`);
@@ -133,11 +140,13 @@ export async function sync(): Promise<{ success: boolean; message: string }> {
 			success: false,
 			message: error instanceof Error ? error.message : "Unknown sync error",
 		};
+	} finally {
+		syncInProgress = false;
 	}
 }
 
 /**
- * Periodically triggers sync if enabled.
+ * Periodically triggers sync if enabled. Also triggers on local store updates.
  */
 export function initAutoSync(intervalMs: number = 300000) {
 	// Default 5 minutes
@@ -151,4 +160,28 @@ export function initAutoSync(intervalMs: number = 300000) {
 			sync().catch(console.error);
 		}
 	}, intervalMs);
+
+	// Debounced sync on local store updates
+	let debounceTimeout: number | undefined;
+	let lastState = JSON.stringify({
+		bookmarks: store.bookmarks,
+		favoriteTags: store.favoriteTags,
+	});
+
+	window.addEventListener("store-updated", () => {
+		const currentState = JSON.stringify({
+			bookmarks: store.bookmarks,
+			favoriteTags: store.favoriteTags,
+		});
+
+		if (currentState !== lastState) {
+			lastState = currentState;
+			if (debounceTimeout) clearTimeout(debounceTimeout);
+			debounceTimeout = window.setTimeout(() => {
+				if (store.sync?.enabled) {
+					sync().catch(console.error);
+				}
+			}, 2000);
+		}
+	});
 }
