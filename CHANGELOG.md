@@ -1,6 +1,13 @@
 # Changelog
 
-### 0.8.2 (2026-04-07)
+## 0.9.0 (2026-04-07)
+
+#### Features
+- locale: Add dynamic titles for bookmark edit and delete buttons (5a65137)
+- seo: Add meta description and robots.txt (a8b5e18)
+- style: Add high contrast mode styles (fab3b2d)
+
+### v0.8.2 (2026-04-07)
 
 #### Refactor
 - i18n: Reorder supported locales (fdc5b9c)
