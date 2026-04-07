@@ -1,6 +1,11 @@
 # Changelog
 
-### 0.8.1 (2026-04-07)
+### 0.8.2 (2026-04-07)
+
+#### Refactor
+- i18n: Reorder supported locales (fdc5b9c)
+
+### v0.8.1 (2026-04-07)
 
 #### Bug Fixes
 - i18n: Reorder locale labels alphabetically (b264662)
