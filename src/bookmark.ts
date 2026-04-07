@@ -71,6 +71,19 @@ export function renderBookmarks(filterTag?: string): void {
 				content.appendChild(description);
 			}
 
+			if (bookmark.tags && bookmark.tags.length > 0) {
+				const tagsContainer = document.createElement("div");
+				tagsContainer.classList.add("bookmarkTags");
+				bookmark.tags.forEach((tag) => {
+					const tagBadge = document.createElement("a");
+					tagBadge.href = `#/tag/${encodeURIComponent(tag)}`;
+					tagBadge.classList.add("tagBadge");
+					tagBadge.textContent = tag;
+					tagsContainer.appendChild(tagBadge);
+				});
+				content.appendChild(tagsContainer);
+			}
+
 			bookmarkItem.appendChild(content);
 			bookmarkItem.appendChild(createButtons(bookmark, filterTag));
 			bookmarksList.appendChild(bookmarkItem);

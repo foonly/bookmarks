@@ -93,6 +93,8 @@ body {
 	margin: 0;
 	min-width: 320px;
 	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
 	font-family: var(--bm-font-family);
 	font-size: var(--bm-font-size);
 	line-height: var(--bm-line-height);
@@ -143,9 +145,10 @@ body {
 
 #version {
 	color: var(--bm-text-dim);
-	position: absolute;
-	right: 1rem;
-	bottom: 1rem;
+	margin-top: auto;
+	padding: 2rem 1rem 1rem;
+	text-align: right;
+	font-size: 0.75rem;
 }
 
 #modalDialog {
@@ -253,6 +256,32 @@ body {
 			display: flex;
 			gap: 0.5rem;
 			padding-top: 2px;
+		}
+
+		.bookmarkTags {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.4rem;
+			margin-top: 0.4rem;
+
+			.tagBadge {
+				display: inline-flex;
+				align-items: center;
+				gap: 0.4rem;
+				padding: 0.15rem 0.5rem;
+				background-color: var(--bm-tag-bg);
+				border-radius: 4px;
+				font-size: 0.75rem;
+				border: 1px solid var(--bm-border-color);
+				color: var(--bm-text-color);
+				text-decoration: none;
+				transition: all 0.2s ease;
+
+				&:hover {
+					border-color: var(--bm-primary-color);
+					background-color: var(--bm-nav-link-hover-bg);
+				}
+			}
 		}
 	}
 }
