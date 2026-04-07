@@ -1,6 +1,25 @@
 # Changelog
 
-## 0.3.0 (2026-04-07)
+## 0.4.0 (2026-04-07)
+
+#### Features
+- config: Add foonver configuration (45e705b)
+
+#### Continuous Integration
+- release: Set VITE_API_BASE in release workflow (98bb2c0)
+
+### v0.3.1 (2026-04-07)
+
+#### Bug Fixes
+- types: Ensure default for storage credentials object (4052ea8)
+
+#### Continuous Integration
+- release: Use variables for deployment details (14ea021)
+
+#### Maintenance
+- Remove unused router import from modal and bookmarkForm (6c7f2c1)
+
+## v0.3.0 (2026-04-07)
 
 #### Features
 - docs: Add backend specification and update README (7f34634)
