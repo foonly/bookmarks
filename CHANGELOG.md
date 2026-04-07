@@ -1,6 +1,13 @@
 # Changelog
 
-## 0.7.0 (2026-04-07)
+## 0.8.0 (2026-04-07)
+
+#### Features
+- about: add detailed content to about view (f4ed8f3)
+- sync: Update sync credentials terminology and descriptions (ec47a86)
+- i18n: Implement internationalization support (3a79f9d)
+
+## v0.7.0 (2026-04-07)
 
 #### Features
 - sync: Include registration secret when remote data is not found (415d42b)
