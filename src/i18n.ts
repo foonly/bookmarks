@@ -4,11 +4,11 @@ export const SUPPORTED_LOCALES = ["en", "de", "sv", "fi", "et"] as const;
 export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
 
 export const localeLabels: Record<SupportedLocale, string> = {
-	en: "English",
 	de: "Deutsch",
-	sv: "Svenska",
-	fi: "Suomi",
 	et: "Eesti",
+	en: "English",
+	fi: "Suomi",
+	sv: "Svenska",
 };
 
 let currentLocale: SupportedLocale = "en";
