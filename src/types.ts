@@ -18,7 +18,7 @@ export const storageSchema = z.object({
 	sync: z
 		.object({
 			enabled: z.boolean().default(false),
-			credentials: z.string().default(""), // format: "id:secret"
+			credentials: z.string().default(""), // format: "id:enc_key:sign_secret"
 			lastSynced: z.number().default(0),
 		})
 		.default({

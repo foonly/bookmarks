@@ -78,23 +78,67 @@ export async function decrypt(
 }
 
 /**
- * Helper to generate a new unique Sync ID and Secret Key pair.
- * Formatted as "id:secret"
+ * Generates a SHA-256 hash of a string.
+ */
+export async function hash(data: string): Promise<string> {
+	const enc = new TextEncoder();
+	const hashBuffer = await window.crypto.subtle.digest(
+		"SHA-256",
+		enc.encode(data),
+	);
+	return Array.from(new Uint8Array(hashBuffer))
+		.map((b) => b.toString(16).padStart(2, "0"))
+		.join("");
+}
+
+/**
+ * Generates an HMAC-SHA256 signature for a message using the signing secret.
+ */
+export async function sign(message: string, secret: string): Promise<string> {
+	const enc = new TextEncoder();
+	const key = await window.crypto.subtle.importKey(
+		"raw",
+		enc.encode(secret),
+		{ name: "HMAC", hash: "SHA-256" },
+		false,
+		["sign"],
+	);
+
+	const signature = await window.crypto.subtle.sign(
+		"HMAC",
+		key,
+		enc.encode(message),
+	);
+
+	// Convert to hex string
+	return Array.from(new Uint8Array(signature))
+		.map((b) => b.toString(16).padStart(2, "0"))
+		.join("");
+}
+
+/**
+ * Helper to generate a new unique Sync ID, Encryption Key, and Signing Secret.
+ * Formatted as "id:enc_key:sign_secret"
  */
 export function generateCredentials(): string {
 	const idArray = new Uint8Array(6);
-	const secretArray = new Uint8Array(16);
+	const encKeyArray = new Uint8Array(16);
+	const signSecretArray = new Uint8Array(16);
 
 	window.crypto.getRandomValues(idArray);
-	window.crypto.getRandomValues(secretArray);
+	window.crypto.getRandomValues(encKeyArray);
+	window.crypto.getRandomValues(signSecretArray);
 
 	// Convert bytes to hex strings
 	const id = Array.from(idArray)
 		.map((b) => b.toString(16).padStart(2, "0"))
 		.join("");
-	const secret = Array.from(secretArray)
+	const encKey = Array.from(encKeyArray)
+		.map((b) => b.toString(16).padStart(2, "0"))
+		.join("");
+	const signSecret = Array.from(signSecretArray)
 		.map((b) => b.toString(16).padStart(2, "0"))
 		.join("");
 
-	return `${id}:${secret}`;
+	return `${id}:${encKey}:${signSecret}`;
 }

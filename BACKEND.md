@@ -6,7 +6,7 @@ This document defines the technical specification for a decentralized storage va
 
 The backend is responsible for storing and retrieving encrypted data blobs. It does not possess the keys to decrypt the data, ensuring that all synchronization remains private and secure (Zero-Knowledge).
 
-- **Authentication**: Keyless. Identification is handled via a unique `Sync ID`.
+- **Authentication**: HMAC-SHA256 signed requests using a `Signing Secret`.
 - **Security**: Data must be encrypted client-side using **AES-GCM**.
 - **Storage**: Each `Sync ID` supports versioned history (default: last 10 versions).
 
@@ -35,13 +35,18 @@ Retrieves the most recent encrypted blob for a specific ID.
 Uploads a new encrypted blob. This action automatically triggers history pruning.
 
 - **URL**: `POST /sync/:id`
+- **Headers**:
+  - `X-Sync-Timestamp`: Unix timestamp in seconds (UTC).
+  - `X-Sync-Signature`: HMAC-SHA256(signing_secret, timestamp + sha256(request_body)).
 - **Request Body**:
   ```json
   {
-  	"data": "base64_encoded_encrypted_blob"
+  	"data": "base64_encoded_encrypted_blob",
+  	"registration_secret": "only_required_on_first_upload"
   }
   ```
 - **Success Response (201 Created)**: Blob stored successfully.
+- **Error Response (401 Unauthorized)**: Signature is invalid or timestamp has expired.
 - **Error Response (413 Payload Too Large)**: Payload exceeds the 1MB limit.
 - **Error Response (429 Too Many Requests)**: Rate limit exceeded for this ID.
 
@@ -93,7 +98,16 @@ Retrieves a specific historical blob by its timestamp.
 - The backend must use a persistent store (SQLite, BadgerDB, or similar).
 - Database should index `id` and `timestamp` for performant lookups and pruning.
 
+### Authentication & Validation
+
+To prevent unauthorized data rotation and resource exhaustion, the server implements the following validation for `POST` requests:
+
+1.  **Registration**: On the first `POST` to a new `Sync ID`, the server must receive a `registration_secret`. This secret is stored by the server and used as the key for all subsequent HMAC validations for this ID.
+2.  **Timestamp Validation**: The server rejects requests where `abs(current_time - X-Sync-Timestamp) > 300 seconds`.
+3.  **Signature Verification**: The `X-Sync-Signature` must match `HMAC-SHA256(stored_signing_secret, timestamp + sha256(raw_body))`.
+4.  **Replay Protection**: The server should track the last used timestamp per ID to prevent exact replays within the valid window.
+
 ### Security & CORS
 
 - **CORS**: The server must allow Cross-Origin Resource Sharing from the trusted frontend origin.
-- **Privacy**: The server must never receive the decryption key. The `:id` in the URL identifies the bucket, but the `:key` remains strictly on the client.
+- **Privacy**: The server must never receive the decryption key. The `:id` in the URL identifies the bucket, but the `:enc_key` remains strictly on the client. The `Signing Secret` is used only for authentication and should be stored securely on the server.

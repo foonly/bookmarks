@@ -1,5 +1,5 @@
 import { store, updateStore, mergeStores } from "./store";
-import { encrypt, decrypt } from "./crypto";
+import { encrypt, decrypt, sign, hash } from "./crypto";
 import { storageSchema } from "./types";
 
 const API_BASE =
@@ -29,11 +29,12 @@ export async function sync(): Promise<{ success: boolean; message: string }> {
 		};
 	}
 
-	const [id, secret] = syncConfig.credentials.split(":");
-	if (!id || !secret) {
+	const [id, encKey, signSecret] = syncConfig.credentials.split(":");
+	if (!id || !encKey || !signSecret) {
 		return {
 			success: false,
-			message: "Invalid sync credentials format (expected ID:Secret).",
+			message:
+				"Invalid sync credentials format (expected ID:EncKey:SignSecret).",
 		};
 	}
 
@@ -51,7 +52,7 @@ export async function sync(): Promise<{ success: boolean; message: string }> {
 			if (encryptedBlob) {
 				// 2. Decrypt
 				try {
-					const decryptedStr = await decrypt(encryptedBlob, secret);
+					const decryptedStr = await decrypt(encryptedBlob, encKey);
 					const parsed = JSON.parse(decryptedStr);
 
 					// Validate schema
@@ -111,14 +112,29 @@ export async function sync(): Promise<{ success: boolean; message: string }> {
 		}
 
 		// 5. Encrypt and Upload local state
-		const encryptedLocal = await encrypt(JSON.stringify(localState), secret);
+		const encryptedLocal = await encrypt(JSON.stringify(localState), encKey);
+
+		const timestamp = Math.floor(Date.now() / 1000).toString();
+		const body: Record<string, string> = { data: encryptedLocal };
+
+		// If this is a new sync ID (remoteData was null and never successfully synced),
+		// include the signing secret for registration.
+		if (!remoteData && syncConfig.lastSynced === 0) {
+			body.registration_secret = signSecret;
+		}
+
+		const bodyString = JSON.stringify(body);
+		const payloadHash = await hash(bodyString);
+		const signature = await sign(timestamp + payloadHash, signSecret);
 
 		const uploadResponse = await fetch(`${API_BASE}/sync/${id}`, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
+				"X-Sync-Timestamp": timestamp,
+				"X-Sync-Signature": signature,
 			},
-			body: JSON.stringify({ data: encryptedLocal }),
+			body: bodyString,
 		});
 
 		if (!uploadResponse.ok) {
