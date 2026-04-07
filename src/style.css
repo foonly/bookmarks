@@ -513,10 +513,6 @@ body {
 	min-width: 200px;
 }
 
-.sync-input-group input {
-	flex-grow: 1;
-}
-
 .sync-input-group button {
 	padding: 0 1rem;
 	background-color: #444;
