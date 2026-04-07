@@ -1,6 +1,14 @@
 # Changelog
 
-## 0.4.0 (2026-04-07)
+## 0.5.0 (2026-04-07)
+
+#### Features
+- pwa: Add PWA support and offline capabilities (7155d93)
+
+#### Refactor
+- settings: Remove redundant title element (ab8ce03)
+
+## v0.4.0 (2026-04-07)
 
 #### Features
 - config: Add foonver configuration (45e705b)
