@@ -1,11 +1,7 @@
 import { store, getTagsWithCounts } from "../store";
 export function renderTagsView(): HTMLElement {
 	const container = document.createElement("div");
-	container.classList.add("card", "tags-view");
-
-	const title = document.createElement("h1");
-	title.textContent = "Tags";
-	container.appendChild(title);
+	container.classList.add("tags-view");
 
 	const tagsWithCounts = getTagsWithCounts();
 	const sortedTags = Object.keys(tagsWithCounts).sort((a, b) =>
@@ -27,7 +23,7 @@ export function renderTagsView(): HTMLElement {
 		tagSection.classList.add("tag-section");
 
 		const tagHeader = document.createElement("h2");
-		tagHeader.innerHTML = `${tag} <span class="tag-count">(${tagsWithCounts[tag]})</span>`;
+		tagHeader.innerHTML = `<span>${tag}</span><span class="tag-count">${tagsWithCounts[tag]}</span>`;
 		tagSection.appendChild(tagHeader);
 
 		const bookmarkList = document.createElement("ul");
@@ -45,7 +41,7 @@ export function renderTagsView(): HTMLElement {
 			link.textContent = bookmark.title || bookmark.url;
 
 			const editLink = document.createElement("a");
-			editLink.href = `#/edit/${bookmark.created}`;
+			editLink.href = `#/tags/edit/${bookmark.created}`;
 			editLink.classList.add("tag-edit-link");
 			editLink.textContent = "edit";
 

@@ -6,8 +6,8 @@ const dialog: HTMLDialogElement | null =
 if (dialog) {
 	dialog.addEventListener("close", () => {
 		const hash = window.location.hash;
-		if (hash.startsWith("#/add") || hash.startsWith("#/edit/")) {
-			router.navigate("/");
+		if (hash.includes("/add") || hash.includes("/edit/")) {
+			window.history.back();
 		}
 	});
 }

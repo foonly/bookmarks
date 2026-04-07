@@ -1,6 +1,6 @@
 import { STORAGE_KEY } from "./constants";
 import { storageSchema } from "./types";
-import type { Bookmark } from "./types";
+import type { Bookmark, Storage } from "./types";
 
 export let store = storageSchema.parse({});
 
@@ -94,4 +94,54 @@ export function getTagsWithCounts(): Record<string, number> {
 		});
 	});
 	return counts;
+}
+
+/**
+ * Merges a remote storage object into the local store.
+ * Uses 'created' as ID and 'modified' as version check.
+ */
+export function mergeStores(remoteStore: Storage): boolean {
+	let hasChanges = false;
+
+	// 1. Merge favorite tags (union)
+	const mergedFavoriteTags = [
+		...new Set([...store.favoriteTags, ...remoteStore.favoriteTags]),
+	];
+	if (
+		JSON.stringify(mergedFavoriteTags.sort()) !==
+		JSON.stringify([...store.favoriteTags].sort())
+	) {
+		store.favoriteTags = mergedFavoriteTags.sort();
+		hasChanges = true;
+	}
+
+	// 2. Merge bookmarks
+	const localBookmarks = [...store.bookmarks];
+	const remoteBookmarks = remoteStore.bookmarks;
+
+	remoteBookmarks.forEach((remote) => {
+		const localIndex = localBookmarks.findIndex(
+			(l) => l.created === remote.created,
+		);
+
+		if (localIndex === -1) {
+			// New bookmark from remote
+			localBookmarks.push(remote);
+			hasChanges = true;
+		} else {
+			const local = localBookmarks[localIndex];
+			// Conflict resolution: Newer modified timestamp wins
+			if (remote.modified > (local.modified || 0)) {
+				localBookmarks[localIndex] = remote;
+				hasChanges = true;
+			}
+		}
+	});
+
+	if (hasChanges) {
+		store.bookmarks = localBookmarks;
+		saveStore();
+	}
+
+	return hasChanges;
 }

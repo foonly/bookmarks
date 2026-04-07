@@ -7,7 +7,10 @@ import { createFormField, createTagsField } from "./formFields";
 /**
  * Create a form to add and edit bookmarks.
  */
-export function showBookmarkForm(id: number = 0): HTMLFormElement {
+export function showBookmarkForm(
+	id: number = 0,
+	defaultTags: string[] = [],
+): HTMLFormElement {
 	const form = document.createElement("form");
 	form.id = BOOKMARK_FORM_ID;
 
@@ -33,7 +36,7 @@ export function showBookmarkForm(id: number = 0): HTMLFormElement {
 	form.appendChild(
 		createFormField("url", "URL", FieldType.URL, bookmark?.url, true),
 	);
-	form.appendChild(createTagsField(bookmark?.tags ?? []));
+	form.appendChild(createTagsField(bookmark?.tags ?? defaultTags));
 	form.appendChild(
 		createFormField(
 			"description",
@@ -65,10 +68,10 @@ export function showBookmarkForm(id: number = 0): HTMLFormElement {
 			data.get("description") as string,
 		);
 
-		router.navigate("/");
+		window.history.back();
 	});
 	form.addEventListener("reset", () => {
-		router.navigate("/");
+		window.history.back();
 	});
 
 	return form;

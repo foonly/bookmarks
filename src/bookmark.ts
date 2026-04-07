@@ -15,12 +15,25 @@ export function renderBookmarks(filterTag?: string): void {
 		element.removeChild(element.firstChild);
 	}
 
-	element.appendChild(createTagFilter(filterTag));
+	// Remove card class from the main container as we want the card to wrap only the list.
+	element.classList.remove("card");
+
+	// Create a toolbar for the filter and add button.
+	const toolbar = document.createElement("div");
+	toolbar.classList.add("bookmarks-toolbar");
+	toolbar.appendChild(createTagFilter(filterTag));
+	toolbar.appendChild(createAddButton(filterTag));
+	element.appendChild(toolbar);
+
+	// Create the card container for the actual list.
+	const card = document.createElement("div");
+	card.classList.add("card");
+	element.appendChild(card);
 
 	// Create the list.
 	const bookmarksList = document.createElement("div");
 	bookmarksList.id = BOOKMARK_LIST_ID;
-	element.appendChild(bookmarksList);
+	card.appendChild(bookmarksList);
 
 	let filteredBookmarks = store.bookmarks;
 	if (filterTag) {
@@ -42,13 +55,27 @@ export function renderBookmarks(filterTag?: string): void {
 		sortedBookmarks.forEach((bookmark) => {
 			const bookmarkItem = document.createElement("div");
 			bookmarkItem.classList.add("bookmarkItem");
-			bookmarkItem.appendChild(createLink(bookmark));
-			bookmarkItem.appendChild(createButtons(bookmark));
+
+			const content = document.createElement("div");
+			content.classList.add("bookmarkContent");
+			content.appendChild(createLink(bookmark));
+
+			if (bookmark.description) {
+				const description = document.createElement("div");
+				description.classList.add("bookmarkDescription");
+				const truncated =
+					bookmark.description.length > 160
+						? bookmark.description.substring(0, 160) + "..."
+						: bookmark.description;
+				description.textContent = truncated;
+				content.appendChild(description);
+			}
+
+			bookmarkItem.appendChild(content);
+			bookmarkItem.appendChild(createButtons(bookmark, filterTag));
 			bookmarksList.appendChild(bookmarkItem);
 		});
 	}
-
-	element.appendChild(createAddButton());
 }
 
 function createTagFilter(activeTag?: string): HTMLElement {
@@ -83,14 +110,16 @@ function createLink(bookmark: Bookmark): HTMLAnchorElement {
 	link.target = "_blank";
 	return link;
 }
-function createButtons(bookmark: Bookmark) {
+function createButtons(bookmark: Bookmark, filterTag?: string) {
 	const buttons = document.createElement("div");
 	buttons.classList.add("bookmarkButtons");
 
 	const editLink = document.createElement("a");
 	editLink.classList.add("editButton", "icon");
 	editLink.innerHTML = edit;
-	editLink.href = `#/edit/${bookmark.created}`;
+	editLink.href = filterTag
+		? `#/tag/${encodeURIComponent(filterTag)}/edit/${bookmark.created}`
+		: `#/edit/${bookmark.created}`;
 	buttons.appendChild(editLink);
 
 	const deleteButton = document.createElement("button");
@@ -108,11 +137,13 @@ function createButtons(bookmark: Bookmark) {
 	return buttons;
 }
 
-function createAddButton(): HTMLAnchorElement {
+function createAddButton(filterTag?: string): HTMLAnchorElement {
 	const link = document.createElement("a");
 	link.classList.add("bookmarkButton", "icon");
 	link.title = "Add Bookmark";
 	link.innerHTML = add;
-	link.href = "#/add";
+	link.href = filterTag
+		? `#/tag/${encodeURIComponent(filterTag)}/add`
+		: "#/add";
 	return link;
 }

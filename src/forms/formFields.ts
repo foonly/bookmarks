@@ -2,140 +2,192 @@ import { FieldType } from "../constants";
 import { getTags } from "../store";
 
 export function createFormField(
-  name: string,
-  label: string,
-  type: string = FieldType.TEXT,
-  value: string | number = "",
-  required = false,
+	name: string,
+	label: string,
+	type: string = FieldType.TEXT,
+	value: string | number = "",
+	required = false,
 ): HTMLElement {
-  const fieldElement = document.createElement("div");
+	const fieldElement = document.createElement("div");
 
-  const capitalizedType = type.charAt(0).toUpperCase() + type.slice(1);
-  fieldElement.classList.add("formField", `formField${capitalizedType}`);
+	const capitalizedType = type.charAt(0).toUpperCase() + type.slice(1);
+	fieldElement.classList.add("formField", `formField${capitalizedType}`);
 
-  if (type !== FieldType.HIDDEN) {
-    const labelElement = document.createElement("label");
-    labelElement.htmlFor = name;
-    labelElement.textContent = label;
-    fieldElement.appendChild(labelElement);
-  }
-  const sanitizedValue = value
-    .toString()
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
+	if (type !== FieldType.HIDDEN) {
+		const labelElement = document.createElement("label");
+		labelElement.htmlFor = name;
+		labelElement.textContent = label;
+		fieldElement.appendChild(labelElement);
+	}
+	const sanitizedValue = value
+		.toString()
+		.replace(/</g, "&lt;")
+		.replace(/>/g, "&gt;");
 
-  const inputElement =
-    type === FieldType.TEXTAREA
-      ? document.createElement("textarea")
-      : document.createElement("input");
-  if (inputElement instanceof HTMLInputElement) {
-    inputElement.type = type;
-  }
-  inputElement.id = name;
-  inputElement.name = name;
-  inputElement.value = sanitizedValue;
-  inputElement.required = required;
+	const inputElement =
+		type === FieldType.TEXTAREA
+			? document.createElement("textarea")
+			: document.createElement("input");
+	if (inputElement instanceof HTMLInputElement) {
+		inputElement.type = type;
+	}
+	inputElement.id = name;
+	inputElement.name = name;
+	inputElement.value = sanitizedValue;
+	inputElement.required = required;
 
-  if (type === FieldType.HIDDEN) {
-    return inputElement;
-  }
+	if (type === FieldType.HIDDEN) {
+		return inputElement;
+	}
 
-  fieldElement.appendChild(inputElement);
+	fieldElement.appendChild(inputElement);
 
-  return fieldElement;
+	return fieldElement;
 }
 
 export function createTagsField(tags: string[]) {
-  const tagsList = [...tags];
-  const tagsElement = document.createElement("div");
-  tagsElement.classList.add("formField", "formFieldTags");
+	const tagsList = [...tags];
+	const tagsElement = document.createElement("div");
+	tagsElement.classList.add("formField", "formFieldTags");
 
-  const dataList = document.createElement("datalist");
-  dataList.id = "tagsList";
+	const dataList = document.createElement("datalist");
+	dataList.id = "tagsList";
 
-  getTags().forEach((tag) => {
-    if (!tagsList.includes(tag)) {
-      const optionElement = document.createElement("option");
-      optionElement.value = tag;
-      dataList.appendChild(optionElement);
-    }
-  });
-  tagsElement.appendChild(dataList);
+	const updateDataList = () => {
+		dataList.innerHTML = "";
+		getTags().forEach((tag) => {
+			if (!tagsList.includes(tag)) {
+				const optionElement = document.createElement("option");
+				optionElement.value = tag;
+				dataList.appendChild(optionElement);
+			}
+		});
+	};
+	updateDataList();
+	tagsElement.appendChild(dataList);
 
-  const labelElement = document.createElement("label");
-  labelElement.htmlFor = "tags";
-  labelElement.textContent = "Tags";
-  tagsElement.appendChild(labelElement);
+	const labelElement = document.createElement("label");
+	labelElement.htmlFor = "tags";
+	labelElement.textContent = "Tags";
+	tagsElement.appendChild(labelElement);
 
-  const inputElement = document.createElement("input");
-  inputElement.setAttribute("list", "tagsList");
-  inputElement.id = "tags";
-  inputElement.required = false;
+	const inputGroup = document.createElement("div");
+	inputGroup.classList.add("tagInputGroup");
 
-  tagsElement.appendChild(inputElement);
+	const inputElement = document.createElement("input");
+	inputElement.setAttribute("list", "tagsList");
+	inputElement.id = "tags";
+	inputElement.placeholder = "Add a tag...";
+	inputElement.required = false;
 
-  const tagFieldElement = document.createElement("input");
-  tagFieldElement.type = "hidden";
-  tagFieldElement.name = "tags";
-  tagFieldElement.value = JSON.stringify(tagsList);
+	const addButton = document.createElement("button");
+	addButton.type = "button";
+	addButton.textContent = "Add";
+	addButton.classList.add("addTagButton");
 
-  tagsElement.appendChild(tagFieldElement);
+	inputGroup.appendChild(inputElement);
+	inputGroup.appendChild(addButton);
+	tagsElement.appendChild(inputGroup);
 
-  const tagContainer = document.createElement("div");
-  tagsElement.appendChild(tagContainer);
-  renderTags(tagContainer, tagFieldElement, tagsList);
+	const tagFieldElement = document.createElement("input");
+	tagFieldElement.type = "hidden";
+	tagFieldElement.name = "tags";
+	tagFieldElement.value = JSON.stringify(tagsList);
+	tagsElement.appendChild(tagFieldElement);
 
-  inputElement.addEventListener("input", (event) => {
-    if (
-      event instanceof InputEvent &&
-      event.inputType === "insertReplacementText"
-    ) {
-      addTag(tagsList, inputElement.value);
-      tagFieldElement.value = JSON.stringify(tagsList);
-      renderTags(tagContainer, tagFieldElement, tagsList);
-      inputElement.value = "";
-    }
-  });
+	const tagSection = document.createElement("div");
+	tagSection.classList.add("addedTagsSection");
 
-  inputElement.addEventListener("keydown", (event) => {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      addTag(tagsList, inputElement.value);
-      tagFieldElement.value = JSON.stringify(tagsList);
-      renderTags(tagContainer, tagFieldElement, tagsList);
-      inputElement.value = "";
-    }
-  });
+	const tagSectionLabel = document.createElement("div");
+	tagSectionLabel.classList.add("tagSectionLabel");
+	tagSectionLabel.textContent = "Added tags:";
+	tagSection.appendChild(tagSectionLabel);
 
-  return tagsElement;
+	const tagContainer = document.createElement("div");
+	tagContainer.classList.add("tagContainer");
+	tagSection.appendChild(tagContainer);
+	tagsElement.appendChild(tagSection);
+
+	const triggerAddTag = () => {
+		const val = inputElement.value.trim();
+		if (val) {
+			addTag(tagsList, val);
+			tagFieldElement.value = JSON.stringify(tagsList);
+			renderTags(tagContainer, tagFieldElement, tagsList, updateDataList);
+			updateDataList();
+			inputElement.value = "";
+		}
+	};
+
+	renderTags(tagContainer, tagFieldElement, tagsList, updateDataList);
+
+	addButton.addEventListener("click", triggerAddTag);
+
+	inputElement.addEventListener("input", (event) => {
+		if (
+			event instanceof InputEvent &&
+			event.inputType === "insertReplacementText"
+		) {
+			triggerAddTag();
+		}
+	});
+
+	inputElement.addEventListener("keydown", (event) => {
+		if (event.key === "Enter") {
+			event.preventDefault();
+			triggerAddTag();
+		}
+	});
+
+	return tagsElement;
 }
 
 function addTag(tags: string[], tag: string) {
-  if (!tag) return;
-  if (!tags.includes(tag)) tags.push(tag);
+	if (!tag) return;
+	if (!tags.includes(tag)) tags.push(tag);
 }
 
 function removeTag(tags: string[], tag: string) {
-  const index = tags.indexOf(tag);
-  if (index !== -1) tags.splice(index, 1);
+	const index = tags.indexOf(tag);
+	if (index !== -1) tags.splice(index, 1);
 }
 
 function renderTags(
-  container: HTMLDivElement,
-  tagFieldElement: HTMLInputElement,
-  tags: string[],
+	container: HTMLDivElement,
+	tagFieldElement: HTMLInputElement,
+	tags: string[],
+	onUpdate?: () => void,
 ) {
-  while (container.firstChild) {
-    container.removeChild(container.firstChild);
-  }
-  tags.forEach((tag) => {
-    const tagElement = document.createElement("button");
-    tagElement.textContent = tag;
-    tagElement.addEventListener("click", () => {
-      removeTag(tags, tag);
-      tagFieldElement.value = JSON.stringify(tags);
-      renderTags(container, tagFieldElement, tags);
-    });
-    container.appendChild(tagElement);
-  });
+	while (container.firstChild) {
+		container.removeChild(container.firstChild);
+	}
+
+	if (tags.length === 0) {
+		const emptyMsg = document.createElement("span");
+		emptyMsg.classList.add("emptyTagsMsg");
+		emptyMsg.textContent = "None";
+		container.appendChild(emptyMsg);
+		return;
+	}
+
+	tags.forEach((tag) => {
+		const tagElement = document.createElement("div");
+		tagElement.classList.add("tagBadge");
+		tagElement.textContent = tag;
+
+		const removeBtn = document.createElement("span");
+		removeBtn.classList.add("removeTagBtn");
+		removeBtn.innerHTML = "&times;";
+		removeBtn.title = `Remove ${tag}`;
+
+		removeBtn.addEventListener("click", () => {
+			removeTag(tags, tag);
+			tagFieldElement.value = JSON.stringify(tags);
+			renderTags(container, tagFieldElement, tags, onUpdate);
+			if (onUpdate) onUpdate();
+		});
+
+		tagElement.appendChild(removeBtn);
+		container.appendChild(tagElement);
+	});
 }

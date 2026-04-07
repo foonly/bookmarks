@@ -45,26 +45,27 @@ a:hover {
 
 body {
 	margin: 0;
-	display: flex;
-	place-items: center;
 	min-width: 320px;
 	min-height: 100vh;
 	font-family: var(--bm-font-family);
 }
 
 #app {
-	max-width: 1280px;
+	width: 100%;
+}
+
+.container {
+	max-width: 1000px;
 	margin: 0 auto;
-	padding: 2rem;
-	text-align: center;
+	padding: 1rem 2rem;
 }
 
 .main-nav {
 	display: flex;
-	justify-content: center;
+	justify-content: flex-start;
 	gap: 1.5rem;
 	margin-bottom: 2rem;
-	padding: 0.5rem;
+	padding: 0.5rem 0;
 	border-bottom: 1px solid var(--bm-border-color);
 }
 
@@ -76,6 +77,11 @@ body {
 
 .main-nav a:hover {
 	background-color: rgba(100, 108, 255, 0.1);
+}
+
+.main-nav a.active {
+	background-color: #646cff;
+	color: white;
 }
 
 #version {
@@ -98,6 +104,34 @@ body {
 		display: flex;
 		justify-content: space-between;
 		margin-top: 2rem;
+
+		button {
+			padding: 0.6rem 1.25rem;
+			border-radius: 4px;
+			border: 1px solid var(--bm-border-color);
+			cursor: pointer;
+			font-weight: 600;
+			font-size: 0.9rem;
+			transition: all 0.2s ease;
+		}
+
+		button[type="submit"] {
+			background-color: #646cff;
+			color: white;
+			border-color: #646cff;
+			&:hover {
+				background-color: #535bf2;
+			}
+		}
+
+		button[type="reset"] {
+			background-color: transparent;
+			color: #888;
+			&:hover {
+				color: #fff;
+				background-color: rgba(255, 255, 255, 0.1);
+			}
+		}
 	}
 }
 
@@ -111,49 +145,158 @@ body {
 		width: 100%;
 		display: flex;
 		justify-content: space-between;
+		align-items: flex-start;
+		padding: 0.75rem;
+		border-radius: 6px;
+		transition: background-color 0.2s ease;
 
-		.bookmarkButtons {
-			opacity: 0;
-			transition: opacity 0.3s ease-in-out;
-		}
 		&:hover {
+			background-color: rgba(255, 255, 255, 0.05);
+
 			.bookmarkButtons {
 				opacity: 1;
 			}
+		}
+
+		.bookmarkContent {
+			display: flex;
+			flex-direction: column;
+			gap: 0.25rem;
+			text-align: left;
+			flex-grow: 1;
+		}
+
+		.bookmarkDescription {
+			font-size: 0.85rem;
+			color: #aaa;
+			line-height: 1.4;
+			max-width: 800px;
+		}
+
+		.bookmarkButtons {
+			opacity: 0;
+			transition: opacity 0.2s ease-in-out;
+			display: flex;
+			gap: 0.5rem;
+			padding-top: 2px;
 		}
 	}
 }
 
 .formField {
 	display: flex;
-	flex-direction: row;
-	margin: 0.5rem 0;
-
-	&.formFieldTextarea {
-		flex-direction: column;
-	}
+	flex-direction: column;
+	margin: 1.25rem 0;
+	gap: 0.4rem;
 
 	label {
-		width: 80px;
-		&::after {
-			content: ":";
-		}
+		font-weight: 600;
+		font-size: 0.75rem;
+		color: #888;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
 	}
 
 	input,
 	textarea {
 		flex-grow: 1;
-		border: 0;
-		border-bottom: 1px solid var(--bm-border-color);
+		border: 1px solid var(--bm-border-color);
+		border-radius: 4px;
+		padding: 0.5rem;
 		font-family: var(--bm-font-family);
-		font-size: 1em;
-		color: var(--bm-text-color);
-		background-color: var(--bm-background-color);
-		transition: border-color 0.3s ease-in-out;
+		font-size: 0.95rem;
+		color: inherit;
+		background-color: rgba(0, 0, 0, 0.2);
+		transition:
+			border-color 0.2s ease,
+			background-color 0.2s ease;
 		&:focus {
 			outline: none;
-			background-color: rgba (128, 128, 128, 0.6);
-			border-color: var(--bm-border-color-focus);
+			background-color: rgba(0, 0, 0, 0.3);
+			border-color: #646cff;
+		}
+	}
+
+	textarea {
+		min-height: 80px;
+		resize: vertical;
+	}
+
+	&.formFieldTags {
+		align-items: flex-start;
+
+		.tagInputGroup {
+			display: flex;
+			width: 100%;
+			gap: 0.5rem;
+
+			input {
+				flex-grow: 1;
+			}
+		}
+
+		.addTagButton {
+			padding: 0 1.25rem;
+			background-color: #444;
+			border: 1px solid var(--bm-border-color);
+			border-radius: 4px;
+			cursor: pointer;
+			font-size: 0.9rem;
+			font-weight: 500;
+			transition: all 0.2s ease;
+			&:hover {
+				background-color: #555;
+				border-color: #888;
+			}
+		}
+
+		.addedTagsSection {
+			margin-top: 1rem;
+			padding: 0.75rem;
+			background-color: rgba(0, 0, 0, 0.1);
+			border-radius: 6px;
+			width: 100%;
+		}
+
+		.tagSectionLabel {
+			font-size: 0.75rem;
+			text-transform: uppercase;
+			letter-spacing: 0.05em;
+			color: #888;
+			margin-bottom: 0.5rem;
+		}
+
+		.tagContainer {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.5rem;
+		}
+
+		.tagBadge {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.4rem;
+			padding: 0.2rem 0.6rem;
+			background-color: #444;
+			border-radius: 4px;
+			font-size: 0.85rem;
+			border: 1px solid var(--bm-border-color);
+		}
+
+		.removeTagBtn {
+			cursor: pointer;
+			color: #888;
+			font-size: 1.2rem;
+			line-height: 1;
+			&:hover {
+				color: #ff4444;
+			}
+		}
+
+		.emptyTagsMsg {
+			color: #666;
+			font-style: italic;
+			font-size: 0.85rem;
 		}
 	}
 }
@@ -177,29 +320,81 @@ body {
 	color: #fff;
 }
 
+.bookmarks-toolbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	margin-bottom: 1rem;
+	gap: 1rem;
+}
+
 .bookmarkButton {
-	display: inline-block;
-	margin-top: 1rem;
+	flex-shrink: 0;
+	background-color: #646cff;
+	color: white;
+	padding: 0.5rem;
+	border-radius: 50%;
+	width: 36px;
+	height: 36px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+	transition: background-color 0.2s ease;
+}
+
+.bookmarkButton:hover {
+	background-color: #535bf2;
+	color: white;
 }
 
 .tags-view {
 	text-align: left;
+	background-color: transparent;
+	border: none;
+	padding: 0;
 }
 
 .tags-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-	gap: 2rem;
-	margin-top: 1.5rem;
+	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+	gap: 1.5rem;
+}
+
+.tag-section {
+	background-color: #333;
+	border: 2px solid var(--bm-border-color);
+	border-radius: 0.5rem;
+	padding: 1.25rem;
+	display: flex;
+	flex-direction: column;
+	transition:
+		transform 0.2s ease,
+		border-color 0.2s ease;
+}
+
+.tag-section:hover {
+	border-color: #444;
+	transform: translateY(-2px);
 }
 
 .tag-section h2 {
-	margin-bottom: 0.5rem;
+	margin: 0 0 0.75rem 0;
+	padding-bottom: 0.5rem;
 	border-bottom: 1px solid var(--bm-border-color);
-	font-size: 1.2rem;
+	font-size: 1rem;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: #fff;
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
 }
 
 .tag-count {
+	background-color: var(--bm-border-color);
+	padding: 2px 8px;
+	border-radius: 10px;
 	font-size: 0.9rem;
 	color: #888;
 	font-weight: normal;
@@ -232,8 +427,7 @@ body {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 0.5rem;
-	margin-bottom: 1.5rem;
-	justify-content: center;
+	justify-content: flex-start;
 }
 
 .tag-filter-item {
@@ -254,4 +448,104 @@ body {
 	background-color: #646cff;
 	color: white;
 	border-color: #646cff;
+}
+
+.settings-view {
+	text-align: left;
+}
+
+.settings-section {
+	margin-bottom: 2rem;
+	padding-bottom: 2rem;
+	border-bottom: 1px solid var(--bm-border-color);
+}
+
+.settings-section:last-of-type {
+	border-bottom: none;
+}
+
+.settings-section h2 {
+	margin-top: 0;
+	font-size: 1.25rem;
+	color: #fff;
+}
+
+.settings-description {
+	color: #888;
+	font-size: 0.9rem;
+	margin-bottom: 1.5rem;
+}
+
+.sync-input-group {
+	display: flex;
+	gap: 0.5rem;
+	width: 100%;
+}
+
+.sync-input-group input {
+	flex-grow: 1;
+}
+
+.sync-input-group button {
+	padding: 0 1rem;
+	background-color: #444;
+	border: 1px solid var(--bm-border-color);
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 0.9rem;
+}
+
+#toggle-creds-visibility {
+	min-width: 64px;
+}
+
+.sync-status {
+	margin-top: 1rem;
+	font-size: 0.85rem;
+	color: #888;
+	font-style: italic;
+}
+
+.settings-actions {
+	display: flex;
+	gap: 1rem;
+	margin-top: 1.5rem;
+}
+
+.settings-actions button {
+	padding: 0.6rem 1.25rem;
+	border-radius: 4px;
+	border: 1px solid var(--bm-border-color);
+	cursor: pointer;
+	font-weight: 600;
+	font-size: 0.9rem;
+	background-color: transparent;
+	color: #ccc;
+	transition: all 0.2s ease;
+}
+
+.settings-actions button:hover:not(:disabled) {
+	background-color: rgba(255, 255, 255, 0.1);
+	color: #fff;
+}
+
+.settings-actions button:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.settings-actions .primary-button {
+	background-color: #646cff;
+	color: white;
+	border-color: #646cff;
+}
+
+.settings-actions .primary-button:hover:not(:disabled) {
+	background-color: #535bf2;
+}
+
+.settings-actions .danger-button:hover:not(:disabled) {
+	background-color: rgba(255, 68, 68, 0.2);
+	border-color: #ff4444;
+	color: #ff4444;
 }
