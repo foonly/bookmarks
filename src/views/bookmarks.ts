@@ -132,6 +132,11 @@ function createButtons(bookmark: Bookmark, filterTag?: string) {
 	const editLink = document.createElement("a");
 	editLink.classList.add("editButton", "icon");
 	editLink.innerHTML = edit;
+	const editTitle = t("bookmarks.edit_button_title", {
+		title: bookmark.title || bookmark.url,
+	});
+	editLink.title = editTitle;
+	editLink.setAttribute("aria-label", editTitle);
 	editLink.href = filterTag
 		? `#/tag/${encodeURIComponent(filterTag)}/edit/${bookmark.created}`
 		: `#/edit/${bookmark.created}`;
@@ -140,6 +145,11 @@ function createButtons(bookmark: Bookmark, filterTag?: string) {
 	const deleteButton = document.createElement("button");
 	deleteButton.classList.add("deleteButton", "icon");
 	deleteButton.innerHTML = remove;
+	const deleteTitle = t("bookmarks.delete_button_title", {
+		title: bookmark.title || bookmark.url,
+	});
+	deleteButton.title = deleteTitle;
+	deleteButton.setAttribute("aria-label", deleteTitle);
 	deleteButton.type = "button";
 	deleteButton.addEventListener("click", () => {
 		if (confirm(t("bookmarks.delete_confirm"))) {
@@ -155,7 +165,9 @@ function createButtons(bookmark: Bookmark, filterTag?: string) {
 function createAddButton(filterTag?: string): HTMLAnchorElement {
 	const link = document.createElement("a");
 	link.classList.add("bookmarkButton", "icon");
-	link.title = t("bookmarks.add_button_title");
+	const label = t("bookmarks.add_button_title");
+	link.title = label;
+	link.setAttribute("aria-label", label);
 	link.innerHTML = add;
 	link.href = filterTag
 		? `#/tag/${encodeURIComponent(filterTag)}/add`

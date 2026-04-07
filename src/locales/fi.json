@@ -7,6 +7,8 @@
 	},
 	"bookmarks": {
 		"add_button_title": "Lisää kirjanmerkki",
+		"edit_button_title": "Muokkaa: {title}",
+		"delete_button_title": "Poista: {title}",
 		"filter_all": "Kaikki",
 		"no_bookmarks": "Ei vielä kirjanmerkkejä",
 		"no_bookmarks_tag": "Ei kirjanmerkkejä tunnisteella \"{tag}\"",

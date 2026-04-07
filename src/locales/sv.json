@@ -7,6 +7,8 @@
 	},
 	"bookmarks": {
 		"add_button_title": "Lägg till bokmärke",
+		"edit_button_title": "Redigera {title}",
+		"delete_button_title": "Ta bort {title}",
 		"filter_all": "Alla",
 		"no_bookmarks": "Inga bokmärken ännu",
 		"no_bookmarks_tag": "Inga bokmärken med taggen \"{tag}\"",

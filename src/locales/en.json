@@ -7,6 +7,8 @@
 	},
 	"bookmarks": {
 		"add_button_title": "Add Bookmark",
+		"edit_button_title": "Edit {title}",
+		"delete_button_title": "Delete {title}",
 		"filter_all": "All",
 		"no_bookmarks": "No bookmarks yet",
 		"no_bookmarks_tag": "No bookmarks with tag \"{tag}\"",

@@ -7,6 +7,8 @@
 	},
 	"bookmarks": {
 		"add_button_title": "Lesezeichen hinzufügen",
+		"edit_button_title": "{title} bearbeiten",
+		"delete_button_title": "{title} löschen",
 		"filter_all": "Alle",
 		"no_bookmarks": "Noch keine Lesezeichen",
 		"no_bookmarks_tag": "Keine Lesezeichen mit dem Tag \"{tag}\"",

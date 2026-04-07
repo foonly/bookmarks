@@ -7,6 +7,8 @@
 	},
 	"bookmarks": {
 		"add_button_title": "Lisa järjehoidja",
+		"edit_button_title": "Muuda: {title}",
+		"delete_button_title": "Kustuta: {title}",
 		"filter_all": "Kõik",
 		"no_bookmarks": "Järjehoidjaid veel pole",
 		"no_bookmarks_tag": "Sildiga \"{tag}\" järjehoidjaid ei leitud",
