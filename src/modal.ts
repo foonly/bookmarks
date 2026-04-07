@@ -1,5 +1,3 @@
-import { router } from "./router.ts";
-
 const dialog: HTMLDialogElement | null =
 	document.querySelector<HTMLDialogElement>("#modalDialog");
 

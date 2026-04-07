@@ -1,5 +1,4 @@
 import { BOOKMARK_FORM_ID, FieldType } from "../constants";
-import { router } from "../router.ts";
 import { getBookmark, updateBookmark } from "../store";
 import { bookmarkSchema } from "../types";
 import { createFormField, createTagsField } from "./formFields";
