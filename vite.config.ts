@@ -68,6 +68,20 @@ export default defineConfig({
 							},
 						},
 					},
+					{
+						urlPattern: /^https:\/\/www\.google\.com\/s2\/favicons.*/i,
+						handler: "StaleWhileRevalidate",
+						options: {
+							cacheName: "site-icons-cache",
+							expiration: {
+								maxEntries: 1000,
+								maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+							},
+							cacheableResponse: {
+								statuses: [0, 200],
+							},
+						},
+					},
 				],
 			},
 		}),

@@ -35,7 +35,12 @@
 			"sync_now": "Jetzt synchronisieren",
 			"syncing": "Synchronisierung läuft...",
 			"last_synced": "Zuletzt synchronisiert: {date}",
-			"generate_confirm": "Das Generieren neuer Zugangsdaten ersetzt Ihre aktuellen. Wenn Sie synchronisierte Daten auf dem Server haben, verlieren Sie den Zugriff darauf, sofern Sie die alten Zugangsdaten nicht gesichert haben. Fortfahren?"
+			"generate_confirm": "Das Erstellen neuer Zugangsdaten ersetzt Ihre aktuellen. Wenn Sie synchronisierte Daten auf dem Server haben, verlieren Sie den Zugriff darauf, es sei denn, Sie haben die alten Zugangsdaten gesichert. Fortfahren?"
+		},
+		"privacy": {
+			"title": "Datenschutz",
+			"fetch_favicons": "Website-Icons abrufen",
+			"fetch_favicons_description": "Wenn aktiviert, fordert die App Website-Icons vom Google-Favicon-Dienst an. Dies kann Google die von Ihnen gesetzten Lesezeichen-Domains offenbaren."
 		},
 		"data": {
 			"title": "Datenverwaltung",

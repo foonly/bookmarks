@@ -3,6 +3,7 @@ import { BOOKMARK_LIST_ID, BOOKMARKS_ID } from "../constants";
 import { getTags, removeBookmark, store } from "../store";
 import type { Bookmark } from "../types";
 import { t } from "../i18n";
+import { cacheBookmarkIcon, getCachedIcon } from "../favicon";
 import remove from "/trash.svg?raw";
 import edit from "/pen-to-square.svg?raw";
 import add from "/bookmark-plus.svg?raw";
@@ -119,10 +120,34 @@ function createTagFilter(activeTag?: string): HTMLElement {
 function createLink(bookmark: Bookmark): HTMLAnchorElement {
 	const link = document.createElement("a");
 	link.title = bookmark.url;
-	link.textContent = bookmark.title ? bookmark.title : bookmark.url;
 	link.href = bookmark.url;
 	link.target = "_blank";
 	link.rel = "noopener noreferrer";
+	link.classList.add("bookmarkLink");
+
+	if (store.fetchFavicons) {
+		const icon = document.createElement("img");
+		icon.alt = "";
+		icon.classList.add("bookmarkIcon");
+		icon.src = getCachedIcon(bookmark.url) || "";
+
+		if (!icon.src) {
+			icon.style.display = "none";
+		}
+
+		link.appendChild(icon);
+
+		cacheBookmarkIcon(bookmark, icon).then(() => {
+			if (icon.src) {
+				icon.style.display = "";
+			}
+		});
+	}
+
+	const text = document.createElement("span");
+	text.textContent = bookmark.title ? bookmark.title : bookmark.url;
+	link.appendChild(text);
+
 	return link;
 }
 function createButtons(bookmark: Bookmark, filterTag?: string) {

@@ -5,6 +5,7 @@ export const bookmarkSchema = z.object({
 	url: z.url(),
 	description: z.string().default(""),
 	tags: z.array(z.string()).default([]),
+
 	created: z.number().default(0),
 	modified: z.number().default(0),
 	deleted: z.boolean().default(false),
@@ -16,6 +17,7 @@ export const storageSchema = z.object({
 	favoriteTags: z.array(z.string()).default([]),
 	bookmarks: z.array(bookmarkSchema).default([]),
 	language: z.string().optional(),
+	fetchFavicons: z.boolean().default(false),
 	sync: z
 		.object({
 			enabled: z.boolean().default(false),

@@ -37,6 +37,11 @@
 			"last_synced": "Last synced: {date}",
 			"generate_confirm": "Generating new credentials will replace your current ones. If you have synced data on the server, you will lose access to it unless you have backed up the old credentials. Continue?"
 		},
+		"privacy": {
+			"title": "Privacy",
+			"fetch_favicons": "Fetch site icons",
+			"fetch_favicons_description": "When enabled, the app will request site icons from Google's favicon service. This may reveal the domains you have bookmarked to Google."
+		},
 		"data": {
 			"title": "Data Management",
 			"export": "Export JSON",

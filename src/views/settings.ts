@@ -72,6 +72,23 @@ export function renderSettingsView(): HTMLElement {
 	`;
 	container.appendChild(languageSection);
 
+	// Privacy Section
+	const privacySection = document.createElement("section");
+	privacySection.classList.add("settings-section");
+	const fetchFavicons = store.fetchFavicons ?? false;
+
+	privacySection.innerHTML = `
+		<h2>${t("settings.privacy.title")}</h2>
+		<p class="settings-description">
+			${t("settings.privacy.fetch_favicons_description")}
+		</p>
+		<div class="formField" style="flex-direction: row; align-items: center; gap: 0.75rem;">
+			<input type="checkbox" id="fetch-favicons-toggle" ${fetchFavicons ? "checked" : ""} style="width: auto; margin: 0;">
+			<label for="fetch-favicons-toggle" style="margin: 0; cursor: pointer;">${t("settings.privacy.fetch_favicons")}</label>
+		</div>
+	`;
+	container.appendChild(privacySection);
+
 	// Data Management Section
 	const dataSection = document.createElement("section");
 	dataSection.classList.add("settings-section");
@@ -107,6 +124,13 @@ function setupEventListeners(container: HTMLElement) {
 	const purgeBtn = container.querySelector("#purge-tombstones");
 	const languageSelect =
 		container.querySelector<HTMLSelectElement>("#language-select");
+	const fetchFaviconsToggle = container.querySelector<HTMLInputElement>(
+		"#fetch-favicons-toggle",
+	);
+
+	fetchFaviconsToggle?.addEventListener("change", () => {
+		updateStore({ fetchFavicons: fetchFaviconsToggle.checked });
+	});
 
 	languageSelect?.addEventListener("change", async () => {
 		const newLang = languageSelect.value;

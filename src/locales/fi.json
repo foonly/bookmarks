@@ -37,6 +37,11 @@
 			"last_synced": "Viimeksi synkronoitu: {date}",
 			"generate_confirm": "Uusien tunnustietojen luominen korvaa nykyiset. Jos sinulla on synkronoitua dataa palvelimella, menetät pääsyn siihen, ellet ole varmuuskopioinut vanhoja tunnustietoja. Jatketaanko?"
 		},
+		"privacy": {
+			"title": "Yksityisyys",
+			"fetch_favicons": "Hae sivustojen kuvakkeet",
+			"fetch_favicons_description": "Kun tämä on käytössä, sovellus pyytää sivustojen kuvakkeet Googlen favicon-palvelusta. Tämä saattaa paljastaa tallentamasi verkkotunnukset Googlelle."
+		},
 		"data": {
 			"title": "Tiedonhallinta",
 			"export": "Vie JSON",

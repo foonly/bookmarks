@@ -486,6 +486,27 @@ body {
 	}
 }
 
+.bookmarkLink {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	text-decoration: none;
+	color: var(--bm-primary-color);
+	font-weight: 600;
+}
+
+.bookmarkLink:hover {
+	text-decoration: underline;
+}
+
+.bookmarkIcon {
+	width: 18px;
+	height: 18px;
+	flex-shrink: 0;
+	object-fit: contain;
+	border-radius: 2px;
+}
+
 .card {
 	min-width: 300px;
 	border: 2px solid var(--bm-border-color);

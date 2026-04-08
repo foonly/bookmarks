@@ -37,6 +37,11 @@
 			"last_synced": "Senast synkroniserad: {date}",
 			"generate_confirm": "Att generera nya uppgifter kommer att ersätta dina nuvarande. Om du har synkroniserad data på servern kommer du att förlora åtkomst till den om du inte har säkerhetskopierat de gamla uppgifterna. Fortsätt?"
 		},
+		"privacy": {
+			"title": "Integritet",
+			"fetch_favicons": "Hämta webbplatsikoner",
+			"fetch_favicons_description": "När detta är aktiverat kommer appen att begära webbplatsikoner från Googles favicon-tjänst. Detta kan avslöja vilka domäner du har bokmärkt för Google."
+		},
 		"data": {
 			"title": "Datahantering",
 			"export": "Exportera JSON",
