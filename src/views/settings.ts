@@ -235,27 +235,21 @@ function renderPrivacySection(): HTMLElement {
 
 	const formField = document.createElement("div");
 	formField.classList.add("formField");
-	Object.assign(formField.style, {
-		flexDirection: "row",
-		alignItems: "center",
-		gap: "0.75rem",
-	});
+	formField.classList.add("formRow");
+
+	const label = document.createElement("label");
+	label.htmlFor = "fetch-favicons-toggle";
+	label.textContent = t("settings.privacy.fetch_favicons");
+	formField.appendChild(label);
 
 	const toggle = document.createElement("input");
 	toggle.type = "checkbox";
 	toggle.id = "fetch-favicons-toggle";
 	toggle.checked = fetchFavicons;
-	Object.assign(toggle.style, { width: "auto", margin: "0" });
 	toggle.onchange = () => {
 		updateStore({ fetchFavicons: toggle.checked });
 	};
 	formField.appendChild(toggle);
-
-	const label = document.createElement("label");
-	label.htmlFor = "fetch-favicons-toggle";
-	Object.assign(label.style, { margin: "0", cursor: "pointer" });
-	label.textContent = t("settings.privacy.fetch_favicons");
-	formField.appendChild(label);
 
 	section.appendChild(formField);
 	return section;
