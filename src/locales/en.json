@@ -40,7 +40,7 @@
 		"privacy": {
 			"title": "Privacy",
 			"fetch_favicons": "Fetch site icons",
-			"fetch_favicons_description": "When enabled, the app will request site icons from Google's favicon service. This may reveal the domains you have bookmarked to Google."
+			"fetch_favicons_description": "When enabled, the app will request site icons from favicon.im. This may reveal the domains you have bookmarked to that service."
 		},
 		"data": {
 			"title": "Data Management",

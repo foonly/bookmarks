@@ -15,6 +15,10 @@ import {
 	getCurrentLocale,
 	initI18n,
 } from "../i18n";
+import eye from "/eye.svg?raw";
+import eyeDash from "/eye-dash.svg?raw";
+import copy from "/copy.svg?raw";
+import dice from "/dice.svg?raw";
 
 /**
  * Re-renders the settings view in the main content area.
@@ -72,13 +76,19 @@ function renderSyncSection(): HTMLElement {
 	const toggleVisibilityBtn = document.createElement("button");
 	toggleVisibilityBtn.type = "button";
 	toggleVisibilityBtn.id = "toggle-creds-visibility";
-	toggleVisibilityBtn.textContent = t("settings.sync.show");
+	toggleVisibilityBtn.classList.add("icon");
+	toggleVisibilityBtn.innerHTML = eye;
+	toggleVisibilityBtn.title = t("settings.sync.show");
+	toggleVisibilityBtn.setAttribute("aria-label", t("settings.sync.show"));
 	toggleVisibilityBtn.onclick = () => {
 		const isPassword = input.type === "password";
 		input.type = isPassword ? "text" : "password";
-		toggleVisibilityBtn.textContent = isPassword
+		toggleVisibilityBtn.innerHTML = isPassword ? eyeDash : eye;
+		const newLabel = isPassword
 			? t("settings.sync.hide")
 			: t("settings.sync.show");
+		toggleVisibilityBtn.title = newLabel;
+		toggleVisibilityBtn.setAttribute("aria-label", newLabel);
 	};
 	inputGroup.appendChild(toggleVisibilityBtn);
 
@@ -86,15 +96,21 @@ function renderSyncSection(): HTMLElement {
 		const copyBtn = document.createElement("button");
 		copyBtn.type = "button";
 		copyBtn.id = "copy-creds";
-		copyBtn.textContent = t("settings.sync.copy");
+		copyBtn.classList.add("icon");
+		copyBtn.innerHTML = copy;
+		copyBtn.title = t("settings.sync.copy");
+		copyBtn.setAttribute("aria-label", t("settings.sync.copy"));
 		copyBtn.onclick = () => {
 			const creds = store.sync?.credentials ?? "";
 			if (creds) {
 				navigator.clipboard.writeText(creds).then(() => {
-					const originalText = copyBtn.textContent;
-					copyBtn.textContent = t("settings.sync.copied");
+					const originalTitle = copyBtn.title;
+					const originalContent = copyBtn.innerHTML;
+					copyBtn.title = t("settings.sync.copied");
+					copyBtn.innerHTML = `<span style="font-size: 0.75rem; font-weight: bold; margin: 0 0.5rem;">${t("settings.sync.copied")}</span>`;
 					setTimeout(() => {
-						copyBtn.textContent = originalText;
+						copyBtn.title = originalTitle;
+						copyBtn.innerHTML = originalContent;
 					}, 2000);
 				});
 			}
@@ -104,7 +120,10 @@ function renderSyncSection(): HTMLElement {
 		const generateBtn = document.createElement("button");
 		generateBtn.type = "button";
 		generateBtn.id = "generate-creds";
-		generateBtn.textContent = t("settings.sync.generate_new");
+		generateBtn.classList.add("icon");
+		generateBtn.innerHTML = dice;
+		generateBtn.title = t("settings.sync.generate_new");
+		generateBtn.setAttribute("aria-label", t("settings.sync.generate_new"));
 		generateBtn.onclick = () => {
 			const hasCredentials = !!store.sync?.credentials;
 			if (!hasCredentials || confirm(t("settings.sync.generate_confirm"))) {

@@ -40,7 +40,7 @@
 		"privacy": {
 			"title": "Yksityisyys",
 			"fetch_favicons": "Hae sivustojen kuvakkeet",
-			"fetch_favicons_description": "Kun tämä on käytössä, sovellus pyytää sivustojen kuvakkeet Googlen favicon-palvelusta. Tämä saattaa paljastaa tallentamasi verkkotunnukset Googlelle."
+			"fetch_favicons_description": "Kun tämä on käytössä, sovellus pyytää sivustojen kuvakkeet favicon.im-palvelusta. Tämä saattaa paljastaa tallentamasi verkkotunnukset kyseiselle palvelulle."
 		},
 		"data": {
 			"title": "Tiedonhallinta",

@@ -1,4 +1,4 @@
-import { store, getTagsWithCounts } from "../store";
+import { store, getTagsWithCounts, incrementClick } from "../store";
 import { t } from "../i18n";
 
 export function renderTagsView(): HTMLElement {
@@ -33,7 +33,14 @@ export function renderTagsView(): HTMLElement {
 
 		const bookmarksWithTag = store.bookmarks
 			.filter((b) => !b.deleted && b.tags.includes(tag))
-			.sort((a, b) => a.title.localeCompare(b.title));
+			.sort((a, b) => {
+				const clicksA = a.clicks || 0;
+				const clicksB = b.clicks || 0;
+				if (clicksB !== clicksA) {
+					return clicksB - clicksA;
+				}
+				return a.title.localeCompare(b.title);
+			});
 
 		bookmarksWithTag.forEach((bookmark) => {
 			const item = document.createElement("li");
@@ -42,6 +49,10 @@ export function renderTagsView(): HTMLElement {
 			link.target = "_blank";
 			link.rel = "noopener noreferrer";
 			link.textContent = bookmark.title || bookmark.url;
+
+			link.addEventListener("click", () => {
+				incrementClick(bookmark.created);
+			});
 
 			const editLink = document.createElement("a");
 			editLink.href = `#/tags/edit/${bookmark.created}`;

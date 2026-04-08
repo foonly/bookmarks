@@ -40,7 +40,7 @@
 		"privacy": {
 			"title": "Integritet",
 			"fetch_favicons": "Hämta webbplatsikoner",
-			"fetch_favicons_description": "När detta är aktiverat kommer appen att begära webbplatsikoner från Googles favicon-tjänst. Detta kan avslöja vilka domäner du har bokmärkt för Google."
+			"fetch_favicons_description": "När detta är aktiverat kommer appen att begära webbplatsikoner från favicon.im. Detta kan avslöja vilka domäner du har bokmärkt för den tjänsten."
 		},
 		"data": {
 			"title": "Datahantering",

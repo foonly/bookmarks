@@ -40,7 +40,7 @@
 		"privacy": {
 			"title": "Datenschutz",
 			"fetch_favicons": "Website-Icons abrufen",
-			"fetch_favicons_description": "Wenn aktiviert, fordert die App Website-Icons vom Google-Favicon-Dienst an. Dies kann Google die von Ihnen gesetzten Lesezeichen-Domains offenbaren."
+			"fetch_favicons_description": "Wenn aktiviert, fordert die App Website-Icons von favicon.im an. Dies kann diesem Dienst die von Ihnen gesetzten Lesezeichen-Domains offenbaren."
 		},
 		"data": {
 			"title": "Datenverwaltung",

@@ -1,9 +1,9 @@
 import { BOOKMARK_LIST_ID, BOOKMARKS_ID } from "../constants";
 
-import { getTags, removeBookmark, store } from "../store";
+import { getTags, incrementClick, removeBookmark, store } from "../store";
 import type { Bookmark } from "../types";
 import { t } from "../i18n";
-import { cacheBookmarkIcon, getCachedIcon } from "../favicon";
+import { getIconUrl } from "../favicon";
 import remove from "/trash.svg?raw";
 import edit from "/pen-to-square.svg?raw";
 import add from "/bookmark-plus.svg?raw";
@@ -52,6 +52,11 @@ export function renderBookmarks(filterTag?: string): void {
 		bookmarksList.appendChild(noBookmarks);
 	} else {
 		const sortedBookmarks = filteredBookmarks.sort((a, b) => {
+			const clicksA = a.clicks || 0;
+			const clicksB = b.clicks || 0;
+			if (clicksB !== clicksA) {
+				return clicksB - clicksA;
+			}
 			return a.title.localeCompare(b.title);
 		});
 		sortedBookmarks.forEach((bookmark) => {
@@ -125,23 +130,23 @@ function createLink(bookmark: Bookmark): HTMLAnchorElement {
 	link.rel = "noopener noreferrer";
 	link.classList.add("bookmarkLink");
 
+	link.addEventListener("click", () => {
+		incrementClick(bookmark.created);
+	});
+
 	if (store.fetchFavicons) {
-		const icon = document.createElement("img");
-		icon.alt = "";
-		icon.classList.add("bookmarkIcon");
-		icon.src = getCachedIcon(bookmark.url) || "";
-
-		if (!icon.src) {
-			icon.style.display = "none";
+		const iconUrl = getIconUrl(bookmark.url);
+		if (iconUrl) {
+			const icon = document.createElement("img");
+			icon.alt = "";
+			icon.classList.add("bookmarkIcon");
+			icon.src = iconUrl;
+			icon.loading = "lazy";
+			icon.addEventListener("error", () => {
+				icon.src = "/bookmark.svg";
+			});
+			link.appendChild(icon);
 		}
-
-		link.appendChild(icon);
-
-		cacheBookmarkIcon(bookmark, icon).then(() => {
-			if (icon.src) {
-				icon.style.display = "";
-			}
-		});
 	}
 
 	const text = document.createElement("span");

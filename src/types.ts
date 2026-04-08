@@ -9,6 +9,7 @@ export const bookmarkSchema = z.object({
 	created: z.number().default(0),
 	modified: z.number().default(0),
 	deleted: z.boolean().default(false),
+	clicks: z.number().default(0),
 });
 
 export type Bookmark = z.infer<typeof bookmarkSchema>;

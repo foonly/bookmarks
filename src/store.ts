@@ -70,6 +70,21 @@ export function getBookmark(id: number): Bookmark | undefined {
 }
 
 /**
+ * Increments the click counter for a bookmark.
+ *
+ * @param {number} id The creation timestamp (id) of the bookmark.
+ * @returns {void}
+ */
+export function incrementClick(id: number): void {
+	const bookmark = store.bookmarks.find((b) => b.created === id);
+	if (bookmark) {
+		bookmark.clicks = (bookmark.clicks || 0) + 1;
+		bookmark.modified = Date.now();
+		saveStore();
+	}
+}
+
+/**
  * Removes a bookmark from the store by its creation timestamp.
  * Marks it as deleted and updates the modified timestamp for syncing.
  *
