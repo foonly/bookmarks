@@ -1,8 +1,19 @@
 # Changelog
 
-## 0.9.0 (2026-04-07)
+## 0.10.0 (2026-04-09)
 
 #### Features
+
+- icons: Switch favicon service to favicon.im (c632842)
+- assets: Update SVG icons and add favicon (1b18b56)
+- settings: Add favicons toggle and associated icons (8376816)
+- settings: Refactor settings view rendering (2e988b6)
+- icons: Implement and display website favicons (facb2f4)
+
+## v0.9.0 (2026-04-07)
+
+#### Features
+
 - locale: Add dynamic titles for bookmark edit and delete buttons (5a65137)
 - seo: Add meta description and robots.txt (a8b5e18)
 - style: Add high contrast mode styles (fab3b2d)
@@ -10,16 +21,19 @@
 ### v0.8.2 (2026-04-07)
 
 #### Refactor
+
 - i18n: Reorder supported locales (fdc5b9c)
 
 ### v0.8.1 (2026-04-07)
 
 #### Bug Fixes
+
 - i18n: Reorder locale labels alphabetically (b264662)
 
 ## v0.8.0 (2026-04-07)
 
 #### Features
+
 - about: add detailed content to about view (f4ed8f3)
 - sync: Update sync credentials terminology and descriptions (ec47a86)
 - i18n: Implement internationalization support (3a79f9d)
@@ -27,49 +41,60 @@
 ## v0.7.0 (2026-04-07)
 
 #### Features
+
 - sync: Include registration secret when remote data is not found (415d42b)
 - sync: Implement HMAC-SHA256 authentication for backend uploads (934d89f)
 
 ## v0.6.0 (2026-04-07)
 
 #### Features
+
 - views: Add About view and navigation (474c170)
 - bookmark: Display tags for bookmarks (454677a)
 - style: Introduce CSS variables for theming (6c402dd)
 
 #### Bug Fixes
+
 - bookmark: Add rel="noopener noreferrer" to external links (9d916f7)
 
 ## v0.5.0 (2026-04-07)
 
 #### Features
+
 - pwa: Add PWA support and offline capabilities (7155d93)
 
 #### Refactor
+
 - settings: Remove redundant title element (ab8ce03)
 
 ## v0.4.0 (2026-04-07)
 
 #### Features
+
 - config: Add foonver configuration (45e705b)
 
 #### Continuous Integration
+
 - release: Set VITE_API_BASE in release workflow (98bb2c0)
 
 ### v0.3.1 (2026-04-07)
 
 #### Bug Fixes
+
 - types: Ensure default for storage credentials object (4052ea8)
 
 #### Continuous Integration
+
 - release: Use variables for deployment details (14ea021)
 
 #### Maintenance
+
 - Remove unused router import from modal and bookmarkForm (6c7f2c1)
 
 ## v0.3.0 (2026-04-07)
 
 #### Features
+
 - docs: Add backend specification and update README (7f34634)
 - sync: Prevent concurrent sync operations and add debounce (24d83f3)
 - store: Implement soft delete and tombstone purging (1c49ab7)
@@ -77,10 +102,12 @@
 - router: Implement client-side routing (194ff08)
 
 #### Bug Fixes
+
 - style: Improve responsiveness and accessibility of UI elements (1cfa164)
 - Reverse button bar direction (83ef8ff)
 
 #### Maintenance
+
 - rename readme.md to README.md (b2adc6b)
 
 ### Misc
@@ -94,6 +121,7 @@
 ## v0.2.0 (2025-09-30)
 
 #### Features
+
 - Remove counter and update bookmark form (8fc3c79)
 - Improve tag input and add tag suggestions (a2a0f10)
 - Add POC tags input to bookmark form (f001796)
@@ -101,26 +129,31 @@
 ### v0.1.5 (2025-09-29)
 
 #### Continuous Integration
+
 - Fix rsync path (4b55ea4)
 
 ### v0.1.4 (2025-09-29)
 
 #### Continuous Integration
+
 - Test deployment options (989f702)
 
 ### v0.1.3 (2025-09-28)
 
 #### Continuous Integration
+
 - Deploy files with trailing slash (537d461)
 
 ### v0.1.2 (2025-09-28)
 
 #### Features
+
 - Upgrade dependencies (2f5233e)
 
 ### v0.1.1 (2025-09-28)
 
 #### Features
+
 - Improve bookmark form and add some styling (169ece8)
 - Add bookmark management features (f47ae44)
 - Implement bookmark form and store updates (4d1201c)
