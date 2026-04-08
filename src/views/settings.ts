@@ -16,156 +16,100 @@ import {
 	initI18n,
 } from "../i18n";
 
-export function renderSettingsView(): HTMLElement {
-	const container = document.createElement("div");
-	container.classList.add("card", "settings-view");
+/**
+ * Re-renders the settings view in the main content area.
+ */
+function reRender() {
+	const mainContent = document.querySelector("#main-content");
+	if (mainContent) {
+		mainContent.replaceChildren(renderSettingsView());
+	}
+}
 
-	// Sync Section
-	const syncSection = document.createElement("section");
-	syncSection.classList.add("settings-section");
+function renderSyncSection(): HTMLElement {
+	const section = document.createElement("section");
+	section.classList.add("settings-section");
 
 	const syncEnabled = store.sync?.enabled ?? false;
 	const syncCreds = store.sync?.credentials ?? "";
 
-	syncSection.innerHTML = `
-		<h2>${t("settings.sync.title")}</h2>
-		<p class="settings-description">
-			${t("settings.sync.description")}
-		</p>
-		<div class="formField">
-			<label for="sync-creds">${t("settings.sync.credentials_label")}</label>
-			<div class="sync-input-group">
-				<input type="password" id="sync-creds" placeholder="${t("settings.sync.credentials_placeholder")}" value="${syncCreds}">
-				<button type="button" id="toggle-creds-visibility">${t("settings.sync.show")}</button>
-				${
-					syncEnabled
-						? `<button type="button" id="copy-creds">${t("settings.sync.copy")}</button>`
-						: `<button type="button" id="generate-creds">${t("settings.sync.generate_new")}</button>`
-				}
-			</div>
-		</div>
-		<div class="settings-actions">
-			<button type="button" class="${syncEnabled ? "danger-button" : "primary-button"}" id="toggle-sync">
-				${syncEnabled ? t("settings.sync.disable_sync") : t("settings.sync.enable_sync")}
-			</button>
-			<button type="button" id="sync-now" ${!syncEnabled ? "disabled" : ""}>${t("settings.sync.sync_now")}</button>
-		</div>
-		${store.sync?.lastSynced ? `<p class="sync-status">${t("settings.sync.last_synced", { date: formatDate(store.sync.lastSynced) })}</p>` : ""}
-	`;
-	container.appendChild(syncSection);
+	const title = document.createElement("h2");
+	title.textContent = t("settings.sync.title");
+	section.appendChild(title);
 
-	// Language Section
-	const languageSection = document.createElement("section");
-	languageSection.classList.add("settings-section");
+	const description = document.createElement("p");
+	description.classList.add("settings-description");
+	description.textContent = t("settings.sync.description");
+	section.appendChild(description);
 
-	const currentLocale = getCurrentLocale();
-	languageSection.innerHTML = `
-		<h2>${t("settings.language")}</h2>
-		<div class="formField">
-			<select id="language-select">
-				${SUPPORTED_LOCALES.map(
-					(locale) =>
-						`<option value="${locale}" ${locale === currentLocale ? "selected" : ""}>${localeLabels[locale]}</option>`,
-				).join("")}
-			</select>
-		</div>
-	`;
-	container.appendChild(languageSection);
+	const formField = document.createElement("div");
+	formField.classList.add("formField");
 
-	// Privacy Section
-	const privacySection = document.createElement("section");
-	privacySection.classList.add("settings-section");
-	const fetchFavicons = store.fetchFavicons ?? false;
+	const label = document.createElement("label");
+	label.htmlFor = "sync-creds";
+	label.textContent = t("settings.sync.credentials_label");
+	formField.appendChild(label);
 
-	privacySection.innerHTML = `
-		<h2>${t("settings.privacy.title")}</h2>
-		<p class="settings-description">
-			${t("settings.privacy.fetch_favicons_description")}
-		</p>
-		<div class="formField" style="flex-direction: row; align-items: center; gap: 0.75rem;">
-			<input type="checkbox" id="fetch-favicons-toggle" ${fetchFavicons ? "checked" : ""} style="width: auto; margin: 0;">
-			<label for="fetch-favicons-toggle" style="margin: 0; cursor: pointer;">${t("settings.privacy.fetch_favicons")}</label>
-		</div>
-	`;
-	container.appendChild(privacySection);
+	const inputGroup = document.createElement("div");
+	inputGroup.classList.add("sync-input-group");
 
-	// Data Management Section
-	const dataSection = document.createElement("section");
-	dataSection.classList.add("settings-section");
-	dataSection.innerHTML = `
-		<h2>${t("settings.data.title")}</h2>
-		<div class="settings-actions">
-			<button type="button" id="export-data">${t("settings.data.export")}</button>
-			<button type="button" id="import-data">${t("settings.data.import")}</button>
-			<button type="button" id="purge-tombstones" title="${t("settings.data.purge_tooltip")}">${t("settings.data.purge")}</button>
-			<button type="button" class="danger-button" id="clear-data">${t("settings.data.clear_all")}</button>
-		</div>
-	`;
-	container.appendChild(dataSection);
-
-	// Event Listeners
-	setupEventListeners(container);
-
-	return container;
-}
-
-function setupEventListeners(container: HTMLElement) {
-	const syncInput = container.querySelector<HTMLInputElement>("#sync-creds");
-	const toggleVisibilityBtn = container.querySelector(
-		"#toggle-creds-visibility",
-	);
-	const generateBtn = container.querySelector("#generate-creds");
-	const copyBtn = container.querySelector("#copy-creds");
-	const toggleSyncBtn = container.querySelector("#toggle-sync");
-	const syncNowBtn = container.querySelector("#sync-now");
-	const clearBtn = container.querySelector("#clear-data");
-	const exportBtn = container.querySelector("#export-data");
-	const importBtn = container.querySelector("#import-data");
-	const purgeBtn = container.querySelector("#purge-tombstones");
-	const languageSelect =
-		container.querySelector<HTMLSelectElement>("#language-select");
-	const fetchFaviconsToggle = container.querySelector<HTMLInputElement>(
-		"#fetch-favicons-toggle",
-	);
-
-	fetchFaviconsToggle?.addEventListener("change", () => {
-		updateStore({ fetchFavicons: fetchFaviconsToggle.checked });
-	});
-
-	languageSelect?.addEventListener("change", async () => {
-		const newLang = languageSelect.value;
-		updateStore({ language: newLang });
-		await initI18n(newLang);
-		// Reload to update navigation and other parts
-		window.location.reload();
-	});
-
-	syncInput?.addEventListener("change", () => {
+	const input = document.createElement("input");
+	input.type = "password";
+	input.id = "sync-creds";
+	input.placeholder = t("settings.sync.credentials_placeholder");
+	input.value = syncCreds;
+	input.onchange = () => {
 		updateStore({
 			sync: {
 				...store.sync,
-				credentials: syncInput.value,
+				credentials: input.value,
 				lastSynced: 0,
 			},
 		});
-	});
+	};
+	inputGroup.appendChild(input);
 
-	toggleVisibilityBtn?.addEventListener("click", () => {
-		if (syncInput) {
-			const isPassword = syncInput.type === "password";
-			syncInput.type = isPassword ? "text" : "password";
-			toggleVisibilityBtn.textContent = isPassword
-				? t("settings.sync.hide")
-				: t("settings.sync.show");
-		}
-	});
+	const toggleVisibilityBtn = document.createElement("button");
+	toggleVisibilityBtn.type = "button";
+	toggleVisibilityBtn.id = "toggle-creds-visibility";
+	toggleVisibilityBtn.textContent = t("settings.sync.show");
+	toggleVisibilityBtn.onclick = () => {
+		const isPassword = input.type === "password";
+		input.type = isPassword ? "text" : "password";
+		toggleVisibilityBtn.textContent = isPassword
+			? t("settings.sync.hide")
+			: t("settings.sync.show");
+	};
+	inputGroup.appendChild(toggleVisibilityBtn);
 
-	generateBtn?.addEventListener("click", () => {
-		const hasCredentials = !!store.sync?.credentials;
-		if (!hasCredentials || confirm(t("settings.sync.generate_confirm"))) {
-			const creds = generateCredentials();
-			if (syncInput) {
-				syncInput.value = creds;
+	if (syncEnabled) {
+		const copyBtn = document.createElement("button");
+		copyBtn.type = "button";
+		copyBtn.id = "copy-creds";
+		copyBtn.textContent = t("settings.sync.copy");
+		copyBtn.onclick = () => {
+			const creds = store.sync?.credentials ?? "";
+			if (creds) {
+				navigator.clipboard.writeText(creds).then(() => {
+					const originalText = copyBtn.textContent;
+					copyBtn.textContent = t("settings.sync.copied");
+					setTimeout(() => {
+						copyBtn.textContent = originalText;
+					}, 2000);
+				});
+			}
+		};
+		inputGroup.appendChild(copyBtn);
+	} else {
+		const generateBtn = document.createElement("button");
+		generateBtn.type = "button";
+		generateBtn.id = "generate-creds";
+		generateBtn.textContent = t("settings.sync.generate_new");
+		generateBtn.onclick = () => {
+			const hasCredentials = !!store.sync?.credentials;
+			if (!hasCredentials || confirm(t("settings.sync.generate_confirm"))) {
+				const creds = generateCredentials();
+				input.value = creds;
 				updateStore({
 					sync: {
 						...store.sync,
@@ -174,23 +118,24 @@ function setupEventListeners(container: HTMLElement) {
 					},
 				});
 			}
-		}
-	});
+		};
+		inputGroup.appendChild(generateBtn);
+	}
 
-	copyBtn?.addEventListener("click", () => {
-		const creds = store.sync?.credentials ?? "";
-		if (creds) {
-			navigator.clipboard.writeText(creds).then(() => {
-				const originalText = copyBtn.textContent;
-				copyBtn.textContent = t("settings.sync.copied");
-				setTimeout(() => {
-					copyBtn.textContent = originalText;
-				}, 2000);
-			});
-		}
-	});
+	formField.appendChild(inputGroup);
+	section.appendChild(formField);
 
-	toggleSyncBtn?.addEventListener("click", () => {
+	const actions = document.createElement("div");
+	actions.classList.add("settings-actions");
+
+	const toggleSyncBtn = document.createElement("button");
+	toggleSyncBtn.type = "button";
+	toggleSyncBtn.id = "toggle-sync";
+	toggleSyncBtn.classList.add(syncEnabled ? "danger-button" : "primary-button");
+	toggleSyncBtn.textContent = syncEnabled
+		? t("settings.sync.disable_sync")
+		: t("settings.sync.enable_sync");
+	toggleSyncBtn.onclick = () => {
 		const newEnabledState = !(store.sync?.enabled ?? false);
 		updateStore({
 			sync: {
@@ -198,16 +143,139 @@ function setupEventListeners(container: HTMLElement) {
 				enabled: newEnabledState,
 			},
 		});
-		// Re-render view to update button states
-		const mainContent = document.querySelector("#main-content");
-		if (mainContent) {
-			mainContent.innerHTML = "";
-			mainContent.append(renderSettingsView());
+		reRender();
+	};
+	actions.appendChild(toggleSyncBtn);
+
+	const syncNowBtn = document.createElement("button");
+	syncNowBtn.type = "button";
+	syncNowBtn.id = "sync-now";
+	syncNowBtn.textContent = t("settings.sync.sync_now");
+	syncNowBtn.disabled = !syncEnabled;
+	syncNowBtn.onclick = async () => {
+		syncNowBtn.disabled = true;
+		syncNowBtn.textContent = t("settings.sync.syncing");
+
+		const result = await sync();
+
+		syncNowBtn.disabled = false;
+		syncNowBtn.textContent = t("settings.sync.sync_now");
+
+		if (result.success) {
+			reRender();
+		} else {
+			alert(result.message);
 		}
+	};
+	actions.appendChild(syncNowBtn);
+
+	section.appendChild(actions);
+
+	if (store.sync?.lastSynced) {
+		const status = document.createElement("p");
+		status.classList.add("sync-status");
+		status.textContent = t("settings.sync.last_synced", {
+			date: formatDate(store.sync.lastSynced),
+		});
+		section.appendChild(status);
+	}
+
+	return section;
+}
+
+function renderLanguageSection(): HTMLElement {
+	const section = document.createElement("section");
+	section.classList.add("settings-section");
+
+	const title = document.createElement("h2");
+	title.textContent = t("settings.language");
+	section.appendChild(title);
+
+	const currentLocale = getCurrentLocale();
+	const formField = document.createElement("div");
+	formField.classList.add("formField");
+
+	const select = document.createElement("select");
+	select.id = "language-select";
+	select.onchange = async () => {
+		const newLang = select.value;
+		updateStore({ language: newLang });
+		await initI18n(newLang);
+		window.location.reload();
+	};
+
+	SUPPORTED_LOCALES.forEach((locale) => {
+		const option = document.createElement("option");
+		option.value = locale;
+		option.textContent = localeLabels[locale];
+		if (locale === currentLocale) {
+			option.selected = true;
+		}
+		select.appendChild(option);
 	});
 
-	exportBtn?.addEventListener("click", () => {
-		// Create a clean export without sync metadata
+	formField.appendChild(select);
+	section.appendChild(formField);
+	return section;
+}
+
+function renderPrivacySection(): HTMLElement {
+	const section = document.createElement("section");
+	section.classList.add("settings-section");
+	const fetchFavicons = store.fetchFavicons ?? false;
+
+	const title = document.createElement("h2");
+	title.textContent = t("settings.privacy.title");
+	section.appendChild(title);
+
+	const description = document.createElement("p");
+	description.classList.add("settings-description");
+	description.textContent = t("settings.privacy.fetch_favicons_description");
+	section.appendChild(description);
+
+	const formField = document.createElement("div");
+	formField.classList.add("formField");
+	Object.assign(formField.style, {
+		flexDirection: "row",
+		alignItems: "center",
+		gap: "0.75rem",
+	});
+
+	const toggle = document.createElement("input");
+	toggle.type = "checkbox";
+	toggle.id = "fetch-favicons-toggle";
+	toggle.checked = fetchFavicons;
+	Object.assign(toggle.style, { width: "auto", margin: "0" });
+	toggle.onchange = () => {
+		updateStore({ fetchFavicons: toggle.checked });
+	};
+	formField.appendChild(toggle);
+
+	const label = document.createElement("label");
+	label.htmlFor = "fetch-favicons-toggle";
+	Object.assign(label.style, { margin: "0", cursor: "pointer" });
+	label.textContent = t("settings.privacy.fetch_favicons");
+	formField.appendChild(label);
+
+	section.appendChild(formField);
+	return section;
+}
+
+function renderDataSection(): HTMLElement {
+	const section = document.createElement("section");
+	section.classList.add("settings-section");
+
+	const title = document.createElement("h2");
+	title.textContent = t("settings.data.title");
+	section.appendChild(title);
+
+	const actions = document.createElement("div");
+	actions.classList.add("settings-actions");
+
+	const exportBtn = document.createElement("button");
+	exportBtn.type = "button";
+	exportBtn.textContent = t("settings.data.export");
+	exportBtn.onclick = () => {
 		const exportData = {
 			favoriteTags: store.favoriteTags,
 			bookmarks: store.bookmarks,
@@ -215,19 +283,20 @@ function setupEventListeners(container: HTMLElement) {
 		const dataStr = JSON.stringify(exportData, null, 2);
 		const dataUri =
 			"data:application/json;charset=utf-8," + encodeURIComponent(dataStr);
-		const exportFileDefaultName = "bookmarks-backup.json";
+		const link = document.createElement("a");
+		link.setAttribute("href", dataUri);
+		link.setAttribute("download", "bookmarks-backup.json");
+		link.click();
+	};
+	actions.appendChild(exportBtn);
 
-		const linkElement = document.createElement("a");
-		linkElement.setAttribute("href", dataUri);
-		linkElement.setAttribute("download", exportFileDefaultName);
-		linkElement.click();
-	});
-
-	importBtn?.addEventListener("click", () => {
+	const importBtn = document.createElement("button");
+	importBtn.type = "button";
+	importBtn.textContent = t("settings.data.import");
+	importBtn.onclick = () => {
 		const input = document.createElement("input");
 		input.type = "file";
 		input.accept = "application/json";
-
 		input.onchange = (e) => {
 			const file = (e.target as HTMLInputElement).files?.[0];
 			if (!file) return;
@@ -237,14 +306,11 @@ function setupEventListeners(container: HTMLElement) {
 				try {
 					const content = e.target?.result as string;
 					const data = JSON.parse(content);
-
-					// Validate the schema (partial is okay for import)
 					const result = storageSchema.safeParse(data);
 					if (!result.success) {
 						alert(t("settings.data.import_invalid"));
 						return;
 					}
-
 					if (mergeStores(result.data)) {
 						alert(t("settings.data.import_success"));
 						window.location.reload();
@@ -258,46 +324,48 @@ function setupEventListeners(container: HTMLElement) {
 			};
 			reader.readAsText(file);
 		};
-
 		input.click();
-	});
+	};
+	actions.appendChild(importBtn);
 
-	syncNowBtn?.addEventListener("click", async () => {
-		if (syncNowBtn instanceof HTMLButtonElement) {
-			syncNowBtn.disabled = true;
-			syncNowBtn.textContent = t("settings.sync.syncing");
-
-			const result = await sync();
-
-			syncNowBtn.disabled = false;
-			syncNowBtn.textContent = t("settings.sync.sync_now");
-
-			if (result.success) {
-				// Re-render to update the last synced timestamp
-				const mainContent = document.querySelector("#main-content");
-				if (mainContent) {
-					mainContent.innerHTML = "";
-					mainContent.append(renderSettingsView());
-				}
-			} else {
-				alert(result.message);
-			}
-		}
-	});
-
-	purgeBtn?.addEventListener("click", () => {
+	const purgeBtn = document.createElement("button");
+	purgeBtn.type = "button";
+	purgeBtn.title = t("settings.data.purge_tooltip");
+	purgeBtn.textContent = t("settings.data.purge");
+	purgeBtn.onclick = () => {
 		if (confirm(t("settings.data.purge_confirm"))) {
 			purgeDeletedBookmarks(true);
 			alert(t("settings.data.purge_success"));
 			window.location.reload();
 		}
-	});
+	};
+	actions.appendChild(purgeBtn);
 
-	clearBtn?.addEventListener("click", () => {
+	const clearBtn = document.createElement("button");
+	clearBtn.type = "button";
+	clearBtn.classList.add("danger-button");
+	clearBtn.textContent = t("settings.data.clear_all");
+	clearBtn.onclick = () => {
 		if (confirm(t("settings.data.clear_confirm"))) {
 			window.localStorage.clear();
 			window.location.hash = "#/";
 			window.location.reload();
 		}
-	});
+	};
+	actions.appendChild(clearBtn);
+
+	section.appendChild(actions);
+	return section;
+}
+
+export function renderSettingsView(): HTMLElement {
+	const container = document.createElement("div");
+	container.classList.add("card", "settings-view");
+
+	container.appendChild(renderSyncSection());
+	container.appendChild(renderLanguageSection());
+	container.appendChild(renderPrivacySection());
+	container.appendChild(renderDataSection());
+
+	return container;
 }
