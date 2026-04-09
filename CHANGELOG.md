@@ -1,6 +1,12 @@
 # Changelog
 
-## 0.11.0 (2026-04-09)
+### 0.11.1 (2026-04-09)
+
+#### Bug Fixes
+
+- constants: Import PAGE_SIZE using destructuring (64fff18)
+
+## v0.11.0 (2026-04-09)
 
 #### Features
 
