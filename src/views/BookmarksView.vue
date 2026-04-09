@@ -6,7 +6,7 @@ import BookmarkItem from "../components/BookmarkItem.vue";
 import Modal from "../components/Modal.vue";
 import BookmarkForm from "../components/BookmarkForm.vue";
 import addIcon from "/bookmark-plus.svg?raw";
-import PAGE_SIZE from "../constants";
+import { PAGE_SIZE } from "../constants";
 
 interface Props {
 	tag?: string;
