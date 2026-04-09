@@ -31,7 +31,9 @@ const displayTitle = computed(() => {
 });
 
 const iconUrl = computed(() => {
-	if (!store.fetchFavicons) return "";
+	if (!store.fetchFavicons || store.isFaviconFailed(props.bookmark.url)) {
+		return "/bookmark.svg";
+	}
 	return getIconUrl(props.bookmark.url);
 });
 
@@ -54,6 +56,10 @@ function handleDelete() {
 
 function handleIconError(event: Event) {
 	const img = event.target as HTMLImageElement;
+
+	// Mark as failed in store to prevent future attempts
+	store.markFaviconFailed(props.bookmark.url);
+
 	// Prevent infinite loop if fallback also fails
 	if (!img.src.includes("/bookmark.svg")) {
 		img.src = "/bookmark.svg";
@@ -73,7 +79,6 @@ function handleIconError(event: Event) {
 				@click="handleLinkClick"
 			>
 				<img
-					v-if="iconUrl"
 					:src="iconUrl"
 					alt=""
 					class="bookmarkIcon"

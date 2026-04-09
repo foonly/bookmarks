@@ -19,7 +19,7 @@ const store = useBookmarkStore();
 // Sync state
 const isSyncing = ref(false);
 const showCredentials = ref(false);
-const syncCreds = ref(store.sync?.credentials || "");
+const syncCreds = ref(store.syncSettings?.credentials || "");
 const copied = ref(false);
 
 // Local settings mirrors
@@ -44,19 +44,19 @@ function toggleCredsVisibility() {
 
 function handleCredsChange() {
 	store.updateSyncSettings({
-		...store.sync,
+		...store.syncSettings,
 		credentials: syncCreds.value,
 		lastSynced: 0,
 	});
 }
 
 function handleGenerateCreds() {
-	const hasCredentials = !!store.sync?.credentials;
+	const hasCredentials = !!store.syncSettings?.credentials;
 	if (!hasCredentials || confirm(t("settings.sync.generate_confirm"))) {
 		const creds = generateCredentials();
 		syncCreds.value = creds;
 		store.updateSyncSettings({
-			...store.sync,
+			...store.syncSettings,
 			credentials: creds,
 			lastSynced: 0,
 		});
@@ -76,8 +76,8 @@ function handleCopyCreds() {
 
 function handleToggleSync() {
 	store.updateSyncSettings({
-		...store.sync,
-		enabled: !store.sync.enabled,
+		...store.syncSettings,
+		enabled: !store.syncSettings.enabled,
 	});
 }
 
@@ -200,7 +200,7 @@ function formatDate(timestamp: number) {
 					></button>
 
 					<button
-						v-if="store.sync.enabled"
+						v-if="store.syncSettings.enabled"
 						type="button"
 						class="icon"
 						:title="t('settings.sync.copy')"
@@ -227,18 +227,20 @@ function formatDate(timestamp: number) {
 			<div class="settings-actions">
 				<button
 					type="button"
-					:class="store.sync.enabled ? 'danger-button' : 'primary-button'"
+					:class="
+						store.syncSettings.enabled ? 'danger-button' : 'primary-button'
+					"
 					@click="handleToggleSync"
 				>
 					{{
-						store.sync.enabled
+						store.syncSettings.enabled
 							? t("settings.sync.disable_sync")
 							: t("settings.sync.enable_sync")
 					}}
 				</button>
 				<button
 					type="button"
-					:disabled="!store.sync.enabled || isSyncing"
+					:disabled="!store.syncSettings.enabled || isSyncing"
 					@click="handleSyncNow"
 				>
 					{{
@@ -247,10 +249,10 @@ function formatDate(timestamp: number) {
 				</button>
 			</div>
 
-			<p v-if="store.sync.lastSynced" class="sync-status">
+			<p v-if="store.syncSettings.lastSynced" class="sync-status">
 				{{
 					t("settings.sync.last_synced", {
-						date: formatDate(store.sync.lastSynced),
+						date: formatDate(store.syncSettings.lastSynced),
 					})
 				}}
 			</p>

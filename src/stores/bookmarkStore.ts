@@ -73,6 +73,17 @@ export const useBookmarkStore = defineStore("bookmarks", {
 				.slice(0, 4)
 				.map(([tag]) => tag);
 		},
+
+		isFaviconFailed: (state) => {
+			return (url: string): boolean => {
+				try {
+					const domain = new URL(url).hostname;
+					return state.failedFavicons.includes(domain);
+				} catch {
+					return true;
+				}
+			};
+		},
 	},
 
 	actions: {
@@ -137,8 +148,8 @@ export const useBookmarkStore = defineStore("bookmarks", {
 			this.saveStore();
 		},
 
-		updateSyncSettings(syncData: Storage["sync"]) {
-			this.$patch({ sync: { ...syncData } });
+		updateSyncSettings(syncData: Storage["syncSettings"]) {
+			this.$state.syncSettings = { ...syncData };
 			this.saveStore();
 		},
 
@@ -153,8 +164,36 @@ export const useBookmarkStore = defineStore("bookmarks", {
 			this.saveStore();
 		},
 
+		markFaviconFailed(url: string) {
+			try {
+				const domain = new URL(url).hostname;
+				if (!this.failedFavicons.includes(domain)) {
+					this.failedFavicons.push(domain);
+					this.saveStore();
+				}
+			} catch {
+				// Ignore invalid URLs
+			}
+		},
+
 		mergeStores(remoteStore: Storage): boolean {
 			let hasChanges = false;
+
+			// Merge failed favicons
+			const mergedFailed = [
+				...new Set([
+					...this.failedFavicons,
+					...(remoteStore.failedFavicons || []),
+				]),
+			].sort();
+
+			if (
+				JSON.stringify(mergedFailed) !==
+				JSON.stringify([...this.failedFavicons].sort())
+			) {
+				this.$state.failedFavicons = mergedFailed;
+				hasChanges = true;
+			}
 
 			// Merge favorite tags using metadata for "Last Write Wins"
 			const allTags = new Set([
@@ -195,8 +234,8 @@ export const useBookmarkStore = defineStore("bookmarks", {
 				JSON.stringify(newMetadata) !==
 					JSON.stringify(this.favoriteTagsMetadata)
 			) {
-				this.favoriteTags = newFavoriteTags;
-				this.favoriteTagsMetadata = newMetadata;
+				this.$state.favoriteTags = newFavoriteTags;
+				this.$state.favoriteTagsMetadata = newMetadata;
 				hasChanges = true;
 			}
 
@@ -220,7 +259,7 @@ export const useBookmarkStore = defineStore("bookmarks", {
 			});
 
 			if (hasChanges) {
-				this.bookmarks = localBookmarks;
+				this.$state.bookmarks = localBookmarks;
 				this.saveStore();
 			}
 
@@ -248,7 +287,7 @@ export const useBookmarkStore = defineStore("bookmarks", {
 				return { success: false, message: "Sync already in progress" };
 			}
 
-			const syncConfig = this.sync;
+			const syncConfig = this.syncSettings;
 
 			if (!syncConfig || !syncConfig.enabled || !syncConfig.credentials) {
 				return {
@@ -316,9 +355,10 @@ export const useBookmarkStore = defineStore("bookmarks", {
 
 				// 4. Compare current local state with remote state to avoid redundant uploads
 				const localState = {
-					bookmarks: this.bookmarks,
-					favoriteTags: this.favoriteTags,
-					favoriteTagsMetadata: this.favoriteTagsMetadata,
+					bookmarks: this.$state.bookmarks,
+					favoriteTags: this.$state.favoriteTags,
+					favoriteTagsMetadata: this.$state.favoriteTagsMetadata,
+					failedFavicons: this.$state.failedFavicons,
 				};
 
 				// Check if remote matches exactly what we have now
@@ -326,12 +366,13 @@ export const useBookmarkStore = defineStore("bookmarks", {
 					const remoteState = {
 						bookmarks: remoteData.bookmarks,
 						favoriteTags: remoteData.favoriteTags,
-						favoriteTagsMetadata: remoteData.favoriteTagsMetadata,
+						favoriteTagsMetadata: remoteData.favoriteTagsMetadata || {},
+						failedFavicons: remoteData.failedFavicons || [],
 					};
 
 					if (JSON.stringify(localState) === JSON.stringify(remoteState)) {
 						// No changes to upload
-						this.sync.lastSynced = Date.now();
+						this.syncSettings.lastSynced = Date.now();
 						this.saveStore();
 						return { success: true, message: "Sync complete (no changes)." };
 					}
@@ -371,7 +412,7 @@ export const useBookmarkStore = defineStore("bookmarks", {
 				}
 
 				// Update last synced timestamp
-				this.sync.lastSynced = Date.now();
+				this.syncSettings.lastSynced = Date.now();
 				this.saveStore();
 
 				return {
@@ -392,19 +433,19 @@ export const useBookmarkStore = defineStore("bookmarks", {
 
 		initAutoSync(intervalMs: number = 300000) {
 			// Immediate sync on startup if enabled
-			if (this.sync.enabled) {
+			if (this.syncSettings.enabled) {
 				this.performSync().catch(console.error);
 			}
 
 			setInterval(() => {
-				if (this.sync.enabled) {
+				if (this.syncSettings.enabled) {
 					this.performSync().catch(console.error);
 				}
 			}, intervalMs);
 
 			// Sync when coming back online
 			window.addEventListener("online", () => {
-				if (this.sync.enabled) {
+				if (this.syncSettings.enabled) {
 					this.performSync().catch(console.error);
 				}
 			});
@@ -415,20 +456,22 @@ export const useBookmarkStore = defineStore("bookmarks", {
 				bookmarks: this.bookmarks,
 				favoriteTags: this.favoriteTags,
 				favoriteTagsMetadata: this.favoriteTagsMetadata,
+				failedFavicons: this.failedFavicons,
 			});
 
-			this.$subscribe((_, state) => {
+			this.$subscribe((_mutation, state) => {
 				const currentState = JSON.stringify({
 					bookmarks: state.bookmarks,
 					favoriteTags: state.favoriteTags,
 					favoriteTagsMetadata: state.favoriteTagsMetadata,
+					failedFavicons: state.failedFavicons,
 				});
 
 				if (currentState !== lastState) {
 					lastState = currentState;
 					if (debounceTimeout) clearTimeout(debounceTimeout);
 					debounceTimeout = window.setTimeout(() => {
-						if (this.sync.enabled) {
+						if (this.syncSettings.enabled) {
 							this.performSync().catch(console.error);
 						}
 					}, 2000);
