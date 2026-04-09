@@ -1,6 +1,19 @@
 # Changelog
 
-## 0.10.0 (2026-04-09)
+## 0.11.0 (2026-04-09)
+
+#### Features
+
+- bookmarks: Implement pagination and "Show more" functionality (5db564a)
+- app: Highlight active navigation link (5d2c788)
+- bookmarks: Add search functionality and suggested tags (77729e5)
+- app: Migrate to Vue 3 Composition API with Pinia (5c68b72)
+
+#### Bug Fixes
+
+- sync: Improve favicon error handling and sync logic (d1dcf0c)
+
+## v0.10.0 (2026-04-09)
 
 #### Features
 
