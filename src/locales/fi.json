@@ -81,6 +81,32 @@
 	"about": {
 		"title": "Tietoja Bookmarks-sovelluksesta",
 		"version": "Versio",
-		"content": "\nYksinkertainen, yksityinen ja salattu kirjanmerkkien hallinta. Tämä sovellus on suunniteltu kevyeksi, ensisijaisesti offline-tilassa toimivaksi ja turvalliseksi.\n\n## Ominaisuudet\n\n- **Päästä päähän -salaus**: Tietosi salataan selaimessasi käyttämällä synkronointitunnuksiasi. Kukaan muu ei voi lukea kirjanmerkkejäsi.\n- **Offline-käyttö**: Toimii ilman internetyhteyttä progressiivisena verkkosovelluksena (PWA).\n- **Nopea ja minimaalinen**: Ei turhuuksia, ei seurantaa, vain kirjanmerkkisi.\n\n## Käyttövinkkejä\n\n- **Tunnisteet**: Käytä tunnisteita kirjanmerkkiesi luokitteluun. Voit suodattaa tunnisteiden perusteella päänäkymässä tai erillisellä Tunnisteet-välilehdellä.\n- **Synkronointi**: Määritä synkronointiosoite ja tunnukset asetuksissa, jotta kirjanmerkkisi pysyvät varmuuskopioituina ja synkronoituina laitteiden välillä.\n- **PWA**: Asenna tämä sovellus aloitusnäytöllesi tai työpöydällesi saadaksesi natiivisovelluksen kaltaisen kokemuksen.\n\n## Yksityisyys ja GDPR\n\nTämä sovellus on rakennettu yksityisyyttä ajatellen. Kaikki tiedot tallennetaan paikallisesti selaimeesi ja salataan synkronointitunnuksillasi palvelimella. Emme kerää henkilötietoja tai analytiikkaa.\n\nJos et ota synkronointia käyttöön, tietoja ei koskaan lähetetä laitteeltasi. Vaikka synkronointi olisi käytössä, tietosi salataan ennen kuin ne lähtevät selaimestasi, joten meillä ei ole pääsyä niihin.\n\nJos sinulla on GDPR-aiheisia kysymyksiä tai pyyntöjä, ota meihin yhteyttä osoitteeseen [bookmarks@foonly.dev](mailto:bookmarks@foonly.dev)\n\n## Avoin lähdekoodi\n\nTämä projekti on avointa lähdekoodia ja kunnioittaa yksityisyyttäsi. Löydät lähdekoodin ja voit osallistua kehitykseen GitHubissa.\n\n[Bookmarks GitHubissa](https://github.com/foonly/bookmarks)\n"
+		"description": "Yksinkertainen, yksityinen ja salattu kirjanmerkkien hallinta. Tämä sovellus on suunniteltu kevyeksi, ensisijaisesti offline-tilassa toimivaksi ja turvalliseksi.",
+		"features": {
+			"title": "Ominaisuudet",
+			"items": [
+				"**Päästä päähän -salaus**: Tietosi salataan selaimessasi käyttämällä synkronointitunnuksiasi. Kukaan muu ei voi lukea kirjanmerkkejäsi.",
+				"**Offline-käyttö**: Toimii ilman internetyhteyttä progressiivisena verkkosovelluksena (PWA).",
+				"**Nopea ja minimaalinen**: Ei turhuuksia, ei seurantaa, vain kirjanmerkkisi."
+			]
+		},
+		"usage": {
+			"title": "Käyttövinkkejä",
+			"items": [
+				"**Tunnisteet**: Käytä tunnisteita kirjanmerkkiesi luokitteluun. Voit suodattaa tunnisteiden perusteella päänäkymässä tai erillisellä Tunnisteet-välilehdellä.",
+				"**Synkronointi**: Määritä synkronointiosoite ja tunnukset asetuksissa, jotta kirjanmerkkisi pysyvät varmuuskopioituina ja synkronoituina laitteiden välillä.",
+				"**PWA**: Asenna tämä sovellus aloitusnäytöllesi tai työpöydällesi saadaksesi natiivisovelluksen kaltaisen kokemuksen."
+			]
+		},
+		"privacy": {
+			"title": "Yksityisyys ja GDPR",
+			"content": "Tämä sovellus on rakennettu yksityisyyttä ajatellen. Kaikki tiedot tallennetaan paikallisesti selaimeesi ja salataan synkronointitunnuksillasi palvelimella. Emme kerää henkilötietoja tai analytiikkaa.\n\nJos et ota synkronointia käyttöön, tietoja ei koskaan lähetetä laitteeltasi. Vaikka synkronointi olisi käytössä, tietosi salataan ennen kuin ne lähtevät selaimestasi, joten meillä ei ole pääsyä niihin.",
+			"contact": "Jos sinulla on GDPR-aiheisia kysymyksiä tai pyyntöjä, ota meihin yhteyttä osoitteeseen {email}"
+		},
+		"opensource": {
+			"title": "Avoin lähdekoodi",
+			"content": "Tämä projekti on avointa lähdekoodia ja kunnioittaa yksityisyyttäsi. Löydät lähdekoodin ja voit osallistua kehitykseen GitHubissa.",
+			"link": "Bookmarks GitHubissa"
+		}
 	}
 }

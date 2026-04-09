@@ -81,6 +81,32 @@
 	"about": {
 		"title": "Om Bokmärken",
 		"version": "Version",
-		"content": "\nEn enkel, privat och krypterad bokmärkeshanterare. Denna app är designad för att vara lättviktig, offline-först och säker.\n\n## Funktioner\n\n- **Ände-till-ände-kryptering**: Din data krypteras i din webbläsare med dina synkroniseringsuppgifter. Ingen annan kan läsa dina bokmärken.\n- **Offlineåtkomst**: Fungerar utan internetanslutning som en Progressive Web App (PWA).\n- **Snabb & minimal**: Inget onödigt, ingen spårning, bara dina bokmärken.\n\n## Användningstips\n\n- **Taggar**: Använd taggar för att kategorisera dina bokmärken. Du kan filtrera på taggar i huvudvyn eller på den dedikerade fliken Taggar.\n- **Synkronisering**: Konfigurera en synkroniserings-URL och uppgifter i Inställningar för att hålla dina bokmärken säkerhetskopierade och synkroniserade mellan enheter.\n- **PWA**: Installera denna app på din startskärm eller ditt skrivbord för en app-liknande upplevelse.\n\n## Integritet och GDPR\n\nDenna app är byggd med integritet i åtanke. All data lagras lokalt i din webbläsare och krypteras med dina synkroniseringsuppgifter på servern. Vi samlar inte in någon personlig data eller analys.\n\nOm du inte aktiverar synkronisering kommer ingen data någonsin att lämna din enhet. Även med synkronisering aktiverad krypteras din data innan den lämnar din webbläsare, så vi har ingen åtkomst till den.\n\nOm du har några GDPR-relaterade frågor eller önskemål, vänligen kontakta oss på [bookmarks@foonly.dev](mailto:bookmarks@foonly.dev)\n\n## Open Source\n\nDetta projekt är öppen källkod och respekterar din integritet. Du kan hitta källkoden och bidra på GitHub.\n\n[Bookmarks på GitHub](https://github.com/foonly/bookmarks)\n"
+		"description": "En enkel, privat och krypterad bokmärkeshanterare. Denna app är designad för att vara lättviktig, offline-först och säker.",
+		"features": {
+			"title": "Funktioner",
+			"items": [
+				"**Ände-till-ände-kryptering**: Din data krypteras i din webbläsare med dina synkroniseringsuppgifter. Ingen annan kan läsa dina bokmärken.",
+				"**Offlineåtkomst**: Fungerar utan internetanslutning som en Progressive Web App (PWA).",
+				"**Snabb & minimal**: Inget onödigt, ingen spårning, bara dina bokmärken."
+			]
+		},
+		"usage": {
+			"title": "Användningstips",
+			"items": [
+				"**Taggar**: Använd taggar för att kategorisera dina bokmärken. Du kan filtrera på taggar i huvudvyn eller på den dedikerade fliken Taggar.",
+				"**Synkronisering**: Konfigurera en synkroniserings-URL och uppgifter i Inställningar för att hålla dina bokmärken säkerhetskopierade och synkroniserade mellan enheter.",
+				"**PWA**: Installera denna app på din startskärm eller ditt skrivbord för en app-liknande upplevelse."
+			]
+		},
+		"privacy": {
+			"title": "Integritet och GDPR",
+			"content": "Denna app är byggd med integritet i åtanke. All data lagras lokalt i din webbläsare och krypteras med dina synkroniseringsuppgifter på servern. Vi samlar inte in någon personlig data eller analys.\n\nOm du inte aktiverar synkronisering kommer ingen data någonsin att lämna din enhet. Även med synkronisering aktiverad krypteras din data innan den lämnar din webbläsare, så vi har ingen åtkomst till den.",
+			"contact": "Om du har några GDPR-relaterade frågor eller önskemål, vänligen kontakta oss på {email}"
+		},
+		"opensource": {
+			"title": "Open Source",
+			"content": "Detta projekt är öppen källkod och respekterar din integritet. Du kan hitta källkoden och bidra på GitHub.",
+			"link": "Bookmarks på GitHub"
+		}
 	}
 }

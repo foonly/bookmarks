@@ -81,6 +81,32 @@
 	"about": {
 		"title": "Järjehoidjatest",
 		"version": "Versioon",
-		"content": "\nLihtne, privaatne ja krüpteeritud järjehoidjate haldur. See rakendus on loodud olema kerge, võrguühenduseta eelistatav ja turvaline.\n\n## Funktsioonid\n\n- **Otsast-otsani krüpteerimine**: Sinu andmed krüpteeritakse veebilehitsejas sünkroonimise andmete abil. Keegi teine ei saa sinu järjehoidjaid lugeda.\n- **Võrguühenduseta juurdepääs**: Töötab ilma internetiühenduseta progressiivse veebirakendusena (PWA).\n- **Kiire ja minimaalne**: Ei mingit liigsust, ei mingit jälitamist, ainult sinu järjehoidjad.\n\n## Kasutusnõuanded\n\n- **Sildid**: Kasuta silte järjehoidjate kategoriseerimiseks. Saad filtreerida siltide järgi peavaates või spetsiaalsel Siltide vahekaardil.\n- **Sünkroonimine**: Seadista seadetes sünkroonimise URL ja andmed, et hoida oma järjehoidjad varundatuna ja sünkroonituna seadmete vahel.\n- **PWA**: Installi see rakendus oma avaekraanile või töölauale, et saada natiivse rakendusega sarnane kogemus.\n\n## Privaatsus ja GDPR\n\nSee rakendus on ehitatud privaatsust silmas pidades. Kõik andmed salvestatakse kohapeal sinu brauseris ja krüpteeritakse sünkroonimise andmetega serveris. Me ei kogu isikuandmeid ega analüütikat.\n\nKui sa ei luba sünkroonimist, ei lahku andmed kunagi sinu seadmest. Isegi kui sünkroonimine on lubatud, krüpteeritakse sinu andmed enne brauserist lahkumist, seega meil puudub neile juurdepääs.\n\nKui sul on GDPR-iga seotud küsimusi või soove, võta meiega ühendust aadressil [bookmarks@foonly.dev](mailto:bookmarks@foonly.dev)\n\n## Avatud lähtekood\n\nSee projekt on avatud lähtekoodiga ja austab sinu privaatsust. Lähtekoodi leiad ja panustada saad GitHubis.\n\n[Bookmarks GitHubis](https://github.com/foonly/bookmarks)\n"
+		"description": "Lihtne, privaatne ja krüpteeritud järjehoidjate haldur. See rakendus on loodud olema kerge, võrguühenduseta eelistatav ja turvaline.",
+		"features": {
+			"title": "Funktsioonid",
+			"items": [
+				"**Otsast-otsani krüpteerimine**: Sinu andmed krüpteeritakse veebilehitsejas sünkroonimise andmete abil. Keegi teine ei saa sinu järjehoidjaid lugeda.",
+				"**Võrguühenduseta juurdepääs**: Töötab ilma internetiühenduseta progressiivse veebirakendusena (PWA).",
+				"**Kiire ja minimaalne**: Ei mingit liigsust, ei mingit jälitamist, ainult sinu järjehoidjad."
+			]
+		},
+		"usage": {
+			"title": "Kasutusnõuanded",
+			"items": [
+				"**Sildid**: Kasuta silte järjehoidjate kategoriseerimiseks. Saad filtreerida siltide järgi peavaates või spetsiaalsel Siltide vahekaardil.",
+				"**Sünkroonimine**: Seadista seadetes sünkroonimise URL ja andmed, et hoida oma järjehoidjad varundatuna ja sünkroonituna seadmete vahel.",
+				"**PWA**: Installi see rakendus oma avaekraanile või töölauale, et saada natiivse rakendusega sarnane kogemus."
+			]
+		},
+		"privacy": {
+			"title": "Privaatsus ja GDPR",
+			"content": "See rakendus on ehitatud privaatsust silmas pidades. Kõik andmed salvestatakse kohapeal sinu brauseris ja krüpteeritakse sünkroonimise andmetega serveris. Me ei kogu isikuandmeid ega analüütikat.\n\nKui sa ei luba sünkroonimist, ei lahku andmed kunagi sinu seadmest. Isegi kui sünkroonimine on lubatud, krüpteeritakse sinu andmed enne brauserist lahkumist, seega meil puudub neile juurdepääs.",
+			"contact": "Kui sul on GDPR-iga seotud küsimusi või soove, võta meiega ühendust aadressil {email}"
+		},
+		"opensource": {
+			"title": "Avatud lähtekood",
+			"content": "See projekt on avatud lähtekoodiga ja austab sinu privaatsust. Lähtekoodi leiad ja panustada saad GitHubis.",
+			"link": "Bookmarks GitHubis"
+		}
 	}
 }

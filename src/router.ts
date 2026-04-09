@@ -1,83 +1,88 @@
-type RouteHandler = (params: Record<string, string>) => void;
+import { createRouter, createWebHashHistory } from "vue-router";
+import BookmarksView from "./views/BookmarksView.vue";
+import TagsView from "./views/TagsView.vue";
+import SettingsView from "./views/SettingsView.vue";
+import AboutView from "./views/AboutView.vue";
 
-interface Route {
-	path: string;
-	regex: RegExp;
-	keys: string[];
-	handler: RouteHandler;
-}
+const routes = [
+	{
+		path: "/",
+		name: "bookmarks",
+		component: BookmarksView,
+		props: false,
+	},
+	{
+		path: "/add",
+		name: "add-bookmark",
+		component: BookmarksView,
+		props: { showModal: "add" },
+	},
+	{
+		path: "/edit/:id",
+		name: "edit-bookmark",
+		component: BookmarksView,
+		props: (route: any) => ({
+			showModal: "edit",
+			bookmarkId: parseInt(route.params.id),
+		}),
+	},
+	{
+		path: "/tag/:tag",
+		name: "tag-bookmarks",
+		component: BookmarksView,
+		props: (route: any) => ({ tag: decodeURIComponent(route.params.tag) }),
+	},
+	{
+		path: "/tag/:tag/add",
+		name: "tag-add-bookmark",
+		component: BookmarksView,
+		props: (route: any) => ({
+			tag: decodeURIComponent(route.params.tag),
+			showModal: "add",
+		}),
+	},
+	{
+		path: "/tag/:tag/edit/:id",
+		name: "tag-edit-bookmark",
+		component: BookmarksView,
+		props: (route: any) => ({
+			tag: decodeURIComponent(route.params.tag),
+			showModal: "edit",
+			bookmarkId: parseInt(route.params.id),
+		}),
+	},
+	{
+		path: "/tags",
+		name: "tags",
+		component: TagsView,
+		props: false,
+	},
+	{
+		path: "/tags/edit/:id",
+		name: "tags-edit-bookmark",
+		component: TagsView,
+		props: (route: any) => ({
+			showModal: "edit",
+			bookmarkId: parseInt(route.params.id),
+		}),
+	},
+	{
+		path: "/settings",
+		name: "settings",
+		component: SettingsView,
+	},
+	{
+		path: "/about",
+		name: "about",
+		component: AboutView,
+	},
+	{
+		path: "/:pathMatch(.*)*",
+		redirect: "/",
+	},
+];
 
-export class Router {
-	private routes: Route[] = [];
-	private defaultHandler: RouteHandler | null = null;
-
-	constructor() {
-		window.addEventListener("hashchange", () => this.handleRoute());
-		window.addEventListener("load", () => this.handleRoute());
-	}
-
-	/**
-	 * Registers a new route.
-	 * Path can include parameters like :id (e.g., "/edit/:id")
-	 */
-	public on(path: string, handler: RouteHandler): this {
-		const keys: string[] = [];
-		// Convert path to regex, e.g., "/edit/:id" -> /^\/edit\/([^/]+)$/
-		const regexPath = path
-			.replace(/:([^/]+)/g, (_, key) => {
-				keys.push(key);
-				return "([^/]+)";
-			})
-			.replace(/\//g, "\\/");
-
-		this.routes.push({
-			path,
-			regex: new RegExp(`^${regexPath}$`),
-			keys,
-			handler,
-		});
-		return this;
-	}
-
-	/**
-	 * Sets a default handler if no routes match.
-	 */
-	public default(handler: RouteHandler): this {
-		this.defaultHandler = handler;
-		return this;
-	}
-
-	/**
-	 * Programmatically navigate to a path.
-	 */
-	public navigate(path: string): void {
-		window.location.hash = path.startsWith("#") ? path : `#${path}`;
-	}
-
-	/**
-	 * Logic to match the current hash against registered routes.
-	 */
-	public handleRoute(): void {
-		// Strip the '#' from the beginning of the hash
-		const hash = window.location.hash.slice(1) || "/";
-
-		for (const route of this.routes) {
-			const match = hash.match(route.regex);
-			if (match) {
-				const params: Record<string, string> = {};
-				route.keys.forEach((key, index) => {
-					params[key] = match[index + 1];
-				});
-				route.handler(params);
-				return;
-			}
-		}
-
-		// If no match found, use default handler
-		if (this.defaultHandler) {
-			this.defaultHandler({});
-		}
-	}
-}
-
-export const router = new Router();
+export const router = createRouter({
+	history: createWebHashHistory(),
+	routes,
+});
