@@ -13,7 +13,8 @@
 		"search_placeholder": "Hae kirjanmerkkejä...",
 		"no_bookmarks": "Ei vielä kirjanmerkkejä",
 		"no_bookmarks_tag": "Ei kirjanmerkkejä tunnisteella \"{tag}\"",
-		"delete_confirm": "Haluatko varmasti poistaa tämän kirjanmerkin?"
+		"delete_confirm": "Haluatko varmasti poistaa tämän kirjanmerkin?",
+		"show_more": "Näytä lisää"
 	},
 	"tags": {
 		"no_tags": "Tunnisteita ei löytynyt.",

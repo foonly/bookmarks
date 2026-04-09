@@ -6,6 +6,7 @@ import BookmarkItem from "../components/BookmarkItem.vue";
 import Modal from "../components/Modal.vue";
 import BookmarkForm from "../components/BookmarkForm.vue";
 import addIcon from "/bookmark-plus.svg?raw";
+import PAGE_SIZE from "../constants";
 
 interface Props {
 	tag?: string;
@@ -19,6 +20,8 @@ const store = useBookmarkStore();
 
 const searchQuery = ref("");
 const debouncedSearchQuery = ref("");
+
+const visibleCount = ref(PAGE_SIZE);
 
 let debounceTimeout: number | undefined;
 watch(searchQuery, (newVal) => {
@@ -53,6 +56,22 @@ const sortedBookmarks = computed(() => {
 		}
 		return a.title.localeCompare(b.title);
 	});
+});
+
+const paginatedBookmarks = computed(() => {
+	return sortedBookmarks.value.slice(0, visibleCount.value);
+});
+
+const hasMore = computed(() => {
+	return visibleCount.value < sortedBookmarks.value.length;
+});
+
+function loadMore() {
+	visibleCount.value += PAGE_SIZE;
+}
+
+watch([() => props.tag, debouncedSearchQuery], () => {
+	visibleCount.value = PAGE_SIZE;
 });
 
 const displayedTags = computed(() => {
@@ -110,13 +129,18 @@ const initialTags = computed(() => (props.tag ? [props.tag] : []));
 
 		<div class="card">
 			<div id="bookmarksList">
-				<template v-if="sortedBookmarks.length > 0">
+				<template v-if="paginatedBookmarks.length > 0">
 					<BookmarkItem
-						v-for="bookmark in sortedBookmarks"
+						v-for="bookmark in paginatedBookmarks"
 						:key="bookmark.created"
 						:bookmark="bookmark"
 						:filter-tag="tag"
 					/>
+					<div v-if="hasMore" class="show-more-container">
+						<button @click="loadMore" class="show-more-button">
+							{{ t("bookmarks.show_more") }}
+						</button>
+					</div>
 				</template>
 				<p v-else class="no-bookmarks">
 					{{
@@ -176,5 +200,28 @@ const initialTags = computed(() => (props.tag ? [props.tag] : []));
 	display: flex;
 	align-items: center;
 	justify-content: center;
+}
+
+.show-more-container {
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	padding: 1rem 0;
+}
+
+.show-more-button {
+	padding: 0.5rem 1.5rem;
+	background-color: var(--bm-button-secondary-bg);
+	border: 1px solid var(--bm-border-color);
+	border-radius: 4px;
+	color: var(--bm-text-color);
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.show-more-button:hover {
+	background-color: var(--bm-button-secondary-hover-bg);
+	border-color: var(--bm-text-dim);
 }
 </style>

@@ -13,7 +13,8 @@
 		"search_placeholder": "Otsi järjehoidjaid...",
 		"no_bookmarks": "Järjehoidjaid veel pole",
 		"no_bookmarks_tag": "Sildiga \"{tag}\" järjehoidjaid ei leitud",
-		"delete_confirm": "Kas oled kindel, et soovid selle järjehoidja kustutada?"
+		"delete_confirm": "Kas oled kindel, et soovid selle järjehoidja kustutada?",
+		"show_more": "Näita rohkem"
 	},
 	"tags": {
 		"no_tags": "Silte ei leitud.",

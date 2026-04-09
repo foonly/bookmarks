@@ -13,7 +13,8 @@
 		"search_placeholder": "Search bookmarks...",
 		"no_bookmarks": "No bookmarks yet",
 		"no_bookmarks_tag": "No bookmarks with tag \"{tag}\"",
-		"delete_confirm": "Are you sure you want to delete this bookmark?"
+		"delete_confirm": "Are you sure you want to delete this bookmark?",
+		"show_more": "Show more"
 	},
 	"tags": {
 		"no_tags": "No tags found.",

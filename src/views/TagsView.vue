@@ -9,6 +9,8 @@ import BookmarkForm from "../components/BookmarkForm.vue";
 import starIcon from "/star.svg?raw";
 import starFilledIcon from "/star-filled.svg?raw";
 
+import editIcon from "/pen-to-square.svg?raw";
+
 interface Props {
 	showModal?: "edit";
 	bookmarkId?: number;
@@ -46,8 +48,9 @@ function getBookmarksForTag(tag: string) {
 				<h2>
 					<router-link :to="`/tag/${encodeURIComponent(tag)}`">
 						{{ tag }}
+						<span class="tag-count">{{ tagsWithCounts[tag] || 0 }}</span>
 					</router-link>
-					<span class="tag-count">{{ tagsWithCounts[tag] || 0 }}</span>
+
 					<button
 						class="star-button icon"
 						@click="store.toggleFavoriteTag(tag)"
@@ -71,9 +74,11 @@ function getBookmarksForTag(tag: string) {
 						</a>
 						<router-link
 							:to="`/tags/edit/${bookmark.created}`"
-							class="tag-edit-link"
+							class="tag-edit-link icon"
+							:title="t('tags.edit')"
+							:aria-label="t('tags.edit')"
 						>
-							{{ t("tags.edit") }}
+							<span v-html="editIcon"></span>
 						</router-link>
 					</li>
 				</ul>

@@ -6,6 +6,7 @@
 		"settings": "Einstellungen"
 	},
 	"bookmarks": {
+		"show_more": "Mehr anzeigen",
 		"add_button_title": "Lesezeichen hinzufügen",
 		"edit_button_title": "{title} bearbeiten",
 		"delete_button_title": "{title} löschen",

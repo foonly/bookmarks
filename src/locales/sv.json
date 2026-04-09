@@ -10,10 +10,11 @@
 		"edit_button_title": "Redigera {title}",
 		"delete_button_title": "Ta bort {title}",
 		"filter_all": "Alla",
-		"search_placeholder": "Sök bland bokmärken...",
-		"no_bookmarks": "Inga bokmärken ännu",
+		"search_placeholder": "Sök bokmärken...",
+		"no_bookmarks": "Inga bokmärken än",
 		"no_bookmarks_tag": "Inga bokmärken med taggen \"{tag}\"",
-		"delete_confirm": "Är du säker på att du vill ta bort detta bokmärke?"
+		"delete_confirm": "Är du säker på att du vill ta bort detta bokmärke?",
+		"show_more": "Visa fler"
 	},
 	"tags": {
 		"no_tags": "Inga taggar hittades.",
