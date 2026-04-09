@@ -5,6 +5,10 @@ import { useBookmarkStore } from "../stores/bookmarkStore";
 import Modal from "../components/Modal.vue";
 import BookmarkForm from "../components/BookmarkForm.vue";
 
+// Icons
+import starIcon from "/star.svg?raw";
+import starFilledIcon from "/star-filled.svg?raw";
+
 interface Props {
 	showModal?: "edit";
 	bookmarkId?: number;
@@ -44,6 +48,12 @@ function getBookmarksForTag(tag: string) {
 						{{ tag }}
 					</router-link>
 					<span class="tag-count">{{ tagsWithCounts[tag] || 0 }}</span>
+					<button
+						class="star-button icon"
+						@click="store.toggleFavoriteTag(tag)"
+						:aria-label="t('tags.toggle_favorite')"
+						v-html="store.isFavoriteTag(tag) ? starFilledIcon : starIcon"
+					></button>
 				</h2>
 				<ul class="tag-bookmark-list">
 					<li

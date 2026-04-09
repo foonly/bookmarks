@@ -65,15 +65,41 @@ onUnmounted(() => {
 			</router-view>
 		</main>
 
-		<div id="version">
-			<router-link to="/about">
-				{{ appVersion }}
+		<footer>
+			<router-link to="/about" active-class="active">
+				{{ t("nav.about") }}
 			</router-link>
-		</div>
+			<router-link to="/settings" active-class="active">
+				{{ t("nav.settings") }}
+			</router-link>
+			<div id="version">
+				{{ appVersion }}
+			</div>
+		</footer>
 	</div>
 </template>
 
 <style>
+.container {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+	main {
+		flex: 1;
+	}
+	footer {
+		display: flex;
+		flex-direction: row;
+		gap: 1rem;
+		align-items: center;
+		justify-content: flex-end;
+	}
+	#version {
+		color: var(--bm-text-dim);
+		font-size: 0.75rem;
+	}
+}
+
 .fade-enter-active,
 .fade-leave-active {
 	transition: opacity 0.15s ease;

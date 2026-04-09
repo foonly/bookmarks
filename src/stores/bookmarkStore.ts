@@ -52,6 +52,27 @@ export const useBookmarkStore = defineStore("bookmarks", {
 				);
 			};
 		},
+
+		isFavoriteTag: (state) => {
+			return (tag: string): boolean => state.favoriteTags.includes(tag);
+		},
+
+		suggestedTags: (state): string[] => {
+			if (state.favoriteTags.length > 0) {
+				return state.favoriteTags;
+			}
+			const counts: Record<string, number> = {};
+			state.bookmarks.forEach((bookmark) => {
+				if (bookmark.deleted) return;
+				bookmark.tags.forEach((tag) => {
+					counts[tag] = (counts[tag] || 0) + 1;
+				});
+			});
+			return Object.entries(counts)
+				.sort((a, b) => b[1] - a[1])
+				.slice(0, 4)
+				.map(([tag]) => tag);
+		},
 	},
 
 	actions: {
@@ -117,23 +138,65 @@ export const useBookmarkStore = defineStore("bookmarks", {
 		},
 
 		updateSyncSettings(syncData: Storage["sync"]) {
-			this.sync = { ...syncData };
+			this.$patch({ sync: { ...syncData } });
+			this.saveStore();
+		},
+
+		toggleFavoriteTag(tag: string) {
+			const index = this.favoriteTags.indexOf(tag);
+			if (index > -1) {
+				this.favoriteTags.splice(index, 1);
+			} else {
+				this.favoriteTags.push(tag);
+			}
+			this.favoriteTagsMetadata[tag] = Date.now();
 			this.saveStore();
 		},
 
 		mergeStores(remoteStore: Storage): boolean {
 			let hasChanges = false;
 
-			// Merge favorite tags
-			const mergedFavoriteTags = [
-				...new Set([...this.favoriteTags, ...remoteStore.favoriteTags]),
-			].sort();
+			// Merge favorite tags using metadata for "Last Write Wins"
+			const allTags = new Set([
+				...Object.keys(this.favoriteTagsMetadata),
+				...Object.keys(remoteStore.favoriteTagsMetadata || {}),
+				...this.favoriteTags,
+				...remoteStore.favoriteTags,
+			]);
+
+			const newFavoriteTags: string[] = [];
+			const newMetadata: Record<string, number> = {
+				...this.favoriteTagsMetadata,
+			};
+
+			allTags.forEach((tag) => {
+				const localTs = this.favoriteTagsMetadata[tag] || 0;
+				const remoteTs = (remoteStore.favoriteTagsMetadata || {})[tag] || 0;
+
+				if (remoteTs > localTs) {
+					// Remote is newer
+					newMetadata[tag] = remoteTs;
+					if (remoteStore.favoriteTags.includes(tag)) {
+						newFavoriteTags.push(tag);
+					}
+				} else {
+					// Local is newer or equal
+					if (this.favoriteTags.includes(tag)) {
+						newFavoriteTags.push(tag);
+					}
+				}
+			});
+
+			newFavoriteTags.sort();
 
 			if (
-				JSON.stringify(mergedFavoriteTags) !==
-				JSON.stringify([...this.favoriteTags].sort())
+				JSON.stringify(newFavoriteTags) !==
+					JSON.stringify([...this.favoriteTags].sort()) ||
+				JSON.stringify(newMetadata) !==
+					JSON.stringify(this.favoriteTagsMetadata)
 			) {
-				this.favoriteTags = mergedFavoriteTags;
+				this.favoriteTags = newFavoriteTags;
+				this.favoriteTagsMetadata = newMetadata;
 				hasChanges = true;
 			}
 
@@ -255,6 +318,7 @@ export const useBookmarkStore = defineStore("bookmarks", {
 				const localState = {
 					bookmarks: this.bookmarks,
 					favoriteTags: this.favoriteTags,
+					favoriteTagsMetadata: this.favoriteTagsMetadata,
 				};
 
 				// Check if remote matches exactly what we have now
@@ -262,6 +326,7 @@ export const useBookmarkStore = defineStore("bookmarks", {
 					const remoteState = {
 						bookmarks: remoteData.bookmarks,
 						favoriteTags: remoteData.favoriteTags,
+						favoriteTagsMetadata: remoteData.favoriteTagsMetadata,
 					};
 
 					if (JSON.stringify(localState) === JSON.stringify(remoteState)) {
@@ -349,12 +414,14 @@ export const useBookmarkStore = defineStore("bookmarks", {
 			let lastState = JSON.stringify({
 				bookmarks: this.bookmarks,
 				favoriteTags: this.favoriteTags,
+				favoriteTagsMetadata: this.favoriteTagsMetadata,
 			});
 
 			this.$subscribe((_, state) => {
 				const currentState = JSON.stringify({
 					bookmarks: state.bookmarks,
 					favoriteTags: state.favoriteTags,
+					favoriteTagsMetadata: state.favoriteTagsMetadata,
 				});
 
 				if (currentState !== lastState) {

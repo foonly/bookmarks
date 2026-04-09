@@ -10,6 +10,7 @@
 		"edit_button_title": "{title} bearbeiten",
 		"delete_button_title": "{title} löschen",
 		"filter_all": "Alle",
+		"search_placeholder": "Lesezeichen suchen...",
 		"no_bookmarks": "Noch keine Lesezeichen",
 		"no_bookmarks_tag": "Keine Lesezeichen mit dem Tag \"{tag}\"",
 		"delete_confirm": "Sind Sie sicher, dass Sie dieses Lesezeichen löschen möchten?"
@@ -74,6 +75,7 @@
 		"edit_bookmark": "Lesezeichen bearbeiten",
 		"add_tag_placeholder": "Tag hinzufügen...",
 		"add_tag_button": "Hinzufügen",
+		"suggested_tags_label": "Vorgeschlagene Tags:",
 		"added_tags_label": "Hinzugefügte Tags:",
 		"no_tags": "Keine",
 		"remove_tag_title": "{tag} entfernen"

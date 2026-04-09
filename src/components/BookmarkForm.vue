@@ -30,6 +30,10 @@ const availableTags = computed(() => {
 	return store.sortedTags.filter((tag) => !form.value.tags.includes(tag));
 });
 
+const suggestedTags = computed(() => {
+	return store.suggestedTags.filter((tag) => !form.value.tags.includes(tag));
+});
+
 onMounted(() => {
 	if (isEdit.value) {
 		const bookmark = store.getBookmarkById(props.id!);
@@ -133,6 +137,21 @@ function handleCancel() {
 				</button>
 			</div>
 
+			<div v-if="suggestedTags.length > 0" class="suggestedTagsSection">
+				<div class="tagSectionLabel">{{ t("form.suggested_tags_label") }}</div>
+				<div class="tagContainer">
+					<button
+						v-for="tag in suggestedTags"
+						:key="tag"
+						type="button"
+						class="tagBadge suggestedTag"
+						@click="form.tags.push(tag)"
+					>
+						+ {{ tag }}
+					</button>
+				</div>
+			</div>
+
 			<div class="addedTagsSection">
 				<div class="tagSectionLabel">{{ t("form.added_tags_label") }}</div>
 				<div class="tagContainer">
@@ -168,4 +187,19 @@ function handleCancel() {
 
 <style scoped>
 /* Basic styles are inherited from global style.css */
+.suggestedTagsSection {
+	margin-top: 0.5rem;
+}
+
+.suggestedTag {
+	cursor: pointer;
+	border: 1px dashed #ccc;
+	background: transparent;
+	font-size: 0.8rem;
+}
+
+.suggestedTag:hover {
+	border-style: solid;
+	border-color: var(--color-primary, #007bff);
+}
 </style>

@@ -186,39 +186,6 @@ body {
 	}
 }
 
-.main-nav {
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: flex-start;
-	gap: 0.5rem 1.5rem;
-	margin-bottom: 2rem;
-	padding: 0.5rem 0;
-	border-bottom: 1px solid var(--bm-border-color);
-}
-
-.main-nav a {
-	padding: 0.25rem 0.75rem;
-	border-radius: 4px;
-	text-decoration: none;
-}
-
-.main-nav a:hover {
-	background-color: var(--bm-nav-link-hover-bg);
-}
-
-.main-nav a.active {
-	background-color: var(--bm-primary-color);
-	color: white;
-}
-
-#version {
-	color: var(--bm-text-dim);
-	margin-top: auto;
-	padding: 2rem 1rem 1rem;
-	text-align: right;
-	font-size: 0.75rem;
-}
-
 #modalDialog {
 	width: min(95vw, 640px);
 	max-height: 90vh;
@@ -569,27 +536,23 @@ body {
 	padding: 1.25rem;
 	display: flex;
 	flex-direction: column;
-	transition:
-		transform 0.2s ease,
-		border-color 0.2s ease;
-}
+	transition: border-color 0.2s ease;
+	&:hover {
+		border-color: var(--bm-tag-section-hover-border);
+	}
 
-.tag-section:hover {
-	border-color: var(--bm-tag-section-hover-border);
-	transform: translateY(-2px);
-}
-
-.tag-section h2 {
-	margin: 0 0 0.75rem 0;
-	padding-bottom: 0.5rem;
-	border-bottom: 1px solid var(--bm-border-color);
-	font-size: 1rem;
-	text-transform: uppercase;
-	letter-spacing: 0.05em;
-	color: var(--bm-text-color);
-	display: flex;
-	justify-content: space-between;
-	align-items: baseline;
+	h2 {
+		margin: 0 0 0.75rem 0;
+		padding-bottom: 0.5rem;
+		border-bottom: 1px solid var(--bm-border-color);
+		font-size: 1rem;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		color: var(--bm-text-color);
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+	}
 }
 
 .tag-count {
@@ -605,23 +568,21 @@ body {
 	list-style: none;
 	padding: 0;
 	margin: 0;
-}
-
-.tag-bookmark-list li {
-	margin-bottom: 0.25rem;
-	display: flex;
-	justify-content: space-between;
-	align-items: baseline;
-	gap: 0.5rem;
+	li {
+		margin-bottom: 0.25rem;
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		gap: 0.5rem;
+	}
 }
 
 .tag-edit-link {
 	font-size: 0.75rem;
 	opacity: 0.6;
-}
-
-.tag-edit-link:hover {
-	opacity: 1;
+	&:hover {
+		opacity: 1;
+	}
 }
 
 @media (max-width: 640px) {

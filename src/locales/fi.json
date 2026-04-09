@@ -10,6 +10,7 @@
 		"edit_button_title": "Muokkaa: {title}",
 		"delete_button_title": "Poista: {title}",
 		"filter_all": "Kaikki",
+		"search_placeholder": "Hae kirjanmerkkejä...",
 		"no_bookmarks": "Ei vielä kirjanmerkkejä",
 		"no_bookmarks_tag": "Ei kirjanmerkkejä tunnisteella \"{tag}\"",
 		"delete_confirm": "Haluatko varmasti poistaa tämän kirjanmerkin?"
@@ -74,6 +75,7 @@
 		"edit_bookmark": "Muokkaa kirjanmerkkiä",
 		"add_tag_placeholder": "Lisää tunniste...",
 		"add_tag_button": "Lisää",
+		"suggested_tags_label": "Ehdotetut tunnisteet:",
 		"added_tags_label": "Lisätyt tunnisteet:",
 		"no_tags": "Ei mitään",
 		"remove_tag_title": "Poista {tag}"

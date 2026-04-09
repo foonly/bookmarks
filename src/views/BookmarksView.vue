@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBookmarkStore } from "../stores/bookmarkStore";
 import BookmarkItem from "../components/BookmarkItem.vue";
@@ -17,11 +17,32 @@ const props = defineProps<Props>();
 const { t } = useI18n();
 const store = useBookmarkStore();
 
+const searchQuery = ref("");
+const debouncedSearchQuery = ref("");
+
+let debounceTimeout: number | undefined;
+watch(searchQuery, (newVal) => {
+	if (debounceTimeout) clearTimeout(debounceTimeout);
+	debounceTimeout = window.setTimeout(() => {
+		debouncedSearchQuery.value = newVal;
+	}, 300);
+});
+
 const sortedBookmarks = computed(() => {
 	let bookmarks = store.activeBookmarks;
 
 	if (props.tag) {
 		bookmarks = bookmarks.filter((b) => b.tags.includes(props.tag!));
+	}
+
+	if (debouncedSearchQuery.value) {
+		const q = debouncedSearchQuery.value.toLowerCase();
+		bookmarks = bookmarks.filter(
+			(b) =>
+				b.title.toLowerCase().includes(q) ||
+				b.description.toLowerCase().includes(q) ||
+				b.tags.some((tag) => tag.toLowerCase().includes(q)),
+		);
 	}
 
 	return [...bookmarks].sort((a, b) => {
@@ -34,7 +55,13 @@ const sortedBookmarks = computed(() => {
 	});
 });
 
-const allTags = computed(() => store.sortedTags);
+const displayedTags = computed(() => {
+	const suggested = store.suggestedTags;
+	if (props.tag && !suggested.includes(props.tag)) {
+		return [...suggested, props.tag].sort();
+	}
+	return suggested;
+});
 
 const addLink = computed(() => {
 	return props.tag ? `/tag/${encodeURIComponent(props.tag)}/add` : "/add";
@@ -46,13 +73,22 @@ const initialTags = computed(() => (props.tag ? [props.tag] : []));
 
 <template>
 	<div class="bookmarks-view">
+		<div class="search-bar">
+			<input
+				type="text"
+				v-model="searchQuery"
+				:placeholder="t('bookmarks.search_placeholder')"
+				class="search-input"
+			/>
+		</div>
+
 		<div class="bookmarks-toolbar">
 			<div class="tag-filter-bar">
 				<router-link to="/" class="tag-filter-item" :class="{ active: !tag }">
 					{{ t("bookmarks.filter_all") }}
 				</router-link>
 				<router-link
-					v-for="tagName in allTags"
+					v-for="tagName in displayedTags"
 					:key="tagName"
 					:to="`/tag/${encodeURIComponent(tagName)}`"
 					class="tag-filter-item"
@@ -106,6 +142,28 @@ const initialTags = computed(() => (props.tag ? [props.tag] : []));
 <style scoped>
 .bookmarks-view {
 	width: 100%;
+}
+
+.search-bar {
+	margin-bottom: 1.5rem;
+}
+
+.search-input {
+	width: 100%;
+	padding: 0.75rem 1rem;
+	border: 1px solid var(--bm-border-color);
+	border-radius: 8px;
+	background-color: var(--bm-input-bg);
+	color: var(--bm-text-color);
+	font-size: 1rem;
+	transition: all 0.2s ease;
+}
+
+.search-input:focus {
+	outline: none;
+	border-color: var(--bm-primary-color);
+	background-color: var(--bm-input-focus-bg);
+	box-shadow: 0 0 0 2px var(--bm-nav-link-hover-bg);
 }
 
 .no-bookmarks {

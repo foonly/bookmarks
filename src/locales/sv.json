@@ -10,6 +10,7 @@
 		"edit_button_title": "Redigera {title}",
 		"delete_button_title": "Ta bort {title}",
 		"filter_all": "Alla",
+		"search_placeholder": "Sök bland bokmärken...",
 		"no_bookmarks": "Inga bokmärken ännu",
 		"no_bookmarks_tag": "Inga bokmärken med taggen \"{tag}\"",
 		"delete_confirm": "Är du säker på att du vill ta bort detta bokmärke?"
@@ -74,6 +75,7 @@
 		"edit_bookmark": "Redigera bokmärke",
 		"add_tag_placeholder": "Lägg till en tagg...",
 		"add_tag_button": "Lägg till",
+		"suggested_tags_label": "Föreslagna taggar:",
 		"added_tags_label": "Tillagda taggar:",
 		"no_tags": "Inga",
 		"remove_tag_title": "Ta bort {tag}"

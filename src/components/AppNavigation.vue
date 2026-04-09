@@ -25,16 +25,32 @@ const isBookmarksActive = computed(() => {
 		<router-link to="/tags" active-class="active">
 			{{ t("nav.tags") }}
 		</router-link>
-		<router-link to="/about" active-class="active">
-			{{ t("nav.about") }}
-		</router-link>
-		<router-link to="/settings" active-class="active">
-			{{ t("nav.settings") }}
-		</router-link>
 	</nav>
 </template>
 
 <style scoped>
 /* Styles are inherited from global style.css,
    but we can add component-specific overrides here if needed */
+
+.main-nav {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-start;
+	gap: 0.5rem 1.5rem;
+	margin-bottom: 2rem;
+	padding: 0.5rem 0;
+	border-bottom: 1px solid var(--bm-border-color);
+	a {
+		padding: 0.25rem 0.75rem;
+		border-radius: 4px;
+		text-decoration: none;
+		&:hover {
+			background-color: var(--bm-nav-link-hover-bg);
+		}
+		&.active {
+			background-color: var(--bm-primary-color);
+			color: white;
+		}
+	}
+}
 </style>
