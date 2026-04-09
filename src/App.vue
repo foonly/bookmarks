@@ -93,6 +93,11 @@ onUnmounted(() => {
 		gap: 1rem;
 		align-items: center;
 		justify-content: flex-end;
+
+		a.active {
+			font-weight: bold;
+			text-decoration: underline;
+		}
 	}
 	#version {
 		color: var(--bm-text-dim);
