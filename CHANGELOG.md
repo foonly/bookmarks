@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.12.0 (2026-11-19)
+
+#### Features
+
+- sync: switch to the foonblob API at blob.foonly.dev (194a810)
+
 ### 0.11.1 (2026-04-09)
 
 #### Bug Fixes
