@@ -2,10 +2,8 @@ import { defineStore } from "pinia";
 import { STORAGE_KEY } from "../constants";
 import { storageSchema } from "../types";
 import type { Bookmark, Storage } from "../types";
-import { encrypt, decrypt, sign, hash } from "../crypto";
-
-const API_BASE =
-	import.meta.env.VITE_API_BASE || "http://localhost:8080/api/v1";
+import { encrypt, decrypt } from "../crypto";
+import { fetchLatest, upload, SyncHttpError } from "../syncClient";
 
 let syncInProgress = false;
 
@@ -307,14 +305,24 @@ export const useBookmarkStore = defineStore("bookmarks", {
 
 			syncInProgress = true;
 			try {
-				// 1. Fetch latest from backend
-				const response = await fetch(`${API_BASE}/sync/${id}`);
+				// 1. Fetch latest from backend (null: sync ID not registered yet)
+				let latest;
+				try {
+					latest = await fetchLatest(id, signSecret);
+				} catch (fetchError) {
+					return {
+						success: false,
+						message:
+							fetchError instanceof SyncHttpError
+								? fetchError.message
+								: "Could not reach the sync server.",
+					};
+				}
 
 				let remoteData = null;
 
-				if (response.ok) {
-					const result = await response.json();
-					const encryptedBlob = result.data;
+				if (latest) {
+					const encryptedBlob = latest.data;
 
 					if (encryptedBlob) {
 						// 2. Decrypt
@@ -340,12 +348,6 @@ export const useBookmarkStore = defineStore("bookmarks", {
 							};
 						}
 					}
-				} else if (response.status !== 404) {
-					// 404 is expected for new accounts; other errors are reported.
-					return {
-						success: false,
-						message: `Server error: ${response.statusText}`,
-					};
 				}
 
 				// 3. Merge remote into local (Last Modified Wins)
@@ -384,32 +386,8 @@ export const useBookmarkStore = defineStore("bookmarks", {
 					encKey,
 				);
 
-				const timestamp = Math.floor(Date.now() / 1000).toString();
-				const body: Record<string, string> = { data: encryptedLocal };
-
-				// If this is a new sync ID (remoteData was null), include the
-				// signing secret for registration.
-				if (!remoteData) {
-					body.registration_secret = signSecret;
-				}
-
-				const bodyString = JSON.stringify(body);
-				const payloadHash = await hash(bodyString);
-				const signature = await sign(timestamp + payloadHash, signSecret);
-
-				const uploadResponse = await fetch(`${API_BASE}/sync/${id}`, {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-						"X-Sync-Timestamp": timestamp,
-						"X-Sync-Signature": signature,
-					},
-					body: bodyString,
-				});
-
-				if (!uploadResponse.ok) {
-					throw new Error(`Upload failed: ${uploadResponse.statusText}`);
-				}
+				// A sync ID the server does not know yet is registered with this upload.
+				await upload(id, signSecret, encryptedLocal, latest === null);
 
 				// Update last synced timestamp
 				this.syncSettings.lastSynced = Date.now();
