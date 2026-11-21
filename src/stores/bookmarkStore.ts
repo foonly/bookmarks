@@ -347,6 +347,40 @@ export const useBookmarkStore = defineStore("bookmarks", {
 			return hasChanges;
 		},
 
+		/**
+		 * Merges an imported backup into the store. Bookmarks without an ID
+		 * (from other tools or hand-written files) all default to ID 0 and
+		 * would collapse into one, so they get fresh IDs, and are skipped
+		 * when a bookmark with the same URL already exists so that importing
+		 * the same file twice adds nothing.
+		 */
+		importData(data: Storage): boolean {
+			const now = Date.now();
+			const usedIds = new Set(this.bookmarks.map((b) => b.created));
+			const activeUrls = new Set(
+				this.bookmarks.filter((b) => !b.deleted).map((b) => b.url),
+			);
+			let nextId = now;
+
+			const bookmarks: Bookmark[] = [];
+			for (const bookmark of data.bookmarks) {
+				if (bookmark.created) {
+					bookmarks.push(bookmark);
+					continue;
+				}
+				if (activeUrls.has(bookmark.url)) continue;
+				while (usedIds.has(nextId)) nextId++;
+				usedIds.add(nextId);
+				activeUrls.add(bookmark.url);
+				bookmarks.push({
+					...bookmark,
+					created: nextId,
+					modified: bookmark.modified || now,
+				});
+			}
+			return this.mergeStores({ ...data, bookmarks });
+		},
+
 		purgeDeleted(forceAll: boolean = false) {
 			const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
 			const now = Date.now();

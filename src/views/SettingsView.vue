@@ -152,7 +152,7 @@ function handleImport() {
 					alert(t("settings.data.import_invalid"));
 					return;
 				}
-				if (store.mergeStores(result.data)) {
+				if (store.importData(result.data)) {
 					alert(t("settings.data.import_success"));
 				} else {
 					alert(t("settings.data.import_no_changes"));

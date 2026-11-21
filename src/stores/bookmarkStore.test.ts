@@ -97,6 +97,44 @@ describe("mergeStores: failed favicons", () => {
 	});
 });
 
+describe("importData", () => {
+	it("gives bookmarks without IDs their own IDs instead of merging them", () => {
+		const store = useBookmarkStore();
+		const imported = remote({
+			bookmarks: [
+				{ url: "https://a.example" },
+				{ url: "https://b.example" },
+				{ url: "https://c.example" },
+			] as Storage["bookmarks"],
+		});
+		expect(store.importData(imported)).toBe(true);
+		expect(store.bookmarks.map((b) => b.url).sort()).toEqual([
+			"https://a.example",
+			"https://b.example",
+			"https://c.example",
+		]);
+		expect(new Set(store.bookmarks.map((b) => b.created)).size).toBe(3);
+		expect(store.bookmarks.every((b) => b.created > 0 && b.modified > 0)).toBe(true);
+	});
+
+	it("does not add ID-less bookmarks again when the same file is imported twice", () => {
+		const store = useBookmarkStore();
+		const file = () =>
+			remote({ bookmarks: [{ url: "https://a.example" }] as Storage["bookmarks"] });
+		store.importData(file());
+		expect(store.importData(file())).toBe(false);
+		expect(store.bookmarks).toHaveLength(1);
+	});
+
+	it("merges bookmarks that have IDs as usual", () => {
+		const store = useBookmarkStore();
+		store.bookmarks.push(bookmark(1, { title: "old", modified: 10 }));
+		store.importData(remote({ bookmarks: [bookmark(1, { title: "new", modified: 20 })] }));
+		expect(store.bookmarks).toHaveLength(1);
+		expect(store.bookmarks[0].title).toBe("new");
+	});
+});
+
 describe("purgeDeleted", () => {
 	it("removes deleted bookmarks after 30 days, or all of them when forced", () => {
 		const store = useBookmarkStore();
