@@ -28,7 +28,7 @@ export function createFakeSyncServer({ exposeDate = true } = {}) {
 		requests: [] as string[],
 		/** Number of blobs stored, registration included. */
 		uploads: 0,
-		/** Whether browsers can read the Date header (foonblob-api#2). */
+		/** Whether browsers can read the Date header (foonblob 0.9.0 and later). */
 		exposeDate,
 		/** Makes the next request fail with this status, or with no response. */
 		failNext: null as number | "network" | null,
