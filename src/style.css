@@ -31,6 +31,9 @@
 	--bm-modal-backdrop: rgba(0, 0, 0, 0.5);
 	--bm-danger-color: #ff4444;
 	--bm-danger-bg-hover: rgba(255, 68, 68, 0.2);
+	--bm-warning-color: #f5b041;
+	--bm-warning-bg: rgba(245, 176, 65, 0.12);
+	--bm-danger-bg: rgba(255, 68, 68, 0.12);
 
 	--bm-nav-link-hover-bg: rgba(100, 108, 255, 0.1);
 	--bm-shadow-color: rgba(0, 0, 0, 0.2);
@@ -72,6 +75,9 @@
 		--bm-modal-backdrop: rgba(0, 0, 0, 0.3);
 		--bm-danger-color: #ef4444;
 		--bm-danger-bg-hover: rgba(239, 68, 68, 0.1);
+		--bm-warning-color: #b45309;
+		--bm-warning-bg: rgba(217, 119, 6, 0.1);
+		--bm-danger-bg: rgba(239, 68, 68, 0.08);
 		--bm-shadow-color: rgba(0, 0, 0, 0.1);
 	}
 }
@@ -711,6 +717,41 @@ body {
 	font-size: 0.85rem;
 	color: var(--bm-text-dim);
 	font-style: italic;
+}
+
+.sync-alert {
+	margin-top: 1rem;
+	padding: 0.75rem 1rem;
+	border-left: 4px solid;
+	border-radius: 4px;
+	font-size: 0.9rem;
+	line-height: 1.4;
+}
+
+.sync-alert-error {
+	border-color: var(--bm-danger-color);
+	background-color: var(--bm-danger-bg);
+}
+
+.sync-alert-warning {
+	border-color: var(--bm-warning-color);
+	background-color: var(--bm-warning-bg);
+}
+
+.attention-marker {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 1.1em;
+	height: 1.1em;
+	margin-left: 0.25em;
+	border-radius: 50%;
+	background-color: var(--bm-warning-color);
+	color: #000;
+	font-size: 0.75em;
+	font-weight: bold;
+	line-height: 1;
+	vertical-align: middle;
 }
 
 .settings-actions {

@@ -37,7 +37,22 @@
 			"sync_now": "Sünkrooni kohe",
 			"syncing": "Sünkroonimine...",
 			"last_synced": "Viimati sünkroonitud: {date}",
-			"generate_confirm": "Uute andmete genereerimine asendab sinu praegused andmed. Kui sul on serveris sünkroonitud andmeid, kaotad neile ligipääsu, kui sul pole vanadest andmetest varukoopiat. Kas jätkata?"
+			"generate_confirm": "Uute andmete genereerimine asendab sinu praegused andmed. Kui sul on serveris sünkroonitud andmeid, kaotad neile ligipääsu, kui sul pole vanadest andmetest varukoopiat. Kas jätkata?",
+			"needs_attention": "Sünkroonimine vajab tähelepanu",
+			"clock_behind": "Sinu seadme kell on sünkroonimisserveri kellast {amount} taga. Sünkroonimine arvestab sellega, kuid teised rakendused ja veebilehed ei pruugi: kontrolli kuupäeva, kellaaja ja ajavööndi seadeid.",
+			"clock_ahead": "Sinu seadme kell on sünkroonimisserveri kellast {amount} ees. Sünkroonimine arvestab sellega, kuid teised rakendused ja veebilehed ei pruugi: kontrolli kuupäeva, kellaaja ja ajavööndi seadeid.",
+			"errors": {
+				"invalid_credentials": "Sünkroonimine ebaõnnestus: sünkroonimise andmed ei ole kujul ID:EncKey:Secret.",
+				"network": "Sünkroonimine ebaõnnestus: sünkroonimisserveriga ei saadud ühendust.",
+				"unauthorized": "Sünkroonimine ebaõnnestus: server ei aktsepteerinud neid andmeid. Kontrolli, et saladus on õige.",
+				"clock": "Sünkroonimine ebaõnnestus: sinu seadme kell on üle 5 minuti vale. Kontrolli kuupäeva, kellaaja ja ajavööndi seadeid.",
+				"wrong_origin": "Sünkroonimine ebaõnnestus: see sünkroonimise ID on lukustatud teisele veebilehele.",
+				"rate_limited": "Sünkroonimine ebaõnnestus: liiga palju päringuid. Peagi proovitakse uuesti.",
+				"server": "Sünkroonimine ebaõnnestus: sünkroonimisserver tagastas vea ({status}).",
+				"decrypt": "Sünkroonimine ebaõnnestus: serveris olevaid andmeid ei õnnestunud dekrüpteerida. Kontrolli krüpteerimisvõtit.",
+				"remote_unreadable": "Sünkroonimine peatati: serveris olevaid andmeid ei õnnestunud lugeda, seega neid üle ei kirjutatud.",
+				"unknown": "Sünkroonimine ebaõnnestus ootamatu vea tõttu. Üksikasjad leiad brauseri konsoolist."
+			}
 		},
 		"privacy": {
 			"title": "Privaatsus",

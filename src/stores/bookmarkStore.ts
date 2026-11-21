@@ -4,8 +4,35 @@ import { storageSchema } from "../types";
 import type { Bookmark, Storage } from "../types";
 import { encrypt, decrypt } from "../crypto";
 import { fetchLatest, upload, SyncHttpError } from "../syncClient";
+import { syncStatus } from "../syncStatus";
+import type { SyncError } from "../syncStatus";
 
 let syncInProgress = false;
+
+/** Classifies an exception thrown during a sync for the UI. */
+function syncErrorFrom(error: unknown): SyncError {
+	if (error instanceof SyncHttpError) {
+		switch (error.status) {
+			case 401:
+				// The server explains why; a timestamp outside its window means
+				// the device clock is off and could not be corrected for.
+				return {
+					code: /timestamp/i.test(error.reason) ? "clock" : "unauthorized",
+				};
+			case 403:
+				return { code: "wrong_origin" };
+			case 429:
+				return { code: "rate_limited" };
+			default:
+				return { code: "server", status: error.status };
+		}
+	}
+	// fetch rejects with a TypeError when no response arrives at all.
+	if (error instanceof TypeError) {
+		return { code: "network" };
+	}
+	return { code: "unknown" };
+}
 
 type SyncedState = Pick<
 	Storage,
@@ -336,129 +363,88 @@ export const useBookmarkStore = defineStore("bookmarks", {
 			}
 		},
 
-		async performSync(): Promise<{ success: boolean; message: string }> {
-			if (syncInProgress) {
-				return { success: false, message: "Sync already in progress" };
+		/**
+		 * Syncs with the server and records the outcome in `syncStatus`, which
+		 * the UI shows. Returns null on success, or why the sync failed.
+		 */
+		async performSync(): Promise<SyncError | null> {
+			if (syncInProgress || !this.syncSettings.enabled) {
+				return null;
 			}
-
-			const syncConfig = this.syncSettings;
-
-			if (!syncConfig || !syncConfig.enabled || !syncConfig.credentials) {
-				return {
-					success: false,
-					message: "Sync is not enabled or credentials missing.",
-				};
-			}
-
-			const [id, encKey, signSecret] = syncConfig.credentials.split(":");
-			if (!id || !encKey || !signSecret) {
-				return {
-					success: false,
-					message:
-						"Invalid sync credentials format (expected ID:EncKey:SignSecret).",
-				};
-			}
-
 			syncInProgress = true;
 			try {
-				// 1. Fetch latest from backend (null: sync ID not registered yet)
-				let latest;
-				try {
-					latest = await fetchLatest(id, signSecret);
-				} catch (fetchError) {
-					return {
-						success: false,
-						message:
-							fetchError instanceof SyncHttpError
-								? fetchError.message
-								: "Could not reach the sync server.",
-					};
-				}
-
-				let remoteData = null;
-
-				if (latest) {
-					const encryptedBlob = latest.data;
-
-					if (encryptedBlob) {
-						// 2. Decrypt
-						try {
-							const decryptedStr = await decrypt(encryptedBlob, encKey);
-							const parsed = JSON.parse(decryptedStr);
-
-							// Validate schema
-							const validated = storageSchema.safeParse(parsed);
-							if (!validated.success) {
-								// Never upload over remote data we could not read: that
-								// would discard every other device's bookmarks.
-								console.error(
-									"Remote data schema validation failed",
-									validated.error,
-								);
-								return {
-									success: false,
-									message:
-										"Remote data could not be read. Sync stopped to avoid overwriting it.",
-								};
-							}
-							remoteData = validated.data;
-						} catch (decryptError) {
-							console.error("Decryption failed", decryptError);
-							return {
-								success: false,
-								message: "Decryption failed. Check your secret key.",
-							};
-						}
-					}
-				}
-
-				// 3. Merge remote into local (Last Modified Wins)
-				if (remoteData) {
-					this.mergeStores(remoteData);
-				}
-
-				// 4. Compare current local state with remote state to avoid redundant uploads
-				const localState = canonicalSyncState(this.$state);
-
-				// Check if remote matches what we have now, ignoring order
-				if (remoteData) {
-					const remoteState = canonicalSyncState(remoteData);
-
-					if (JSON.stringify(localState) === JSON.stringify(remoteState)) {
-						// No changes to upload
-						this.syncSettings.lastSynced = Date.now();
-						this.saveStore();
-						return { success: true, message: "Sync complete (no changes)." };
-					}
-				}
-
-				// 5. Encrypt and Upload local state
-				const encryptedLocal = await encrypt(
-					JSON.stringify(localState),
-					encKey,
-				);
-
-				// A sync ID the server does not know yet is registered with this upload.
-				await upload(id, signSecret, encryptedLocal, latest === null);
-
-				// Update last synced timestamp
-				this.syncSettings.lastSynced = Date.now();
-				this.saveStore();
-
-				return {
-					success: true,
-					message: "Sync completed and updated backend.",
-				};
+				const error = await this.syncOnce();
+				syncStatus.error = error;
+				return error;
 			} catch (error) {
 				console.error("Sync error:", error);
-				return {
-					success: false,
-					message:
-						error instanceof Error ? error.message : "Unknown sync error",
-				};
+				syncStatus.error = syncErrorFrom(error);
+				return syncStatus.error;
 			} finally {
 				syncInProgress = false;
 			}
+		},
+
+		/** One sync round. Use performSync, which guards and records it. */
+		async syncOnce(): Promise<SyncError | null> {
+			const [id, encKey, signSecret] = (
+				this.syncSettings.credentials || ""
+			).split(":");
+			if (!id || !encKey || !signSecret) {
+				return { code: "invalid_credentials" };
+			}
+
+			// 1. Fetch latest from backend (null: sync ID not registered yet)
+			const latest = await fetchLatest(id, signSecret);
+
+			let remoteData = null;
+
+			if (latest?.data) {
+				// 2. Decrypt
+				let parsed: unknown;
+				try {
+					parsed = JSON.parse(await decrypt(latest.data, encKey));
+				} catch (decryptError) {
+					console.error("Decryption failed", decryptError);
+					return { code: "decrypt" };
+				}
+
+				// Validate schema
+				const validated = storageSchema.safeParse(parsed);
+				if (!validated.success) {
+					// Never upload over remote data we could not read: that
+					// would discard every other device's bookmarks.
+					console.error("Remote data schema validation failed", validated.error);
+					return { code: "remote_unreadable" };
+				}
+				remoteData = validated.data;
+			}
+
+			// 3. Merge remote into local (Last Modified Wins)
+			if (remoteData) {
+				this.mergeStores(remoteData);
+			}
+
+			// 4. Compare current local state with remote state to avoid redundant uploads
+			const localState = canonicalSyncState(this.$state);
+
+			// Check if remote matches what we have now, ignoring order
+			const unchanged =
+				remoteData &&
+				JSON.stringify(localState) ===
+					JSON.stringify(canonicalSyncState(remoteData));
+
+			if (!unchanged) {
+				// 5. Encrypt and Upload local state
+				const encryptedLocal = await encrypt(JSON.stringify(localState), encKey);
+
+				// A sync ID the server does not know yet is registered with this upload.
+				await upload(id, signSecret, encryptedLocal, latest === null);
+			}
+
+			this.syncSettings.lastSynced = Date.now();
+			this.saveStore();
+			return null;
 		},
 
 		initAutoSync(intervalMs: number = 300000) {

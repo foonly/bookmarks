@@ -4,6 +4,7 @@ import { useI18n } from "vue-i18n";
 import { useBookmarkStore } from "../stores/bookmarkStore";
 import { storageSchema } from "../types";
 import { generateCredentials } from "../crypto";
+import { syncStatus, CLOCK_WARNING_SECONDS } from "../syncStatus";
 
 import { SUPPORTED_LOCALES, localeLabels } from "../i18n";
 
@@ -83,12 +84,40 @@ function handleToggleSync() {
 
 async function handleSyncNow() {
 	isSyncing.value = true;
-	const result = await store.performSync();
+	// The outcome is shown in the status below the buttons.
+	await store.performSync();
 	isSyncing.value = false;
+}
 
-	if (!result.success) {
-		alert(result.message);
-	}
+const syncErrorMessage = computed(() => {
+	const error = syncStatus.error;
+	if (!error) return "";
+	return t(`settings.sync.errors.${error.code}`, { status: error.status ?? "" });
+});
+
+const clockNotice = computed(() => {
+	const offset = syncStatus.clockOffsetSeconds;
+	if (offset === null || Math.abs(offset) <= CLOCK_WARNING_SECONDS) return "";
+	// The offset is server clock minus device clock: positive means behind.
+	const key = offset > 0 ? "settings.sync.clock_behind" : "settings.sync.clock_ahead";
+	return t(key, { amount: formatDuration(Math.abs(offset)) });
+});
+
+/** Formats seconds as hours and minutes in the current language. */
+function formatDuration(seconds: number): string {
+	const totalMinutes = Math.round(seconds / 60);
+	const hours = Math.floor(totalMinutes / 60);
+	const minutes = totalMinutes % 60;
+	const format = (value: number, unit: "hour" | "minute") =>
+		new Intl.NumberFormat(locale.value, {
+			style: "unit",
+			unit,
+			unitDisplay: "long",
+		}).format(value);
+	const parts: string[] = [];
+	if (hours) parts.push(format(hours, "hour"));
+	if (minutes || !hours) parts.push(format(minutes, "minute"));
+	return parts.join(" ");
 }
 
 function handleExport() {
@@ -256,6 +285,15 @@ function formatDate(timestamp: number) {
 					})
 				}}
 			</p>
+
+			<template v-if="store.syncSettings.enabled">
+				<p v-if="syncErrorMessage" class="sync-alert sync-alert-error" role="alert">
+					{{ syncErrorMessage }}
+				</p>
+				<p v-if="clockNotice" class="sync-alert sync-alert-warning" role="status">
+					{{ clockNotice }}
+				</p>
+			</template>
 		</section>
 
 		<!-- Language Section -->

@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, inject } from "vue";
+import { computed, onMounted, onUnmounted, ref, inject } from "vue";
 import { useI18n } from "vue-i18n";
 import { registerSW } from "virtual:pwa-register";
 import { useBookmarkStore } from "./stores/bookmarkStore";
 import AppNavigation from "./components/AppNavigation.vue";
+import { syncStatus, CLOCK_WARNING_SECONDS } from "./syncStatus";
 
 const { t, locale } = useI18n();
 const store = useBookmarkStore();
@@ -18,6 +19,15 @@ store.initAutoSync();
 if (store.language) {
 	locale.value = store.language;
 }
+
+// Flag the Settings link when sync has a problem the user should look at.
+// Network errors are left out: the offline indicator already covers them.
+const syncNeedsAttention = computed(
+	() =>
+		store.syncSettings.enabled &&
+		((syncStatus.error !== null && syncStatus.error.code !== "network") ||
+			Math.abs(syncStatus.clockOffsetSeconds ?? 0) > CLOCK_WARNING_SECONDS),
+);
 
 // Offline status handling
 const updateOnlineStatus = () => {
@@ -71,6 +81,14 @@ onUnmounted(() => {
 			</router-link>
 			<router-link to="/settings" active-class="active">
 				{{ t("nav.settings") }}
+				<span
+					v-if="syncNeedsAttention"
+					class="attention-marker"
+					role="img"
+					:title="t('settings.sync.needs_attention')"
+					:aria-label="t('settings.sync.needs_attention')"
+					>!</span
+				>
 			</router-link>
 			<div id="version">
 				{{ appVersion }}
