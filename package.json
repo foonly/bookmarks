@@ -12,6 +12,8 @@
 		"dev": "vite",
 		"build": "vue-tsc && vite build",
 		"preview": "vite preview",
+		"test": "vitest run",
+		"test:watch": "vitest",
 		"postversion": "git push && git push --tags"
 	},
 	"devDependencies": {
@@ -20,6 +22,7 @@
 		"typescript": "~5.8.3",
 		"vite": "^7.1.7",
 		"vite-plugin-pwa": "^1.2.0",
+		"vitest": "^5.1.1",
 		"vue-tsc": "^3.2.6",
 		"workbox-build": "^7.4.0"
 	},

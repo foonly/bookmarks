@@ -37,6 +37,17 @@ To start the development server with hot-reloading:
 pnpm run dev
 ```
 
+## Testing
+
+To run the test suite once, or in watch mode while developing:
+
+```shell
+pnpm test
+pnpm run test:watch
+```
+
+The sync tests run devices against an in-memory fake of the foonblob API (`src/test/fakeSyncServer.ts`) that enforces the real server's timestamp window, signatures and replay protection.
+
 ## Building
 
 To create a production-ready build in the `dist` directory:

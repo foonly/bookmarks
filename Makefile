@@ -1,4 +1,4 @@
-.PHONY: clean install dev
+.PHONY: clean install dev test
 
 build: install
 	pnpm run build
@@ -8,6 +8,9 @@ install:
 
 dev: install
 	pnpm run dev
+
+test: install
+	pnpm run test
 
 clean:
 	rm -rf node_modules
