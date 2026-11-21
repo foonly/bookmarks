@@ -30,14 +30,14 @@ const routes = [
 		path: "/tag/:tag",
 		name: "tag-bookmarks",
 		component: BookmarksView,
-		props: (route: any) => ({ tag: decodeURIComponent(route.params.tag) }),
+		props: (route: any) => ({ tag: route.params.tag }),
 	},
 	{
 		path: "/tag/:tag/add",
 		name: "tag-add-bookmark",
 		component: BookmarksView,
 		props: (route: any) => ({
-			tag: decodeURIComponent(route.params.tag),
+			tag: route.params.tag,
 			showModal: "add",
 		}),
 	},
@@ -46,7 +46,7 @@ const routes = [
 		name: "tag-edit-bookmark",
 		component: BookmarksView,
 		props: (route: any) => ({
-			tag: decodeURIComponent(route.params.tag),
+			tag: route.params.tag,
 			showModal: "edit",
 			bookmarkId: parseInt(route.params.id),
 		}),
