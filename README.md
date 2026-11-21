@@ -58,7 +58,7 @@ pnpm run build
 
 ## Synchronization & Backend
 
-The application is designed to work with a specialized Go-based backend (see `BACKEND.md` for specifications).
+Sync uses [foonblob](https://github.com/foonly/foonblob-api), a small Go server that stores encrypted, versioned blobs; see its [API.md](https://github.com/foonly/foonblob-api/blob/main/API.md) for the protocol. The server only ever sees ciphertext: the encryption key stays on your devices. Set `VITE_API_BASE` at build time to point the app at your own instance (see `.env.example`).
 
 To enable sync:
 
