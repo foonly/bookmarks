@@ -3,61 +3,81 @@
  *
  * Every request is signed with HMAC-SHA256 over `timestamp + content`, where
  * content is the URL path for GET and the SHA-256 hex digest of the body for POST.
- * The server only accepts a timestamp that is strictly greater than the last one
- * it accepted for the sync ID, so timestamps are kept monotonic across tabs.
+ * The server accepts timestamps within 5 minutes of its own clock and rejects
+ * any signature it has already seen. Timestamps come from this device's clock,
+ * corrected by the offset to the server's clock, which is measured from the
+ * Date header of every response.
  */
 import { hash, sign } from "./crypto";
+import { syncStatus } from "./syncStatus";
 
 const API_BASE =
 	import.meta.env.VITE_API_BASE || "http://localhost:8080/api/v1";
 
-const TS_KEY = "bookmarks-last-timestamp";
-
-function readLastTimestamp(): number {
-	try {
-		return parseInt(localStorage.getItem(TS_KEY) || "0", 10) || 0;
-	} catch {
-		return 0;
-	}
+// Older versions kept an ever-increasing timestamp counter here, which the
+// server no longer needs. Remove it.
+try {
+	localStorage.removeItem("bookmarks-last-timestamp");
+} catch {
+	// Storage unavailable: nothing to remove.
 }
 
-function writeLastTimestamp(ts: number) {
-	try {
-		localStorage.setItem(TS_KEY, String(ts));
-	} catch {
-		// Storage unavailable: monotonicity then only holds within this page.
-	}
+/** Server clock minus device clock, in milliseconds. */
+let clockOffsetMs = 0;
+
+/**
+ * Updates the clock offset from a response's Date header. Servers that do not
+ * expose the header to browsers leave the offset unchanged.
+ */
+function measureClockOffset(res: Response) {
+	const serverMs = Date.parse(res.headers.get("Date") ?? "");
+	if (Number.isNaN(serverMs)) return;
+	// Date has whole-second resolution: on average the server time is half a
+	// second later than it says.
+	clockOffsetMs = serverMs + 500 - Date.now();
+	syncStatus.clockOffsetSeconds = Math.round(clockOffsetMs / 1000);
 }
 
-let lastTimestamp = 0;
+/** The last timestamp used for each signed content. */
+const lastTimestampFor = new Map<string, number>();
 
-/** Returns a Unix timestamp (seconds) greater than any previously used one. */
-function nextTimestamp(): number {
-	lastTimestamp = Math.max(lastTimestamp, readLastTimestamp());
-	let ts = Math.floor(Date.now() / 1000);
-	if (ts <= lastTimestamp) {
-		ts = lastTimestamp + 1;
+/**
+ * Returns a server-corrected Unix timestamp (seconds) for signing `content`.
+ * Signing the same content with the same timestamp gives the same signature,
+ * which the server rejects as a replay, so a repeat within the same second
+ * gets the next second instead.
+ */
+function timestampFor(content: string): number {
+	let ts = Math.floor((Date.now() + clockOffsetMs) / 1000);
+	const last = lastTimestampFor.get(content);
+	// Only bump close to the last one: after the clock offset is corrected
+	// backwards, following an old timestamp would put requests out of the window.
+	if (last !== undefined && ts <= last && last - ts < 60) {
+		ts = last + 1;
 	}
-	lastTimestamp = ts;
-	writeLastTimestamp(ts);
+	lastTimestampFor.set(content, ts);
 	return ts;
-}
-
-/** Records a timestamp seen from the server so later requests stay ahead of it. */
-function noteTimestamp(ts: number) {
-	if (ts > Math.max(lastTimestamp, readLastTimestamp())) {
-		lastTimestamp = ts;
-		writeLastTimestamp(ts);
-	}
 }
 
 export class SyncHttpError extends Error {
 	status: number;
+	/** The server's explanation, from the response body. */
+	reason: string;
 
-	constructor(status: number, message: string) {
+	constructor(status: number, message: string, reason = "") {
 		super(message);
 		this.status = status;
+		this.reason = reason;
 	}
+}
+
+async function errorFrom(res: Response, what: string): Promise<SyncHttpError> {
+	const reason = (await res.text().catch(() => "")).trim();
+	return new SyncHttpError(
+		res.status,
+		`${what}: ${res.status} ${res.statusText}${reason ? ` — ${reason}` : ""}`,
+		reason,
+	);
 }
 
 function syncUrl(id: string): URL {
@@ -70,8 +90,8 @@ async function signedFetch(
 	init: { method: "GET" } | { method: "POST"; body: string },
 	isRetry = false,
 ): Promise<Response> {
-	const timestamp = nextTimestamp();
 	const content = init.method === "POST" ? await hash(init.body) : url.pathname;
+	const timestamp = timestampFor(content);
 	const signature = await sign(timestamp + content, secret);
 
 	const res = await fetch(url, {
@@ -82,9 +102,11 @@ async function signedFetch(
 			"X-Sync-Signature": signature,
 		},
 	});
+	measureClockOffset(res);
 
-	// A 401 may be a timestamp collision with another device or tab using the
-	// same sync ID. Retry once with a fresh timestamp.
+	// A 401 may come from a clock offset this response has just measured, or
+	// from another tab or device making the identical request in the same
+	// second. Retry once with a fresh timestamp.
 	if (res.status === 401 && !isRetry) {
 		return signedFetch(url, secret, init, true);
 	}
@@ -103,13 +125,12 @@ export async function fetchLatest(
 		return null;
 	}
 	if (!res.ok) {
-		throw new SyncHttpError(res.status, `Server error: ${res.status} ${res.statusText}`);
+		throw await errorFrom(res, "Server error");
 	}
 	const result = await res.json();
 	if (typeof result?.data !== "string" || typeof result?.timestamp !== "number") {
 		throw new SyncHttpError(res.status, "Unexpected response from sync server");
 	}
-	noteTimestamp(result.timestamp);
 	return result;
 }
 
@@ -134,10 +155,6 @@ export async function upload(
 		body: JSON.stringify(body),
 	});
 	if (res.status !== 201) {
-		const text = await res.text().catch(() => "");
-		throw new SyncHttpError(
-			res.status,
-			`Upload failed: ${res.status} ${res.statusText}${text ? ` — ${text.trim()}` : ""}`,
-		);
+		throw await errorFrom(res, "Upload failed");
 	}
 }

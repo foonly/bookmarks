@@ -46,7 +46,20 @@ export async function encrypt(data: string, secret: string): Promise<string> {
 	combined.set(new Uint8Array(ciphertext), iv.length);
 
 	// Convert to Base64 for easy string handling
-	return btoa(String.fromCharCode(...combined));
+	return bytesToBase64(combined);
+}
+
+/**
+ * Base64-encodes bytes in chunks. Spreading the whole array into
+ * String.fromCharCode overflows the call stack above roughly 100 KB.
+ */
+function bytesToBase64(bytes: Uint8Array): string {
+	const CHUNK_SIZE = 0x8000;
+	let binary = "";
+	for (let i = 0; i < bytes.length; i += CHUNK_SIZE) {
+		binary += String.fromCharCode(...bytes.subarray(i, i + CHUNK_SIZE));
+	}
+	return btoa(binary);
 }
 
 /**

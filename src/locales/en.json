@@ -38,7 +38,22 @@
 			"sync_now": "Sync Now",
 			"syncing": "Syncing...",
 			"last_synced": "Last synced: {date}",
-			"generate_confirm": "Generating new credentials will replace your current ones. If you have synced data on the server, you will lose access to it unless you have backed up the old credentials. Continue?"
+			"generate_confirm": "Generating new credentials will replace your current ones. If you have synced data on the server, you will lose access to it unless you have backed up the old credentials. Continue?",
+			"needs_attention": "Sync needs attention",
+			"clock_behind": "Your device's clock is {amount} behind the sync server's. Sync corrects for this, but other apps and websites may not: check your date, time and time zone settings.",
+			"clock_ahead": "Your device's clock is {amount} ahead of the sync server's. Sync corrects for this, but other apps and websites may not: check your date, time and time zone settings.",
+			"errors": {
+				"invalid_credentials": "Sync failed: the credentials are not in the ID:EncKey:Secret format.",
+				"network": "Sync failed: could not reach the sync server.",
+				"unauthorized": "Sync failed: the server did not accept these credentials. Check that the secret is correct.",
+				"clock": "Sync failed: your device's clock is more than 5 minutes off. Check your date, time and time zone settings.",
+				"wrong_origin": "Sync failed: this sync ID is locked to a different website.",
+				"rate_limited": "Sync failed: too many requests. It will try again shortly.",
+				"server": "Sync failed: the sync server returned an error ({status}).",
+				"decrypt": "Sync failed: the data on the server could not be decrypted. Check your encryption key.",
+				"remote_unreadable": "Sync stopped: the data on the server could not be read, so it was not overwritten.",
+				"unknown": "Sync failed because of an unexpected error. See the browser console for details."
+			}
 		},
 		"privacy": {
 			"title": "Privacy",

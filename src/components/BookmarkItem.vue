@@ -3,7 +3,7 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import type { Bookmark } from "../types";
 import { useBookmarkStore } from "../stores/bookmarkStore";
-import { getIconUrl } from "../favicon";
+import { getIconUrl, iconFailedOnServer } from "../favicon";
 import TagBadge from "./TagBadge.vue";
 
 // Icons
@@ -54,15 +54,20 @@ function handleDelete() {
 	}
 }
 
-function handleIconError(event: Event) {
+async function handleIconError(event: Event) {
 	const img = event.target as HTMLImageElement;
 
-	// Mark as failed in store to prevent future attempts
-	store.markFaviconFailed(props.bookmark.url);
-
 	// Prevent infinite loop if fallback also fails
-	if (!img.src.includes("/bookmark.svg")) {
-		img.src = "/bookmark.svg";
+	if (img.src.includes("/bookmark.svg")) return;
+
+	const failedUrl = img.src;
+	img.src = "/bookmark.svg";
+
+	// The failed list is synced and never shrinks, so only record icons the
+	// server really could not provide. After a network failure the icon is
+	// retried on the next render.
+	if (await iconFailedOnServer(failedUrl)) {
+		store.markFaviconFailed(props.bookmark.url);
 	}
 }
 </script>

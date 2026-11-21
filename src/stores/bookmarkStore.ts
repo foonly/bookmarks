@@ -4,8 +4,61 @@ import { storageSchema } from "../types";
 import type { Bookmark, Storage } from "../types";
 import { encrypt, decrypt } from "../crypto";
 import { fetchLatest, upload, SyncHttpError } from "../syncClient";
+import { syncStatus } from "../syncStatus";
+import type { SyncError } from "../syncStatus";
 
 let syncInProgress = false;
+
+/** Classifies an exception thrown during a sync for the UI. */
+function syncErrorFrom(error: unknown): SyncError {
+	if (error instanceof SyncHttpError) {
+		switch (error.status) {
+			case 401:
+				// The server explains why; a timestamp outside its window means
+				// the device clock is off and could not be corrected for.
+				return {
+					code: /timestamp/i.test(error.reason) ? "clock" : "unauthorized",
+				};
+			case 403:
+				return { code: "wrong_origin" };
+			case 429:
+				return { code: "rate_limited" };
+			default:
+				return { code: "server", status: error.status };
+		}
+	}
+	// fetch rejects with a TypeError when no response arrives at all.
+	if (error instanceof TypeError) {
+		return { code: "network" };
+	}
+	return { code: "unknown" };
+}
+
+type SyncedState = Pick<
+	Storage,
+	"bookmarks" | "favoriteTags" | "favoriteTagsMetadata" | "failedFavicons"
+>;
+
+const byKey = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
+
+/**
+ * Returns the synced part of the store in a fixed order. Devices merge
+ * bookmarks in different orders, so comparing or uploading the raw arrays
+ * makes devices see "changes" that are only reordering, and re-upload to
+ * each other on every sync.
+ */
+function canonicalSyncState(state: SyncedState): SyncedState {
+	return {
+		bookmarks: [...state.bookmarks].sort((a, b) => a.created - b.created),
+		favoriteTags: [...state.favoriteTags].sort(byKey),
+		favoriteTagsMetadata: Object.fromEntries(
+			Object.entries(state.favoriteTagsMetadata || {}).sort(([a], [b]) =>
+				byKey(a, b),
+			),
+		),
+		failedFavicons: [...(state.failedFavicons || [])].sort(byKey),
+	};
+}
 
 export const useBookmarkStore = defineStore("bookmarks", {
 	state: (): Storage => {
@@ -94,6 +147,16 @@ export const useBookmarkStore = defineStore("bookmarks", {
 					this.$patch(parsed);
 				} catch (error) {
 					console.error("Error parsing storage:", error);
+					// The next saveStore() overwrites STORAGE_KEY, so keep the raw
+					// data under a separate key rather than losing it.
+					try {
+						window.localStorage.setItem(
+							`${STORAGE_KEY}-unreadable-${Date.now()}`,
+							dataRaw,
+						);
+					} catch (backupError) {
+						console.error("Could not back up unreadable storage:", backupError);
+					}
 				}
 			}
 			this.purgeDeleted();
@@ -130,8 +193,11 @@ export const useBookmarkStore = defineStore("bookmarks", {
 		incrementClick(id: number) {
 			const bookmark = this.bookmarks.find((b) => b.created === id);
 			if (bookmark) {
+				// Clicks deliberately leave `modified` alone: it decides which
+				// device's copy of the bookmark wins a merge, and a click on a
+				// stale copy must not beat a real edit made elsewhere. Clicks
+				// are merged separately (see mergeStores).
 				bookmark.clicks = (bookmark.clicks || 0) + 1;
-				bookmark.modified = Date.now();
 				this.saveStore();
 			}
 		},
@@ -216,6 +282,16 @@ export const useBookmarkStore = defineStore("bookmarks", {
 					if (remoteStore.favoriteTags.includes(tag)) {
 						newFavoriteTags.push(tag);
 					}
+				} else if (remoteTs === 0 && localTs === 0) {
+					// Neither side has a timestamp (favorited before timestamps were
+					// recorded). Keep it if either side has it; otherwise devices
+					// disagree forever and re-upload on every sync.
+					if (
+						this.favoriteTags.includes(tag) ||
+						remoteStore.favoriteTags.includes(tag)
+					) {
+						newFavoriteTags.push(tag);
+					}
 				} else {
 					// Local is newer or equal
 					if (this.favoriteTags.includes(tag)) {
@@ -249,8 +325,15 @@ export const useBookmarkStore = defineStore("bookmarks", {
 					hasChanges = true;
 				} else {
 					const local = localBookmarks[localIndex];
-					if (remote.modified > (local.modified || 0)) {
-						localBookmarks[localIndex] = remote;
+					const remoteIsNewer = remote.modified > (local.modified || 0);
+					// Content follows the newest edit; the click count takes the
+					// higher of the two, independent of which edit won.
+					const clicks = Math.max(local.clicks || 0, remote.clicks || 0);
+					if (remoteIsNewer || clicks !== (local.clicks || 0)) {
+						localBookmarks[localIndex] = {
+							...(remoteIsNewer ? remote : local),
+							clicks,
+						};
 						hasChanges = true;
 					}
 				}
@@ -280,133 +363,88 @@ export const useBookmarkStore = defineStore("bookmarks", {
 			}
 		},
 
-		async performSync(): Promise<{ success: boolean; message: string }> {
-			if (syncInProgress) {
-				return { success: false, message: "Sync already in progress" };
+		/**
+		 * Syncs with the server and records the outcome in `syncStatus`, which
+		 * the UI shows. Returns null on success, or why the sync failed.
+		 */
+		async performSync(): Promise<SyncError | null> {
+			if (syncInProgress || !this.syncSettings.enabled) {
+				return null;
 			}
-
-			const syncConfig = this.syncSettings;
-
-			if (!syncConfig || !syncConfig.enabled || !syncConfig.credentials) {
-				return {
-					success: false,
-					message: "Sync is not enabled or credentials missing.",
-				};
-			}
-
-			const [id, encKey, signSecret] = syncConfig.credentials.split(":");
-			if (!id || !encKey || !signSecret) {
-				return {
-					success: false,
-					message:
-						"Invalid sync credentials format (expected ID:EncKey:SignSecret).",
-				};
-			}
-
 			syncInProgress = true;
 			try {
-				// 1. Fetch latest from backend (null: sync ID not registered yet)
-				let latest;
-				try {
-					latest = await fetchLatest(id, signSecret);
-				} catch (fetchError) {
-					return {
-						success: false,
-						message:
-							fetchError instanceof SyncHttpError
-								? fetchError.message
-								: "Could not reach the sync server.",
-					};
-				}
-
-				let remoteData = null;
-
-				if (latest) {
-					const encryptedBlob = latest.data;
-
-					if (encryptedBlob) {
-						// 2. Decrypt
-						try {
-							const decryptedStr = await decrypt(encryptedBlob, encKey);
-							const parsed = JSON.parse(decryptedStr);
-
-							// Validate schema
-							const validated = storageSchema.safeParse(parsed);
-							if (validated.success) {
-								remoteData = validated.data;
-							} else {
-								console.error(
-									"Remote data schema validation failed",
-									validated.error,
-								);
-							}
-						} catch (decryptError) {
-							console.error("Decryption failed", decryptError);
-							return {
-								success: false,
-								message: "Decryption failed. Check your secret key.",
-							};
-						}
-					}
-				}
-
-				// 3. Merge remote into local (Last Modified Wins)
-				if (remoteData) {
-					this.mergeStores(remoteData);
-				}
-
-				// 4. Compare current local state with remote state to avoid redundant uploads
-				const localState = {
-					bookmarks: this.$state.bookmarks,
-					favoriteTags: this.$state.favoriteTags,
-					favoriteTagsMetadata: this.$state.favoriteTagsMetadata,
-					failedFavicons: this.$state.failedFavicons,
-				};
-
-				// Check if remote matches exactly what we have now
-				if (remoteData) {
-					const remoteState = {
-						bookmarks: remoteData.bookmarks,
-						favoriteTags: remoteData.favoriteTags,
-						favoriteTagsMetadata: remoteData.favoriteTagsMetadata || {},
-						failedFavicons: remoteData.failedFavicons || [],
-					};
-
-					if (JSON.stringify(localState) === JSON.stringify(remoteState)) {
-						// No changes to upload
-						this.syncSettings.lastSynced = Date.now();
-						this.saveStore();
-						return { success: true, message: "Sync complete (no changes)." };
-					}
-				}
-
-				// 5. Encrypt and Upload local state
-				const encryptedLocal = await encrypt(
-					JSON.stringify(localState),
-					encKey,
-				);
-
-				// A sync ID the server does not know yet is registered with this upload.
-				await upload(id, signSecret, encryptedLocal, latest === null);
-
-				// Update last synced timestamp
-				this.syncSettings.lastSynced = Date.now();
-				this.saveStore();
-
-				return {
-					success: true,
-					message: "Sync completed and updated backend.",
-				};
+				const error = await this.syncOnce();
+				syncStatus.error = error;
+				return error;
 			} catch (error) {
 				console.error("Sync error:", error);
-				return {
-					success: false,
-					message:
-						error instanceof Error ? error.message : "Unknown sync error",
-				};
+				syncStatus.error = syncErrorFrom(error);
+				return syncStatus.error;
 			} finally {
 				syncInProgress = false;
 			}
+		},
+
+		/** One sync round. Use performSync, which guards and records it. */
+		async syncOnce(): Promise<SyncError | null> {
+			const [id, encKey, signSecret] = (
+				this.syncSettings.credentials || ""
+			).split(":");
+			if (!id || !encKey || !signSecret) {
+				return { code: "invalid_credentials" };
+			}
+
+			// 1. Fetch latest from backend (null: sync ID not registered yet)
+			const latest = await fetchLatest(id, signSecret);
+
+			let remoteData = null;
+
+			if (latest?.data) {
+				// 2. Decrypt
+				let parsed: unknown;
+				try {
+					parsed = JSON.parse(await decrypt(latest.data, encKey));
+				} catch (decryptError) {
+					console.error("Decryption failed", decryptError);
+					return { code: "decrypt" };
+				}
+
+				// Validate schema
+				const validated = storageSchema.safeParse(parsed);
+				if (!validated.success) {
+					// Never upload over remote data we could not read: that
+					// would discard every other device's bookmarks.
+					console.error("Remote data schema validation failed", validated.error);
+					return { code: "remote_unreadable" };
+				}
+				remoteData = validated.data;
+			}
+
+			// 3. Merge remote into local (Last Modified Wins)
+			if (remoteData) {
+				this.mergeStores(remoteData);
+			}
+
+			// 4. Compare current local state with remote state to avoid redundant uploads
+			const localState = canonicalSyncState(this.$state);
+
+			// Check if remote matches what we have now, ignoring order
+			const unchanged =
+				remoteData &&
+				JSON.stringify(localState) ===
+					JSON.stringify(canonicalSyncState(remoteData));
+
+			if (!unchanged) {
+				// 5. Encrypt and Upload local state
+				const encryptedLocal = await encrypt(JSON.stringify(localState), encKey);
+
+				// A sync ID the server does not know yet is registered with this upload.
+				await upload(id, signSecret, encryptedLocal, latest === null);
+			}
+
+			this.syncSettings.lastSynced = Date.now();
+			this.saveStore();
+			return null;
 		},
 
 		initAutoSync(intervalMs: number = 300000) {
@@ -430,20 +468,21 @@ export const useBookmarkStore = defineStore("bookmarks", {
 
 			// Debounced sync on local store updates
 			let debounceTimeout: number | undefined;
-			let lastState = JSON.stringify({
-				bookmarks: this.bookmarks,
-				favoriteTags: this.favoriteTags,
-				favoriteTagsMetadata: this.favoriteTagsMetadata,
-				failedFavicons: this.failedFavicons,
-			});
+			// Click counts are left out so that opening a bookmark does not
+			// upload the whole store each time; they go up with the next sync
+			// (startup, the interval, coming online, or any real change).
+			const withoutClicks = (key: string, value: unknown) =>
+				key === "clicks" ? undefined : value;
+			let lastState = JSON.stringify(
+				canonicalSyncState(this.$state),
+				withoutClicks,
+			);
 
 			this.$subscribe((_mutation, state) => {
-				const currentState = JSON.stringify({
-					bookmarks: state.bookmarks,
-					favoriteTags: state.favoriteTags,
-					favoriteTagsMetadata: state.favoriteTagsMetadata,
-					failedFavicons: state.failedFavicons,
-				});
+				const currentState = JSON.stringify(
+					canonicalSyncState(state),
+					withoutClicks,
+				);
 
 				if (currentState !== lastState) {
 					lastState = currentState;

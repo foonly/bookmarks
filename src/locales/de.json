@@ -37,7 +37,22 @@
 			"sync_now": "Jetzt synchronisieren",
 			"syncing": "Synchronisierung läuft...",
 			"last_synced": "Zuletzt synchronisiert: {date}",
-			"generate_confirm": "Das Erstellen neuer Zugangsdaten ersetzt Ihre aktuellen. Wenn Sie synchronisierte Daten auf dem Server haben, verlieren Sie den Zugriff darauf, es sei denn, Sie haben die alten Zugangsdaten gesichert. Fortfahren?"
+			"generate_confirm": "Das Erstellen neuer Zugangsdaten ersetzt Ihre aktuellen. Wenn Sie synchronisierte Daten auf dem Server haben, verlieren Sie den Zugriff darauf, es sei denn, Sie haben die alten Zugangsdaten gesichert. Fortfahren?",
+			"needs_attention": "Synchronisierung erfordert Aufmerksamkeit",
+			"clock_behind": "Die Uhr Ihres Geräts geht {amount} gegenüber dem Sync-Server nach. Die Synchronisierung gleicht das aus, andere Apps und Websites aber womöglich nicht: Prüfen Sie Ihre Einstellungen für Datum, Uhrzeit und Zeitzone.",
+			"clock_ahead": "Die Uhr Ihres Geräts geht {amount} gegenüber dem Sync-Server vor. Die Synchronisierung gleicht das aus, andere Apps und Websites aber womöglich nicht: Prüfen Sie Ihre Einstellungen für Datum, Uhrzeit und Zeitzone.",
+			"errors": {
+				"invalid_credentials": "Synchronisierung fehlgeschlagen: Die Zugangsdaten haben nicht das Format ID:EncKey:Secret.",
+				"network": "Synchronisierung fehlgeschlagen: Der Sync-Server ist nicht erreichbar.",
+				"unauthorized": "Synchronisierung fehlgeschlagen: Der Server hat die Zugangsdaten nicht akzeptiert. Prüfen Sie, ob das Secret stimmt.",
+				"clock": "Synchronisierung fehlgeschlagen: Die Uhr Ihres Geräts weicht um mehr als 5 Minuten ab. Prüfen Sie Ihre Einstellungen für Datum, Uhrzeit und Zeitzone.",
+				"wrong_origin": "Synchronisierung fehlgeschlagen: Diese Sync-ID ist an eine andere Website gebunden.",
+				"rate_limited": "Synchronisierung fehlgeschlagen: zu viele Anfragen. Es wird in Kürze erneut versucht.",
+				"server": "Synchronisierung fehlgeschlagen: Der Sync-Server hat einen Fehler gemeldet ({status}).",
+				"decrypt": "Synchronisierung fehlgeschlagen: Die Daten auf dem Server konnten nicht entschlüsselt werden. Prüfen Sie Ihren Verschlüsselungsschlüssel.",
+				"remote_unreadable": "Synchronisierung angehalten: Die Daten auf dem Server konnten nicht gelesen werden und wurden daher nicht überschrieben.",
+				"unknown": "Synchronisierung wegen eines unerwarteten Fehlers fehlgeschlagen. Details finden Sie in der Browser-Konsole."
+			}
 		},
 		"privacy": {
 			"title": "Datenschutz",

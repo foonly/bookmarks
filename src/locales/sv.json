@@ -37,7 +37,22 @@
 			"sync_now": "Synkronisera nu",
 			"syncing": "Synkroniserar...",
 			"last_synced": "Senast synkroniserad: {date}",
-			"generate_confirm": "Att generera nya uppgifter kommer att ersätta dina nuvarande. Om du har synkroniserad data på servern kommer du att förlora åtkomst till den om du inte har säkerhetskopierat de gamla uppgifterna. Fortsätt?"
+			"generate_confirm": "Att generera nya uppgifter kommer att ersätta dina nuvarande. Om du har synkroniserad data på servern kommer du att förlora åtkomst till den om du inte har säkerhetskopierat de gamla uppgifterna. Fortsätt?",
+			"needs_attention": "Synkroniseringen behöver åtgärdas",
+			"clock_behind": "Enhetens klocka går {amount} efter synkroniseringsserverns. Synkroniseringen kompenserar för detta, men andra appar och webbplatser gör det kanske inte: kontrollera inställningarna för datum, tid och tidszon.",
+			"clock_ahead": "Enhetens klocka går {amount} före synkroniseringsserverns. Synkroniseringen kompenserar för detta, men andra appar och webbplatser gör det kanske inte: kontrollera inställningarna för datum, tid och tidszon.",
+			"errors": {
+				"invalid_credentials": "Synkroniseringen misslyckades: uppgifterna har inte formatet ID:EncKey:Secret.",
+				"network": "Synkroniseringen misslyckades: kunde inte nå synkroniseringsservern.",
+				"unauthorized": "Synkroniseringen misslyckades: servern godkände inte uppgifterna. Kontrollera att hemligheten är rätt.",
+				"clock": "Synkroniseringen misslyckades: enhetens klocka går fel med mer än 5 minuter. Kontrollera inställningarna för datum, tid och tidszon.",
+				"wrong_origin": "Synkroniseringen misslyckades: detta synkroniserings-ID är låst till en annan webbplats.",
+				"rate_limited": "Synkroniseringen misslyckades: för många förfrågningar. Ett nytt försök görs snart.",
+				"server": "Synkroniseringen misslyckades: synkroniseringsservern returnerade ett fel ({status}).",
+				"decrypt": "Synkroniseringen misslyckades: datan på servern kunde inte dekrypteras. Kontrollera krypteringsnyckeln.",
+				"remote_unreadable": "Synkroniseringen stoppades: datan på servern kunde inte läsas, så den skrevs inte över.",
+				"unknown": "Synkroniseringen misslyckades på grund av ett oväntat fel. Se webbläsarens konsol för detaljer."
+			}
 		},
 		"privacy": {
 			"title": "Integritet",
