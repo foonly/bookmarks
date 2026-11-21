@@ -78,7 +78,6 @@
 	},
 	"system": {
 		"offline_indicator": "You are currently offline",
-		"update_available": "New version available. Update now?",
 		"offline_ready": "App ready to work offline"
 	},
 	"form": {

@@ -77,7 +77,6 @@
 	},
 	"system": {
 		"offline_indicator": "Oled praegu võrguühenduseta",
-		"update_available": "Uus versioon on saadaval. Kas uuendada kohe?",
 		"offline_ready": "Rakendus on valmis võrguühenduseta töötamiseks"
 	},
 	"form": {

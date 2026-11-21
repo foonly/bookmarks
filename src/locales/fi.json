@@ -77,7 +77,6 @@
 	},
 	"system": {
 		"offline_indicator": "Olet offline-tilassa",
-		"update_available": "Uusi versio saatavilla. Päivitä nyt?",
 		"offline_ready": "Sovellus on valmis toimimaan offline-tilassa"
 	},
 	"form": {

@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, inject } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRouter } from "vue-router";
 import { registerSW } from "virtual:pwa-register";
 import { useBookmarkStore } from "./stores/bookmarkStore";
 import AppNavigation from "./components/AppNavigation.vue";
 import { syncStatus, CLOCK_WARNING_SECONDS } from "./syncStatus";
+import { reloadWhenNotEditing } from "./utils/navigation";
 
 const { t, locale } = useI18n();
+const router = useRouter();
 const store = useBookmarkStore();
 const isOffline = ref(!navigator.onLine);
 const appVersion = inject<string>("appVersion", "");
@@ -18,6 +21,7 @@ store.initAutoSync();
 // Sync locale from store
 if (store.language) {
 	locale.value = store.language;
+	document.documentElement.lang = store.language;
 }
 
 // Flag the Settings link when sync has a problem the user should look at.
@@ -40,10 +44,10 @@ registerSW({
 	onOfflineReady() {
 		console.log(t("system.offline_ready"));
 	},
-	onNeedRefresh() {
-		if (confirm(t("system.update_available"))) {
-			location.reload();
-		}
+	// With autoUpdate, a new version activates on its own and the page then
+	// needs a reload to use it. Hold that off while a bookmark form is open.
+	onNeedReload() {
+		reloadWhenNotEditing(router);
 	},
 });
 

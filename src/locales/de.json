@@ -77,7 +77,6 @@
 	},
 	"system": {
 		"offline_indicator": "Sie sind derzeit offline",
-		"update_available": "Neue Version verfügbar. Jetzt aktualisieren?",
 		"offline_ready": "App ist bereit für den Offline-Betrieb"
 	},
 	"form": {

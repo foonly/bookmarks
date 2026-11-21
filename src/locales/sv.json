@@ -77,7 +77,6 @@
 	},
 	"system": {
 		"offline_indicator": "Du är för närvarande offline",
-		"update_available": "Ny version tillgänglig. Uppdatera nu?",
 		"offline_ready": "Appen är redo att användas offline"
 	},
 	"form": {
