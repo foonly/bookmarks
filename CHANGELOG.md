@@ -1,5 +1,41 @@
 # Changelog
 
+## 0.14.0 (2026-11-21)
+
+#### Features
+
+- search: Match bookmark URLs as well (9ec59ed)
+
+#### Bug Fixes
+
+- import: Keep bookmarks that have no ID in the imported file (b057eb9)
+- Hold update reloads while a form is open, set page language (b5d3590)
+- pwa: Use real PNG app icons and clean up the precache list (31d6ee5)
+
+#### Refactor
+
+- Remove unused helpers and constants (95eff86)
+
+#### Documentation
+
+- Replace BACKEND.md with a link to foonblob's API docs (8314112)
+
+#### Tests
+
+- Refer to the foonblob release that exposes Date (a44822d)
+- Add a Vitest suite for sync, crypto, validation and routing (93fc440)
+
+#### Continuous Integration
+
+- Pin actions to commit SHAs and make Build read-only (c06c3f4)
+
+#### Maintenance
+
+- deps: Upgrade to TypeScript 6 (75d3130)
+- deps: Upgrade to Vite 8 and vite-plugin-pwa 2 (ee360f7)
+- deps: Upgrade to Pinia 4 (217db00)
+- deps: Update dependencies within their ranges (e67742b)
+
 ## 0.13.0 (2026-11-21)
 
 #### Features
