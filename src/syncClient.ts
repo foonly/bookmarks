@@ -31,10 +31,21 @@ function writeLastTimestamp(ts: number) {
 
 let lastTimestamp = 0;
 
+/** The server rejects timestamps further than this from its own clock. */
+const MAX_CLOCK_SKEW_SECONDS = 300;
+
 /** Returns a Unix timestamp (seconds) greater than any previously used one. */
 function nextTimestamp(): number {
 	lastTimestamp = Math.max(lastTimestamp, readLastTimestamp());
 	let ts = Math.floor(Date.now() / 1000);
+	// The server accepts at most MAX_CLOCK_SKEW_SECONDS ahead of its clock, and
+	// this clock must itself be within that of the server for sync to work at
+	// all. Anything further ahead than twice that was never accepted: it is
+	// left over from a clock that was once wrong, and keeping it would make
+	// every request from now on fail. Start again from the clock.
+	if (lastTimestamp > ts + 2 * MAX_CLOCK_SKEW_SECONDS) {
+		lastTimestamp = 0;
+	}
 	if (ts <= lastTimestamp) {
 		ts = lastTimestamp + 1;
 	}
