@@ -2,6 +2,12 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
+		<!-- Blocks inline script, including javascript: URLs, as a second line of
+		     defence behind URL validation. -->
+		<meta
+			http-equiv="Content-Security-Policy"
+			content="script-src 'self'; object-src 'none'; base-uri 'self'"
+		/>
 		<link rel="icon" type="image/svg+xml" href="/bookmark.webp" />
 		<link rel="apple-touch-icon" href="/bookmark.svg" />
 		<link rel="manifest" href="/manifest.webmanifest" />

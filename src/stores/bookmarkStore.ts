@@ -94,6 +94,16 @@ export const useBookmarkStore = defineStore("bookmarks", {
 					this.$patch(parsed);
 				} catch (error) {
 					console.error("Error parsing storage:", error);
+					// The next saveStore() overwrites STORAGE_KEY, so keep the raw
+					// data under a separate key rather than losing it.
+					try {
+						window.localStorage.setItem(
+							`${STORAGE_KEY}-unreadable-${Date.now()}`,
+							dataRaw,
+						);
+					} catch (backupError) {
+						console.error("Could not back up unreadable storage:", backupError);
+					}
 				}
 			}
 			this.purgeDeleted();
@@ -332,14 +342,20 @@ export const useBookmarkStore = defineStore("bookmarks", {
 
 							// Validate schema
 							const validated = storageSchema.safeParse(parsed);
-							if (validated.success) {
-								remoteData = validated.data;
-							} else {
+							if (!validated.success) {
+								// Never upload over remote data we could not read: that
+								// would discard every other device's bookmarks.
 								console.error(
 									"Remote data schema validation failed",
 									validated.error,
 								);
+								return {
+									success: false,
+									message:
+										"Remote data could not be read. Sync stopped to avoid overwriting it.",
+								};
 							}
+							remoteData = validated.data;
 						} catch (decryptError) {
 							console.error("Decryption failed", decryptError);
 							return {

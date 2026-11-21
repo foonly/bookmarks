@@ -73,21 +73,24 @@ function handleInputTag(event: Event) {
 }
 
 function handleSubmit() {
-	if (isEdit.value) {
-		const bookmark = store.getBookmarkById(props.id!);
-		if (bookmark) {
-			store.updateBookmark({
-				...bookmark,
-				...form.value,
-			});
-		}
-	} else {
-		const newBookmark = bookmarkSchema.parse({
-			...form.value,
-			created: Date.now(),
-		});
-		store.updateBookmark(newBookmark);
+	const existing = isEdit.value ? store.getBookmarkById(props.id!) : undefined;
+	if (isEdit.value && !existing) {
+		router.back();
+		return;
 	}
+
+	// Validate edits as well as new bookmarks, so a disallowed URL scheme
+	// cannot be saved either way.
+	const result = bookmarkSchema.safeParse(
+		existing
+			? { ...existing, ...form.value }
+			: { ...form.value, created: Date.now() },
+	);
+	if (!result.success) {
+		console.warn("Invalid bookmark", result.error.issues);
+		return;
+	}
+	store.updateBookmark(result.data);
 	router.back();
 }
 
@@ -112,6 +115,7 @@ function handleCancel() {
 				id="url"
 				v-model="form.url"
 				required
+				pattern="[Hh][Tt][Tt][Pp][Ss]?://.+"
 				autocomplete="off"
 			/>
 		</div>
