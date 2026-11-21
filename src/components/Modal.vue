@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch } from "vue";
 import { useRouter } from "vue-router";
+import { closeModalRoute } from "../utils/navigation";
 
 interface Props {
 	show?: boolean;
@@ -15,7 +16,7 @@ function handleClose() {
 	emit("close");
 	// If the modal was opened via a route, go back
 	if (props.show) {
-		router.back();
+		closeModalRoute(router);
 	}
 }
 
@@ -34,12 +35,16 @@ watch(
 			dialogRef.value?.close();
 		}
 	},
-	{ immediate: true },
 );
 
 onMounted(() => {
 	// Add escape key listener if needed (though <dialog> handles it by default)
 	dialogRef.value?.addEventListener("close", handleClose);
+	// The watcher only sees changes, and the dialog element does not exist
+	// before mount, so open it here when the page loads onto a modal route.
+	if (props.show) {
+		dialogRef.value?.showModal();
+	}
 });
 
 onUnmounted(() => {

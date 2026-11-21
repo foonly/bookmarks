@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
+import { closeModalRoute } from "../utils/navigation";
 import { useBookmarkStore } from "../stores/bookmarkStore";
 import { bookmarkSchema } from "../types";
 
@@ -75,7 +76,7 @@ function handleInputTag(event: Event) {
 function handleSubmit() {
 	const existing = isEdit.value ? store.getBookmarkById(props.id!) : undefined;
 	if (isEdit.value && !existing) {
-		router.back();
+		closeModalRoute(router);
 		return;
 	}
 
@@ -91,11 +92,11 @@ function handleSubmit() {
 		return;
 	}
 	store.updateBookmark(result.data);
-	router.back();
+	closeModalRoute(router);
 }
 
 function handleCancel() {
-	router.back();
+	closeModalRoute(router);
 }
 </script>
 
