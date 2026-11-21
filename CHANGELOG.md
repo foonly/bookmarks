@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.13.0 (2026-11-21)
+
+#### Features
+
+- sync: Show sync problems and a wrong device clock in Settings (8f4b6c0)
+
+#### Bug Fixes
+
+- sync: Correct for the device clock instead of keeping a counter (f0190e3)
+- sync: Recover from a stored timestamp left by a wrong clock (a8b2a50)
+- sync: Stop clicks from overriding edits made on other devices (e8cdc70)
+- modal: Open the add/edit modal when loading its route directly (448244e)
+- favicons: Only record icons the server failed to provide (f55d9b0)
+- router: Stop decoding tag params twice (ff571a2)
+- sync: Keep favorite tags that have no timestamp on either side (ca236cb)
+- sync: Compare and upload synced state in a fixed order (536fa02)
+- sync: Reject unsafe URLs and never overwrite unreadable data (8602633)
+- crypto: Base64-encode ciphertext in chunks (0ea61b3)
+
 ## 0.12.0 (2026-11-19)
 
 #### Features
@@ -194,4 +213,3 @@
 - Add release workflow (65d5488)
 - Add MIT license (000302d)
 - Add initial README file (086546e)
-
