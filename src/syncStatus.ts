@@ -3,6 +3,7 @@ import { reactive } from "vue";
 /** Why the last sync failed. The UI turns each code into a translated message. */
 export type SyncErrorCode =
 	| "invalid_credentials"
+	| "weak_credentials"
 	| "network"
 	| "unauthorized"
 	| "clock"

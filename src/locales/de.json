@@ -51,8 +51,11 @@
 				"server": "Synchronisierung fehlgeschlagen: Der Sync-Server hat einen Fehler gemeldet ({status}).",
 				"decrypt": "Synchronisierung fehlgeschlagen: Die Daten auf dem Server konnten nicht entschlüsselt werden. Prüfen Sie Ihren Verschlüsselungsschlüssel.",
 				"remote_unreadable": "Synchronisierung angehalten: Die Daten auf dem Server konnten nicht gelesen werden und wurden daher nicht überschrieben.",
-				"unknown": "Synchronisierung wegen eines unerwarteten Fehlers fehlgeschlagen. Details finden Sie in der Browser-Konsole."
-			}
+				"unknown": "Synchronisierung wegen eines unerwarteten Fehlers fehlgeschlagen. Details finden Sie in der Browser-Konsole.",
+				"weak_credentials": "Synchronisierung fehlgeschlagen: Diese Zugangsdaten sind zu schwach. Erzeugen Sie neue mit der Generieren-Schaltfläche, die bei deaktivierter Synchronisierung angezeigt wird."
+			},
+			"credentials_invalid": "Erwartetes Format: ID:EncKey:Secret.",
+			"credentials_weak": "Diese Zugangsdaten sind zu schwach: Verschlüsselungsschlüssel und Secret müssen jeweils mindestens 32 Hexadezimalzeichen lang sein, wie generierte Zugangsdaten. Erzeugen Sie neue mit der Generieren-Schaltfläche, die bei deaktivierter Synchronisierung angezeigt wird."
 		},
 		"privacy": {
 			"title": "Datenschutz",

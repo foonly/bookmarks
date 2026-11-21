@@ -52,8 +52,11 @@
 				"server": "Sync failed: the sync server returned an error ({status}).",
 				"decrypt": "Sync failed: the data on the server could not be decrypted. Check your encryption key.",
 				"remote_unreadable": "Sync stopped: the data on the server could not be read, so it was not overwritten.",
-				"unknown": "Sync failed because of an unexpected error. See the browser console for details."
-			}
+				"unknown": "Sync failed because of an unexpected error. See the browser console for details.",
+				"weak_credentials": "Sync failed: these credentials are too weak. Create new ones with the generate button, shown while sync is off."
+			},
+			"credentials_invalid": "Expected the format ID:EncKey:Secret.",
+			"credentials_weak": "These credentials are too weak: the encryption key and secret must each be at least 32 hexadecimal characters, like generated ones. Create new ones with the generate button, shown while sync is off."
 		},
 		"privacy": {
 			"title": "Privacy",

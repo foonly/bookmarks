@@ -51,8 +51,11 @@
 				"server": "Synkronointi epäonnistui: synkronointipalvelin palautti virheen ({status}).",
 				"decrypt": "Synkronointi epäonnistui: palvelimella olevien tietojen salausta ei voitu purkaa. Tarkista salausavain.",
 				"remote_unreadable": "Synkronointi keskeytettiin: palvelimella olevia tietoja ei voitu lukea, joten niitä ei korvattu.",
-				"unknown": "Synkronointi epäonnistui odottamattoman virheen vuoksi. Lisätiedot löytyvät selaimen konsolista."
-			}
+				"unknown": "Synkronointi epäonnistui odottamattoman virheen vuoksi. Lisätiedot löytyvät selaimen konsolista.",
+				"weak_credentials": "Synkronointi epäonnistui: synkronointitiedot ovat liian heikot. Luo uudet tiedot luontipainikkeella, joka näkyy, kun synkronointi ei ole käytössä."
+			},
+			"credentials_invalid": "Odotettu muoto on ID:EncKey:Secret.",
+			"credentials_weak": "Synkronointitiedot ovat liian heikot: salausavaimessa ja salaisuudessa on oltava kummassakin vähintään 32 heksadesimaalimerkkiä, kuten luoduissa tiedoissa. Luo uudet tiedot luontipainikkeella, joka näkyy, kun synkronointi ei ole käytössä."
 		},
 		"privacy": {
 			"title": "Yksityisyys",

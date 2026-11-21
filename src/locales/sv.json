@@ -51,8 +51,11 @@
 				"server": "Synkroniseringen misslyckades: synkroniseringsservern returnerade ett fel ({status}).",
 				"decrypt": "Synkroniseringen misslyckades: datan på servern kunde inte dekrypteras. Kontrollera krypteringsnyckeln.",
 				"remote_unreadable": "Synkroniseringen stoppades: datan på servern kunde inte läsas, så den skrevs inte över.",
-				"unknown": "Synkroniseringen misslyckades på grund av ett oväntat fel. Se webbläsarens konsol för detaljer."
-			}
+				"unknown": "Synkroniseringen misslyckades på grund av ett oväntat fel. Se webbläsarens konsol för detaljer.",
+				"weak_credentials": "Synkroniseringen misslyckades: uppgifterna är för svaga. Skapa nya med generera-knappen, som visas när synkroniseringen är avstängd."
+			},
+			"credentials_invalid": "Förväntat format: ID:EncKey:Secret.",
+			"credentials_weak": "Uppgifterna är för svaga: krypteringsnyckeln och hemligheten måste vara minst 32 hexadecimala tecken var, som genererade uppgifter. Skapa nya med generera-knappen, som visas när synkroniseringen är avstängd."
 		},
 		"privacy": {
 			"title": "Integritet",

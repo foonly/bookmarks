@@ -51,8 +51,11 @@
 				"server": "Sünkroonimine ebaõnnestus: sünkroonimisserver tagastas vea ({status}).",
 				"decrypt": "Sünkroonimine ebaõnnestus: serveris olevaid andmeid ei õnnestunud dekrüpteerida. Kontrolli krüpteerimisvõtit.",
 				"remote_unreadable": "Sünkroonimine peatati: serveris olevaid andmeid ei õnnestunud lugeda, seega neid üle ei kirjutatud.",
-				"unknown": "Sünkroonimine ebaõnnestus ootamatu vea tõttu. Üksikasjad leiad brauseri konsoolist."
-			}
+				"unknown": "Sünkroonimine ebaõnnestus ootamatu vea tõttu. Üksikasjad leiad brauseri konsoolist.",
+				"weak_credentials": "Sünkroonimine ebaõnnestus: need andmed on liiga nõrgad. Loo uued genereerimisnupuga, mis on nähtav, kui sünkroonimine on välja lülitatud."
+			},
+			"credentials_invalid": "Oodatud kuju: ID:EncKey:Secret.",
+			"credentials_weak": "Need andmed on liiga nõrgad: krüpteerimisvõti ja saladus peavad kumbki olema vähemalt 32 kuueteistkümnendsüsteemi märki pikad, nagu genereeritud andmed. Loo uued genereerimisnupuga, mis on nähtav, kui sünkroonimine on välja lülitatud."
 		},
 		"privacy": {
 			"title": "Privaatsus",

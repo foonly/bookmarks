@@ -5,6 +5,7 @@ import type { Bookmark, Storage } from "../types";
 import { encrypt, decrypt } from "../crypto";
 import { fetchLatest, upload, SyncHttpError } from "../syncClient";
 import { syncStatus } from "../syncStatus";
+import { parseCredentials } from "../credentials";
 import type { SyncError } from "../syncStatus";
 
 let syncInProgress = false;
@@ -454,12 +455,11 @@ export const useBookmarkStore = defineStore("bookmarks", {
 
 		/** One sync round. Use performSync, which guards and records it. */
 		async syncOnce(): Promise<SyncError | null> {
-			const [id, encKey, signSecret] = (
-				this.syncSettings.credentials || ""
-			).split(":");
-			if (!id || !encKey || !signSecret) {
-				return { code: "invalid_credentials" };
+			const check = parseCredentials(this.syncSettings.credentials || "");
+			if (!check.ok) {
+				return { code: check.problem === "weak" ? "weak_credentials" : "invalid_credentials" };
 			}
+			const { id, encKey, signSecret } = check.credentials;
 
 			// 1. Fetch latest from backend (null: sync ID not registered yet)
 			const latest = await fetchLatest(id, signSecret);

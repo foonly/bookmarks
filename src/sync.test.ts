@@ -233,6 +233,14 @@ describe("reporting sync errors", () => {
 		expect(server.requests).toEqual([]);
 	});
 
+	it("refuses weak credentials without contacting the server", async () => {
+		const { device } = await loadApp();
+		expect(await device("myid:hunter2:hunter2").performSync()).toEqual({
+			code: "weak_credentials",
+		});
+		expect(server.requests).toEqual([]);
+	});
+
 	it.each([
 		[403, { code: "wrong_origin" }],
 		[429, { code: "rate_limited" }],

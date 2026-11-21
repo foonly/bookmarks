@@ -4,6 +4,7 @@ import { useI18n } from "vue-i18n";
 import { useBookmarkStore } from "../stores/bookmarkStore";
 import { storageSchema } from "../types";
 import { generateCredentials } from "../crypto";
+import { parseCredentials } from "../credentials";
 import { syncStatus, CLOCK_WARNING_SECONDS } from "../syncStatus";
 
 import { SUPPORTED_LOCALES, localeLabels } from "../i18n";
@@ -36,6 +37,16 @@ const language = computed({
 const fetchFavicons = computed({
 	get: () => store.fetchFavicons,
 	set: (val: boolean) => store.toggleFetchFavicons(val),
+});
+
+/** Why the credentials in the field cannot be used, shown under it. */
+const credentialsProblem = computed(() => {
+	if (!syncCreds.value.trim()) return "";
+	const check = parseCredentials(syncCreds.value);
+	if (check.ok) return "";
+	return check.problem === "weak"
+		? t("settings.sync.credentials_weak")
+		: t("settings.sync.credentials_invalid");
 });
 
 // Actions
@@ -244,6 +255,9 @@ function formatDate(timestamp: number) {
 						v-html="diceIcon"
 					></button>
 				</div>
+				<p v-if="credentialsProblem" class="sync-alert sync-alert-error" role="alert">
+					{{ credentialsProblem }}
+				</p>
 			</div>
 
 			<div class="settings-actions">
