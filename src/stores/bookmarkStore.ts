@@ -166,8 +166,11 @@ export const useBookmarkStore = defineStore("bookmarks", {
 		incrementClick(id: number) {
 			const bookmark = this.bookmarks.find((b) => b.created === id);
 			if (bookmark) {
+				// Clicks deliberately leave `modified` alone: it decides which
+				// device's copy of the bookmark wins a merge, and a click on a
+				// stale copy must not beat a real edit made elsewhere. Clicks
+				// are merged separately (see mergeStores).
 				bookmark.clicks = (bookmark.clicks || 0) + 1;
-				bookmark.modified = Date.now();
 				this.saveStore();
 			}
 		},
@@ -295,8 +298,15 @@ export const useBookmarkStore = defineStore("bookmarks", {
 					hasChanges = true;
 				} else {
 					const local = localBookmarks[localIndex];
-					if (remote.modified > (local.modified || 0)) {
-						localBookmarks[localIndex] = remote;
+					const remoteIsNewer = remote.modified > (local.modified || 0);
+					// Content follows the newest edit; the click count takes the
+					// higher of the two, independent of which edit won.
+					const clicks = Math.max(local.clicks || 0, remote.clicks || 0);
+					if (remoteIsNewer || clicks !== (local.clicks || 0)) {
+						localBookmarks[localIndex] = {
+							...(remoteIsNewer ? remote : local),
+							clicks,
+						};
 						hasChanges = true;
 					}
 				}
@@ -472,10 +482,21 @@ export const useBookmarkStore = defineStore("bookmarks", {
 
 			// Debounced sync on local store updates
 			let debounceTimeout: number | undefined;
-			let lastState = JSON.stringify(canonicalSyncState(this.$state));
+			// Click counts are left out so that opening a bookmark does not
+			// upload the whole store each time; they go up with the next sync
+			// (startup, the interval, coming online, or any real change).
+			const withoutClicks = (key: string, value: unknown) =>
+				key === "clicks" ? undefined : value;
+			let lastState = JSON.stringify(
+				canonicalSyncState(this.$state),
+				withoutClicks,
+			);
 
 			this.$subscribe((_mutation, state) => {
-				const currentState = JSON.stringify(canonicalSyncState(state));
+				const currentState = JSON.stringify(
+					canonicalSyncState(state),
+					withoutClicks,
+				);
 
 				if (currentState !== lastState) {
 					lastState = currentState;
