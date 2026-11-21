@@ -43,6 +43,7 @@ const sortedBookmarks = computed(() => {
 		bookmarks = bookmarks.filter(
 			(b) =>
 				b.title.toLowerCase().includes(q) ||
+				b.url.toLowerCase().includes(q) ||
 				b.description.toLowerCase().includes(q) ||
 				b.tags.some((tag) => tag.toLowerCase().includes(q)),
 		);
