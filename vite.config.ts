@@ -7,12 +7,8 @@ export default defineConfig({
 		vue(),
 		VitePWA({
 			registerType: "autoUpdate",
-			includeAssets: [
-				"bookmark.svg",
-				"favicon.ico",
-				"apple-touch-icon.png",
-				"robots.txt",
-			],
+			// The PNG glob below already precaches the manifest icons.
+			includeManifestIcons: false,
 			manifest: {
 				name: "Bookmarks",
 				short_name: "Bookmarks",
@@ -20,27 +16,29 @@ export default defineConfig({
 				theme_color: "#2563eb",
 				background_color: "#242424",
 				display: "standalone",
+				// Generated from public/bookmark.webp. The maskable icon has the
+				// book inside the central safe zone on a white background.
 				icons: [
 					{
-						src: "bookmark.svg",
+						src: "pwa-192x192.png",
 						sizes: "192x192",
-						type: "image/svg+xml",
+						type: "image/png",
 					},
 					{
-						src: "bookmark.svg",
+						src: "pwa-512x512.png",
 						sizes: "512x512",
-						type: "image/svg+xml",
+						type: "image/png",
 					},
 					{
-						src: "bookmark.svg",
+						src: "maskable-512x512.png",
 						sizes: "512x512",
-						type: "image/svg+xml",
-						purpose: "any maskable",
+						type: "image/png",
+						purpose: "maskable",
 					},
 				],
 			},
 			workbox: {
-				globPatterns: ["**/*.{js,css,html,ico,png,svg,json,txt}"],
+				globPatterns: ["**/*.{js,css,html,png,svg,webp,txt}"],
 				runtimeCaching: [
 					{
 						urlPattern: /^https:\/\/favicon\.im\/.*/i,
