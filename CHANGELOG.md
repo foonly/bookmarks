@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.15.0 (2026-11-21)
+
+#### Features
+
+- sync: Refuse weak sync credentials (54f9432)
+- sync: Track deleted bookmarks as a list of IDs (8b0fe2e)
+- favicons: Keep icon failures on the device and retry after 30 days (62197cc)
+
+#### Bug Fixes
+
+- Recognise the bookmark form by route, not path (b863ca0)
+
 ## 0.14.0 (2026-11-21)
 
 #### Features
