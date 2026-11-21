@@ -57,7 +57,9 @@
 		"privacy": {
 			"title": "Privaatsus",
 			"fetch_favicons": "Hangi saidi ikoonid",
-			"fetch_favicons_description": "Kui see on lubatud, küsib rakendus saidi ikoone favicon.im teenusest. See võib sellele teenusele paljastada domeenid, mille olete järjehoidjatesse lisanud."
+			"fetch_favicons_description": "Kui see on lubatud, küsib rakendus saidi ikoone favicon.im teenusest. See võib sellele teenusele paljastada domeenid, mille olete järjehoidjatesse lisanud.",
+			"failed_icons": "{n} veebilehel puudub ikoon. Uuesti proovitakse 30 päeva pärast. | {n} veebilehel puudub ikoon. Uuesti proovitakse 30 päeva pärast.",
+			"retry_icons": "Proovi kohe uuesti"
 		},
 		"data": {
 			"title": "Andmehaldus",

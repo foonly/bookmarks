@@ -39,7 +39,11 @@ const bookmarkListSchema = z
 export const storageSchema = z.object({
 	favoriteTags: z.array(z.string()).default([]),
 	favoriteTagsMetadata: z.record(z.string(), z.number()).default({}),
-	failedFavicons: z.array(z.string()).default([]),
+	// Local to this device and never synced: when the site icon for each
+	// domain last failed to load. They are retried after a while. (Older
+	// versions synced a `failedFavicons` list that could never shrink; it is
+	// dropped when stored or synced data is read.)
+	faviconFailures: z.record(z.string(), z.number()).default({}),
 	bookmarks: bookmarkListSchema,
 	language: z.string().optional(),
 	fetchFavicons: z.boolean().default(false),

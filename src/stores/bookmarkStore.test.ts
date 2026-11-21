@@ -88,12 +88,57 @@ describe("mergeStores: favorite tags", () => {
 	});
 });
 
-describe("mergeStores: failed favicons", () => {
-	it("keeps the union of both sides", () => {
+describe("favicon failures", () => {
+	const url = "https://example.com/page";
+
+	it("show the placeholder for 30 days, then try the icon again", () => {
 		const store = useBookmarkStore();
-		store.failedFavicons = ["b.example", "a.example"];
-		store.mergeStores(remote({ failedFavicons: ["c.example", "a.example"] }));
-		expect(store.failedFavicons).toEqual(["a.example", "b.example", "c.example"]);
+		const now = Date.now();
+		store.markFaviconFailed(url);
+		expect(store.isFaviconFailed(url)).toBe(true);
+		expect(store.failedFaviconCount).toBe(1);
+
+		vi.spyOn(Date, "now").mockReturnValue(now + 29 * DAY_MS);
+		expect(store.isFaviconFailed(url)).toBe(true);
+		vi.spyOn(Date, "now").mockReturnValue(now + 31 * DAY_MS);
+		expect(store.isFaviconFailed(url)).toBe(false);
+		store.pruneFaviconFailures(); // runs on every load
+		expect(store.failedFaviconCount).toBe(0);
+	});
+
+	it("can all be retried at once", () => {
+		const store = useBookmarkStore();
+		store.markFaviconFailed(url);
+		store.markFaviconFailed("https://other.example");
+		store.retryFavicons();
+		expect(store.isFaviconFailed(url)).toBe(false);
+		expect(store.failedFaviconCount).toBe(0);
+	});
+
+	it("are not merged from other devices, nor are the old synced list's entries", () => {
+		const store = useBookmarkStore();
+		const fromOtherDevice = remote({
+			failedFavicons: ["example.com"],
+			faviconFailures: { "example.com": Date.now() },
+		} as Partial<Storage>);
+		expect(store.mergeStores(fromOtherDevice)).toBe(false);
+		expect(store.isFaviconFailed(url)).toBe(false);
+	});
+
+	it("drop the old synced list and expired failures when loading", () => {
+		vi.spyOn(console, "log").mockImplementation(() => {});
+		const now = Date.now();
+		localStorage.setItem(
+			STORAGE_KEY,
+			JSON.stringify({
+				failedFavicons: ["legacy.example"],
+				faviconFailures: { "old.example": now - 31 * DAY_MS, "new.example": now - DAY_MS },
+			}),
+		);
+		const store = useBookmarkStore();
+		store.loadStore();
+		expect(store.faviconFailures).toEqual({ "new.example": now - DAY_MS });
+		expect("failedFavicons" in store.$state).toBe(false);
 	});
 });
 

@@ -3,7 +3,7 @@
  * fake server that enforces the real foonblob rules.
  */
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { encrypt, generateCredentials } from "./crypto";
+import { decrypt, encrypt, generateCredentials } from "./crypto";
 import { createFakeSyncServer } from "./test/fakeSyncServer";
 import type { FakeSyncServer } from "./test/fakeSyncServer";
 import { bookmark, loadApp, skewClock, snapshot } from "./test/helpers";
@@ -93,6 +93,52 @@ describe("syncing between devices", () => {
 		for (const store of [a, b]) {
 			expect(store.bookmarks[0]).toMatchObject({ title: "edited on A", clicks: 7 });
 		}
+	});
+});
+
+describe("favicon failures", () => {
+	const icon = "https://example.com/page";
+
+	it("stay on the device that recorded them", async () => {
+		const { device } = await loadApp();
+		const a = device(credentials, [bookmark(1)]);
+		a.markFaviconFailed(icon);
+		await a.performSync();
+
+		const encKey = credentials.split(":")[1];
+		const blob = server.identities.get(syncIdOf(credentials))!.blob.data;
+		expect(Object.keys(JSON.parse(await decrypt(blob, encKey))).sort()).toEqual([
+			"bookmarks",
+			"favoriteTags",
+			"favoriteTagsMetadata",
+		]);
+
+		const b = device(credentials);
+		await b.performSync();
+		expect(b.isFaviconFailed(icon)).toBe(false);
+	});
+
+	it("ignores the list older versions sync, without re-uploading", async () => {
+		const { device } = await loadApp();
+		await device(credentials, [bookmark(1)]).performSync();
+		// What an older version uploads: the same data plus its failed list.
+		const encKey = credentials.split(":")[1];
+		server.identities.get(syncIdOf(credentials))!.blob.data = await encrypt(
+			JSON.stringify({
+				bookmarks: [bookmark(1)],
+				favoriteTags: [],
+				favoriteTagsMetadata: {},
+				failedFavicons: ["example.com"],
+			}),
+			encKey,
+		);
+
+		const uploads = server.uploads;
+		const b = device(credentials);
+		expect(await b.performSync()).toBeNull();
+		await b.performSync();
+		expect(server.uploads).toBe(uploads);
+		expect(b.isFaviconFailed(icon)).toBe(false);
 	});
 });
 
@@ -222,7 +268,7 @@ describe("device clock", () => {
 });
 
 describe("automatic sync", () => {
-	it("uploads after a real change, but not after a click alone", async () => {
+	it("uploads after a real change, but not after a click or icon failure", async () => {
 		vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout", "setInterval", "clearInterval"] });
 		try {
 			const { device } = await loadApp();
@@ -238,6 +284,7 @@ describe("automatic sync", () => {
 			const performSync = vi.spyOn(a, "performSync");
 
 			a.incrementClick(1);
+			a.markFaviconFailed("https://example.com/page");
 			await vi.advanceTimersByTimeAsync(5000);
 			expect(performSync).not.toHaveBeenCalled();
 

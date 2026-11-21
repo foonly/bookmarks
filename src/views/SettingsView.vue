@@ -324,6 +324,16 @@ function formatDate(timestamp: number) {
 					v-model="fetchFavicons"
 				/>
 			</div>
+			<template v-if="store.fetchFavicons && store.failedFaviconCount > 0">
+				<p class="settings-description">
+					{{ t("settings.privacy.failed_icons", store.failedFaviconCount) }}
+				</p>
+				<div class="settings-actions">
+					<button type="button" @click="store.retryFavicons()">
+						{{ t("settings.privacy.retry_icons") }}
+					</button>
+				</div>
+			</template>
 		</section>
 
 		<!-- Data Management Section -->

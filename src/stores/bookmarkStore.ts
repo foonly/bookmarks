@@ -9,6 +9,11 @@ import type { SyncError } from "../syncStatus";
 
 let syncInProgress = false;
 
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+/** How long a site whose icon failed to load shows the placeholder. */
+export const FAVICON_RETRY_MS = 30 * DAY_MS;
+
 /** Classifies an exception thrown during a sync for the UI. */
 function syncErrorFrom(error: unknown): SyncError {
 	if (error instanceof SyncHttpError) {
@@ -36,7 +41,7 @@ function syncErrorFrom(error: unknown): SyncError {
 
 type SyncedState = Pick<
 	Storage,
-	"bookmarks" | "favoriteTags" | "favoriteTagsMetadata" | "failedFavicons"
+	"bookmarks" | "favoriteTags" | "favoriteTagsMetadata"
 >;
 
 const byKey = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
@@ -56,7 +61,6 @@ function canonicalSyncState(state: SyncedState): SyncedState {
 				byKey(a, b),
 			),
 		),
-		failedFavicons: [...(state.failedFavicons || [])].sort(byKey),
 	};
 }
 
@@ -128,13 +132,19 @@ export const useBookmarkStore = defineStore("bookmarks", {
 		isFaviconFailed: (state) => {
 			return (url: string): boolean => {
 				try {
-					const domain = new URL(url).hostname;
-					return state.failedFavicons.includes(domain);
+					const failedAt = state.faviconFailures[new URL(url).hostname];
+					return failedAt !== undefined && Date.now() - failedAt < FAVICON_RETRY_MS;
 				} catch {
 					return true;
 				}
 			};
 		},
+
+		/**
+		 * Number of sites shown without their icon. Expired failures are
+		 * removed on load (pruneFaviconFailures), so this counts stored ones.
+		 */
+		failedFaviconCount: (state): number => Object.keys(state.faviconFailures).length,
 	},
 
 	actions: {
@@ -160,6 +170,7 @@ export const useBookmarkStore = defineStore("bookmarks", {
 				}
 			}
 			this.purgeDeleted();
+			this.pruneFaviconFailures();
 		},
 
 		saveStore() {
@@ -230,34 +241,35 @@ export const useBookmarkStore = defineStore("bookmarks", {
 
 		markFaviconFailed(url: string) {
 			try {
-				const domain = new URL(url).hostname;
-				if (!this.failedFavicons.includes(domain)) {
-					this.failedFavicons.push(domain);
-					this.saveStore();
-				}
+				this.faviconFailures[new URL(url).hostname] = Date.now();
+				this.saveStore();
 			} catch {
 				// Ignore invalid URLs
 			}
 		},
 
+		/** Forgets all icon failures, so every site icon is tried again. */
+		retryFavicons() {
+			this.faviconFailures = {};
+			this.saveStore();
+		},
+
+		/** Drops failures old enough to be retried, keeping the record small. */
+		pruneFaviconFailures() {
+			const now = Date.now();
+			const kept = Object.fromEntries(
+				Object.entries(this.faviconFailures).filter(
+					([, failedAt]) => now - failedAt < FAVICON_RETRY_MS,
+				),
+			);
+			if (Object.keys(kept).length !== Object.keys(this.faviconFailures).length) {
+				this.faviconFailures = kept;
+				this.saveStore();
+			}
+		},
+
 		mergeStores(remoteStore: Storage): boolean {
 			let hasChanges = false;
-
-			// Merge failed favicons
-			const mergedFailed = [
-				...new Set([
-					...this.failedFavicons,
-					...(remoteStore.failedFavicons || []),
-				]),
-			].sort();
-
-			if (
-				JSON.stringify(mergedFailed) !==
-				JSON.stringify([...this.failedFavicons].sort())
-			) {
-				this.$state.failedFavicons = mergedFailed;
-				hasChanges = true;
-			}
 
 			// Merge favorite tags using metadata for "Last Write Wins"
 			const allTags = new Set([
@@ -382,14 +394,13 @@ export const useBookmarkStore = defineStore("bookmarks", {
 		},
 
 		purgeDeleted(forceAll: boolean = false) {
-			const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
 			const now = Date.now();
 			const initialCount = this.bookmarks.length;
 
 			this.bookmarks = this.bookmarks.filter((bookmark) => {
 				if (!bookmark.deleted) return true;
 				if (forceAll) return false;
-				return now - bookmark.modified < THIRTY_DAYS_MS;
+				return now - bookmark.modified < 30 * DAY_MS;
 			});
 
 			if (this.bookmarks.length !== initialCount) {

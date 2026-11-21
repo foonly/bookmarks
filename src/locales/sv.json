@@ -57,7 +57,9 @@
 		"privacy": {
 			"title": "Integritet",
 			"fetch_favicons": "Hämta webbplatsikoner",
-			"fetch_favicons_description": "När detta är aktiverat kommer appen att begära webbplatsikoner från favicon.im. Detta kan avslöja vilka domäner du har bokmärkt för den tjänsten."
+			"fetch_favicons_description": "När detta är aktiverat kommer appen att begära webbplatsikoner från favicon.im. Detta kan avslöja vilka domäner du har bokmärkt för den tjänsten.",
+			"failed_icons": "{n} webbplats saknar ikon. Ett nytt försök görs efter 30 dagar. | {n} webbplatser saknar ikon. Ett nytt försök görs efter 30 dagar.",
+			"retry_icons": "Försök igen nu"
 		},
 		"data": {
 			"title": "Datahantering",

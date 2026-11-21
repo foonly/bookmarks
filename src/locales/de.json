@@ -57,7 +57,9 @@
 		"privacy": {
 			"title": "Datenschutz",
 			"fetch_favicons": "Website-Icons abrufen",
-			"fetch_favicons_description": "Wenn aktiviert, fordert die App Website-Icons von favicon.im an. Dies kann diesem Dienst die von Ihnen gesetzten Lesezeichen-Domains offenbaren."
+			"fetch_favicons_description": "Wenn aktiviert, fordert die App Website-Icons von favicon.im an. Dies kann diesem Dienst die von Ihnen gesetzten Lesezeichen-Domains offenbaren.",
+			"failed_icons": "Für {n} Website wurde kein Symbol gefunden. Ein neuer Versuch erfolgt nach 30 Tagen. | Für {n} Websites wurde kein Symbol gefunden. Ein neuer Versuch erfolgt nach 30 Tagen.",
+			"retry_icons": "Jetzt erneut versuchen"
 		},
 		"data": {
 			"title": "Datenverwaltung",

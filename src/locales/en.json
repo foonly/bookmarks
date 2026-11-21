@@ -58,7 +58,9 @@
 		"privacy": {
 			"title": "Privacy",
 			"fetch_favicons": "Fetch site icons",
-			"fetch_favicons_description": "When enabled, the app will request site icons from favicon.im. This may reveal the domains you have bookmarked to that service."
+			"fetch_favicons_description": "When enabled, the app will request site icons from favicon.im. This may reveal the domains you have bookmarked to that service.",
+			"failed_icons": "{n} site has no icon. It is tried again after 30 days. | {n} sites have no icon. They are tried again after 30 days.",
+			"retry_icons": "Retry now"
 		},
 		"data": {
 			"title": "Data Management",
