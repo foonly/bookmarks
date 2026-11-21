@@ -252,6 +252,16 @@ export const useBookmarkStore = defineStore("bookmarks", {
 					if (remoteStore.favoriteTags.includes(tag)) {
 						newFavoriteTags.push(tag);
 					}
+				} else if (remoteTs === 0 && localTs === 0) {
+					// Neither side has a timestamp (favorited before timestamps were
+					// recorded). Keep it if either side has it; otherwise devices
+					// disagree forever and re-upload on every sync.
+					if (
+						this.favoriteTags.includes(tag) ||
+						remoteStore.favoriteTags.includes(tag)
+					) {
+						newFavoriteTags.push(tag);
+					}
 				} else {
 					// Local is newer or equal
 					if (this.favoriteTags.includes(tag)) {
