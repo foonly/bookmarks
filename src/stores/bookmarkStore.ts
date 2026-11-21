@@ -7,6 +7,32 @@ import { fetchLatest, upload, SyncHttpError } from "../syncClient";
 
 let syncInProgress = false;
 
+type SyncedState = Pick<
+	Storage,
+	"bookmarks" | "favoriteTags" | "favoriteTagsMetadata" | "failedFavicons"
+>;
+
+const byKey = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
+
+/**
+ * Returns the synced part of the store in a fixed order. Devices merge
+ * bookmarks in different orders, so comparing or uploading the raw arrays
+ * makes devices see "changes" that are only reordering, and re-upload to
+ * each other on every sync.
+ */
+function canonicalSyncState(state: SyncedState): SyncedState {
+	return {
+		bookmarks: [...state.bookmarks].sort((a, b) => a.created - b.created),
+		favoriteTags: [...state.favoriteTags].sort(byKey),
+		favoriteTagsMetadata: Object.fromEntries(
+			Object.entries(state.favoriteTagsMetadata || {}).sort(([a], [b]) =>
+				byKey(a, b),
+			),
+		),
+		failedFavicons: [...(state.failedFavicons || [])].sort(byKey),
+	};
+}
+
 export const useBookmarkStore = defineStore("bookmarks", {
 	state: (): Storage => {
 		// Initialize with empty schema-validated object
@@ -372,21 +398,11 @@ export const useBookmarkStore = defineStore("bookmarks", {
 				}
 
 				// 4. Compare current local state with remote state to avoid redundant uploads
-				const localState = {
-					bookmarks: this.$state.bookmarks,
-					favoriteTags: this.$state.favoriteTags,
-					favoriteTagsMetadata: this.$state.favoriteTagsMetadata,
-					failedFavicons: this.$state.failedFavicons,
-				};
+				const localState = canonicalSyncState(this.$state);
 
-				// Check if remote matches exactly what we have now
+				// Check if remote matches what we have now, ignoring order
 				if (remoteData) {
-					const remoteState = {
-						bookmarks: remoteData.bookmarks,
-						favoriteTags: remoteData.favoriteTags,
-						favoriteTagsMetadata: remoteData.favoriteTagsMetadata || {},
-						failedFavicons: remoteData.failedFavicons || [],
-					};
+					const remoteState = canonicalSyncState(remoteData);
 
 					if (JSON.stringify(localState) === JSON.stringify(remoteState)) {
 						// No changes to upload
@@ -446,20 +462,10 @@ export const useBookmarkStore = defineStore("bookmarks", {
 
 			// Debounced sync on local store updates
 			let debounceTimeout: number | undefined;
-			let lastState = JSON.stringify({
-				bookmarks: this.bookmarks,
-				favoriteTags: this.favoriteTags,
-				favoriteTagsMetadata: this.favoriteTagsMetadata,
-				failedFavicons: this.failedFavicons,
-			});
+			let lastState = JSON.stringify(canonicalSyncState(this.$state));
 
 			this.$subscribe((_mutation, state) => {
-				const currentState = JSON.stringify({
-					bookmarks: state.bookmarks,
-					favoriteTags: state.favoriteTags,
-					favoriteTagsMetadata: state.favoriteTagsMetadata,
-					failedFavicons: state.failedFavicons,
-				});
+				const currentState = JSON.stringify(canonicalSyncState(state));
 
 				if (currentState !== lastState) {
 					lastState = currentState;
