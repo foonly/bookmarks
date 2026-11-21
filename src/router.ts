@@ -14,12 +14,14 @@ const routes = [
 	{
 		path: "/add",
 		name: "add-bookmark",
+		meta: { modal: true },
 		component: BookmarksView,
 		props: { showModal: "add" },
 	},
 	{
 		path: "/edit/:id",
 		name: "edit-bookmark",
+		meta: { modal: true },
 		component: BookmarksView,
 		props: (route: any) => ({
 			showModal: "edit",
@@ -35,6 +37,7 @@ const routes = [
 	{
 		path: "/tag/:tag/add",
 		name: "tag-add-bookmark",
+		meta: { modal: true },
 		component: BookmarksView,
 		props: (route: any) => ({
 			tag: route.params.tag,
@@ -44,6 +47,7 @@ const routes = [
 	{
 		path: "/tag/:tag/edit/:id",
 		name: "tag-edit-bookmark",
+		meta: { modal: true },
 		component: BookmarksView,
 		props: (route: any) => ({
 			tag: route.params.tag,
@@ -60,6 +64,7 @@ const routes = [
 	{
 		path: "/tags/edit/:id",
 		name: "tags-edit-bookmark",
+		meta: { modal: true },
 		component: TagsView,
 		props: (route: any) => ({
 			showModal: "edit",
