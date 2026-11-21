@@ -171,6 +171,27 @@ describe("importData", () => {
 		expect(store.bookmarks).toHaveLength(1);
 	});
 
+	it("restores bookmarks deleted since the backup, under new IDs", () => {
+		const store = useBookmarkStore();
+		store.bookmarks.push(bookmark(1));
+		store.removeBookmark(1);
+		expect(store.importData(remote({ bookmarks: [bookmark(1, { title: "restored" })] }))).toBe(
+			true,
+		);
+		expect(store.bookmarks).toHaveLength(1);
+		expect(store.bookmarks[0]).toMatchObject({ title: "restored" });
+		expect(store.bookmarks[0].created).not.toBe(1);
+		expect(store.deletedIds).toEqual([1]);
+	});
+
+	it("does not apply deletions recorded in the backup", () => {
+		const store = useBookmarkStore();
+		store.bookmarks.push(bookmark(1));
+		store.importData(remote({ bookmarks: [bookmark(1, { deleted: true, modified: Date.now() })] }));
+		expect(store.bookmarks.map((b) => b.created)).toEqual([1]);
+		expect(store.deletedIds).toEqual([]);
+	});
+
 	it("merges bookmarks that have IDs as usual", () => {
 		const store = useBookmarkStore();
 		store.bookmarks.push(bookmark(1, { title: "old", modified: 10 }));
@@ -180,19 +201,64 @@ describe("importData", () => {
 	});
 });
 
-describe("purgeDeleted", () => {
-	it("removes deleted bookmarks after 30 days, or all of them when forced", () => {
+describe("deleting", () => {
+	it("removes the bookmark and keeps only its ID", () => {
 		const store = useBookmarkStore();
-		const now = Date.now();
-		store.bookmarks.push(
-			bookmark(1),
-			bookmark(2, { deleted: true, modified: now - 31 * DAY_MS }),
-			bookmark(3, { deleted: true, modified: now - 1 * DAY_MS }),
-		);
-		store.purgeDeleted();
-		expect(store.bookmarks.map((b) => b.created)).toEqual([1, 3]);
-		store.purgeDeleted(true);
+		store.bookmarks.push(bookmark(1), bookmark(2, { title: "private" }));
+		store.removeBookmark(2);
 		expect(store.bookmarks.map((b) => b.created)).toEqual([1]);
+		expect(store.deletedIds).toEqual([2]);
+		expect(localStorage.getItem(STORAGE_KEY)).not.toContain("private");
+	});
+
+	it("applies deletions from another device", () => {
+		const store = useBookmarkStore();
+		store.bookmarks.push(bookmark(1), bookmark(2));
+		expect(store.mergeStores(remote({ bookmarks: [bookmark(1)], deletedIds: [2] }))).toBe(true);
+		expect(store.bookmarks.map((b) => b.created)).toEqual([1]);
+		expect(store.deletedIds).toEqual([2]);
+	});
+
+	it("wins over an edit made later on another device", () => {
+		// There is no undelete, so a deletion is final.
+		const store = useBookmarkStore();
+		store.removeBookmark(1);
+		store.mergeStores(
+			remote({ bookmarks: [bookmark(1, { title: "edited", modified: Date.now() + DAY_MS })] }),
+		);
+		expect(store.bookmarks).toEqual([]);
+	});
+
+	it("keeps the deleted IDs of both devices", () => {
+		const store = useBookmarkStore();
+		store.removeBookmark(1);
+		store.mergeStores(remote({ deletedIds: [2, 3] }));
+		expect([...store.deletedIds].sort()).toEqual([1, 2, 3]);
+		expect(store.mergeStores(remote({ deletedIds: [3, 1] }))).toBe(false);
+	});
+
+	it("understands deletion markers from older versions", () => {
+		const store = useBookmarkStore();
+		store.bookmarks.push(bookmark(1), bookmark(2));
+		store.mergeStores(remote({ bookmarks: [bookmark(2, { deleted: true, modified: 5 })] }));
+		expect(store.bookmarks.map((b) => b.created)).toEqual([1]);
+		expect(store.deletedIds).toEqual([2]);
+	});
+
+	it("converts stored deletion markers when loading", () => {
+		vi.spyOn(console, "log").mockImplementation(() => {});
+		localStorage.setItem(
+			STORAGE_KEY,
+			JSON.stringify({
+				bookmarks: [bookmark(1), bookmark(2, { deleted: true, title: "private" })],
+				deletedIds: [3],
+			}),
+		);
+		const store = useBookmarkStore();
+		store.loadStore();
+		expect(store.bookmarks.map((b) => b.created)).toEqual([1]);
+		expect([...store.deletedIds].sort()).toEqual([2, 3]);
+		expect(localStorage.getItem(STORAGE_KEY)).not.toContain("private");
 	});
 });
 

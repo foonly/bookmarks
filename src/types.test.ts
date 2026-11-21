@@ -27,6 +27,7 @@ describe("storageSchema", () => {
 		expect(storageSchema.parse({})).toEqual({
 			favoriteTags: [],
 			favoriteTagsMetadata: {},
+			deletedIds: [],
 			faviconFailures: {},
 			bookmarks: [],
 			fetchFavicons: false,

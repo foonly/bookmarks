@@ -167,13 +167,6 @@ function handleImport() {
 	input.click();
 }
 
-function handlePurge() {
-	if (confirm(t("settings.data.purge_confirm"))) {
-		store.purgeDeleted(true);
-		alert(t("settings.data.purge_success"));
-	}
-}
-
 function handleClearAll() {
 	if (confirm(t("settings.data.clear_confirm"))) {
 		window.localStorage.clear();
@@ -345,13 +338,6 @@ function formatDate(timestamp: number) {
 				</button>
 				<button type="button" @click="handleImport">
 					{{ t("settings.data.import") }}
-				</button>
-				<button
-					type="button"
-					:title="t('settings.data.purge_tooltip')"
-					@click="handlePurge"
-				>
-					{{ t("settings.data.purge") }}
 				</button>
 				<button type="button" class="danger-button" @click="handleClearAll">
 					{{ t("settings.data.clear_all") }}

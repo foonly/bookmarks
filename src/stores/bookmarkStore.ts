@@ -41,7 +41,7 @@ function syncErrorFrom(error: unknown): SyncError {
 
 type SyncedState = Pick<
 	Storage,
-	"bookmarks" | "favoriteTags" | "favoriteTagsMetadata"
+	"bookmarks" | "favoriteTags" | "favoriteTagsMetadata" | "deletedIds"
 >;
 
 const byKey = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
@@ -55,6 +55,7 @@ const byKey = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
 function canonicalSyncState(state: SyncedState): SyncedState {
 	return {
 		bookmarks: [...state.bookmarks].sort((a, b) => a.created - b.created),
+		deletedIds: [...new Set(state.deletedIds)].sort((a, b) => a - b),
 		favoriteTags: [...state.favoriteTags].sort(byKey),
 		favoriteTagsMetadata: Object.fromEntries(
 			Object.entries(state.favoriteTagsMetadata || {}).sort(([a], [b]) =>
@@ -73,13 +74,12 @@ export const useBookmarkStore = defineStore("bookmarks", {
 	getters: {
 		getBookmarkById: (state) => {
 			return (id: number): Bookmark | undefined =>
-				state.bookmarks.find((b) => b.created === id && !b.deleted);
+				state.bookmarks.find((b) => b.created === id);
 		},
 
 		sortedTags: (state): string[] => {
 			const tags = new Set([...state.favoriteTags]);
 			state.bookmarks.forEach((bookmark) => {
-				if (bookmark.deleted) return;
 				bookmark.tags.forEach((tag) => tags.add(tag));
 			});
 			return Array.from(tags).sort();
@@ -88,7 +88,6 @@ export const useBookmarkStore = defineStore("bookmarks", {
 		tagsWithCounts: (state): Record<string, number> => {
 			const counts: Record<string, number> = {};
 			state.bookmarks.forEach((bookmark) => {
-				if (bookmark.deleted) return;
 				bookmark.tags.forEach((tag) => {
 					counts[tag] = (counts[tag] || 0) + 1;
 				});
@@ -96,15 +95,13 @@ export const useBookmarkStore = defineStore("bookmarks", {
 			return counts;
 		},
 
-		activeBookmarks: (state): Bookmark[] => {
-			return state.bookmarks.filter((b) => !b.deleted);
-		},
+		// Deleted bookmarks are removed from the list (see applyDeletions),
+		// so every bookmark in it is active.
+		activeBookmarks: (state): Bookmark[] => state.bookmarks,
 
 		getBookmarksByTag: (state) => {
 			return (tag: string): Bookmark[] => {
-				return state.bookmarks.filter(
-					(b) => !b.deleted && b.tags.includes(tag),
-				);
+				return state.bookmarks.filter((b) => b.tags.includes(tag));
 			};
 		},
 
@@ -118,7 +115,6 @@ export const useBookmarkStore = defineStore("bookmarks", {
 			}
 			const counts: Record<string, number> = {};
 			state.bookmarks.forEach((bookmark) => {
-				if (bookmark.deleted) return;
 				bookmark.tags.forEach((tag) => {
 					counts[tag] = (counts[tag] || 0) + 1;
 				});
@@ -169,7 +165,7 @@ export const useBookmarkStore = defineStore("bookmarks", {
 					}
 				}
 			}
-			this.purgeDeleted();
+			this.applyDeletions();
 			this.pruneFaviconFailures();
 		},
 
@@ -192,11 +188,31 @@ export const useBookmarkStore = defineStore("bookmarks", {
 			this.saveStore();
 		},
 
+		/** Deletes a bookmark for good, on every device once synced. */
 		removeBookmark(id: number) {
-			const bookmark = this.bookmarks.find((b) => b.created === id);
-			if (bookmark) {
-				bookmark.deleted = true;
-				bookmark.modified = Date.now();
+			this.bookmarks = this.bookmarks.filter((b) => b.created !== id);
+			if (!this.deletedIds.includes(id)) {
+				this.deletedIds.push(id);
+			}
+			this.saveStore();
+		},
+
+		/**
+		 * Removes every bookmark whose ID is in `deletedIds`, after moving
+		 * markers from older versions (`deleted: true`) into the list.
+		 */
+		applyDeletions() {
+			const deleted = new Set(this.deletedIds);
+			for (const bookmark of this.bookmarks) {
+				if (bookmark.deleted) deleted.add(bookmark.created);
+			}
+			const bookmarks = this.bookmarks.filter((b) => !deleted.has(b.created));
+			if (
+				bookmarks.length !== this.bookmarks.length ||
+				deleted.size !== this.deletedIds.length
+			) {
+				this.bookmarks = bookmarks;
+				this.deletedIds = [...deleted];
 				this.saveStore();
 			}
 		},
@@ -271,6 +287,19 @@ export const useBookmarkStore = defineStore("bookmarks", {
 		mergeStores(remoteStore: Storage): boolean {
 			let hasChanges = false;
 
+			// Deletions are final: a bookmark deleted on any device is removed
+			// everywhere, even if it was edited elsewhere since. Older versions
+			// send deletions as bookmarks marked `deleted: true` instead.
+			const deleted = new Set([
+				...this.deletedIds,
+				...remoteStore.deletedIds,
+				...remoteStore.bookmarks.filter((b) => b.deleted).map((b) => b.created),
+			]);
+			if (deleted.size !== new Set(this.deletedIds).size) {
+				this.$state.deletedIds = [...deleted];
+				hasChanges = true;
+			}
+
 			// Merge favorite tags using metadata for "Last Write Wins"
 			const allTags = new Set([
 				...Object.keys(this.favoriteTagsMetadata),
@@ -326,8 +355,12 @@ export const useBookmarkStore = defineStore("bookmarks", {
 			}
 
 			// Merge bookmarks
-			const localBookmarks = [...this.bookmarks];
+			const localBookmarks = this.bookmarks.filter((b) => !deleted.has(b.created));
+			if (localBookmarks.length !== this.bookmarks.length) {
+				hasChanges = true;
+			}
 			remoteStore.bookmarks.forEach((remote) => {
+				if (deleted.has(remote.created)) return;
 				const localIndex = localBookmarks.findIndex(
 					(l) => l.created === remote.created,
 				);
@@ -360,23 +393,27 @@ export const useBookmarkStore = defineStore("bookmarks", {
 		},
 
 		/**
-		 * Merges an imported backup into the store. Bookmarks without an ID
-		 * (from other tools or hand-written files) all default to ID 0 and
-		 * would collapse into one, so they get fresh IDs, and are skipped
-		 * when a bookmark with the same URL already exists so that importing
-		 * the same file twice adds nothing.
+		 * Merges an imported backup into the store, as a restore:
+		 * - Bookmarks deleted since the backup was made come back, under a new
+		 *   ID, since their old one is in the deleted list.
+		 * - Bookmarks without an ID (from other tools or hand-written files)
+		 *   all default to ID 0 and would collapse into one, so they get new
+		 *   IDs too.
+		 * Either kind is skipped when its URL is already bookmarked, so
+		 * importing the same file twice adds nothing. Deletions recorded in the
+		 * backup itself are not applied.
 		 */
 		importData(data: Storage): boolean {
 			const now = Date.now();
-			const usedIds = new Set(this.bookmarks.map((b) => b.created));
-			const activeUrls = new Set(
-				this.bookmarks.filter((b) => !b.deleted).map((b) => b.url),
-			);
+			const deleted = new Set(this.deletedIds);
+			const usedIds = new Set([...this.bookmarks.map((b) => b.created), ...deleted]);
+			const activeUrls = new Set(this.bookmarks.map((b) => b.url));
 			let nextId = now;
 
 			const bookmarks: Bookmark[] = [];
 			for (const bookmark of data.bookmarks) {
-				if (bookmark.created) {
+				if (bookmark.deleted) continue;
+				if (bookmark.created && !deleted.has(bookmark.created)) {
 					bookmarks.push(bookmark);
 					continue;
 				}
@@ -390,22 +427,7 @@ export const useBookmarkStore = defineStore("bookmarks", {
 					modified: bookmark.modified || now,
 				});
 			}
-			return this.mergeStores({ ...data, bookmarks });
-		},
-
-		purgeDeleted(forceAll: boolean = false) {
-			const now = Date.now();
-			const initialCount = this.bookmarks.length;
-
-			this.bookmarks = this.bookmarks.filter((bookmark) => {
-				if (!bookmark.deleted) return true;
-				if (forceAll) return false;
-				return now - bookmark.modified < 30 * DAY_MS;
-			});
-
-			if (this.bookmarks.length !== initialCount) {
-				this.saveStore();
-			}
+			return this.mergeStores({ ...data, bookmarks, deletedIds: [] });
 		},
 
 		/**

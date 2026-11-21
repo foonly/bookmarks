@@ -10,6 +10,8 @@ export const bookmarkSchema = z.object({
 
 	created: z.number().default(0),
 	modified: z.number().default(0),
+	// Only set in data from versions before 0.15, which kept deleted bookmarks
+	// as markers. Such bookmarks are moved into `deletedIds` when read.
 	deleted: z.boolean().default(false),
 	clicks: z.number().default(0),
 });
@@ -39,6 +41,10 @@ const bookmarkListSchema = z
 export const storageSchema = z.object({
 	favoriteTags: z.array(z.string()).default([]),
 	favoriteTagsMetadata: z.record(z.string(), z.number()).default({}),
+	// IDs of deleted bookmarks, synced so every device removes them. Deletion
+	// is final, so the list only grows and merges as a union; at ~14 bytes per
+	// ID its size does not matter.
+	deletedIds: z.array(z.number()).default([]),
 	// Local to this device and never synced: when the site icon for each
 	// domain last failed to load. They are retried after a while. (Older
 	// versions synced a `failedFavicons` list that could never shrink; it is

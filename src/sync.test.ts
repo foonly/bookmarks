@@ -50,9 +50,8 @@ describe("syncing between devices", () => {
 
 		expect(snapshot(a)).toEqual(snapshot(b));
 		expect(snapshot(a)).toMatchObject([
-			{ created: 1, title: "edited on A", deleted: false },
-			{ created: 2, deleted: true },
-			{ created: 3, deleted: false },
+			{ created: 1, title: "edited on A" },
+			{ created: 3 },
 		]);
 	});
 
@@ -96,6 +95,52 @@ describe("syncing between devices", () => {
 	});
 });
 
+describe("deleting", () => {
+	const encKey = () => credentials.split(":")[1];
+	const remoteBlob = async () =>
+		decrypt(server.identities.get(syncIdOf(credentials))!.blob.data, encKey());
+
+	it("reaches a device that was offline for over a month, and leaves no content behind", async () => {
+		const { device } = await loadApp();
+		const a = device(credentials, [bookmark(1), bookmark(2, { title: "private title" })]);
+		const c = device(credentials);
+		await a.performSync();
+		await c.performSync(); // C has bookmark 2, then goes offline
+
+		a.removeBookmark(2);
+		await a.performSync();
+		expect(await remoteBlob()).not.toContain("private title");
+
+		skewClock(40 * 24 * 3600); // C comes back weeks later
+		await c.performSync();
+		expect(snapshot(c).map((b) => b.created)).toEqual([1]);
+	});
+
+	it("converges with a device still on an older version", async () => {
+		const { device } = await loadApp();
+		const a = device(credentials, [bookmark(1), bookmark(2), bookmark(3)]);
+		await a.performSync();
+		// An older version deletes bookmark 3 by marking it, and its upload
+		// drops the deletedIds field it does not know.
+		const older = {
+			bookmarks: [bookmark(1), bookmark(2), bookmark(3, { deleted: true, modified: Date.now() })],
+			favoriteTags: [],
+			favoriteTagsMetadata: {},
+		};
+		a.removeBookmark(2); // meanwhile A deletes bookmark 2
+		server.identities.get(syncIdOf(credentials))!.blob.data = await encrypt(
+			JSON.stringify(older),
+			encKey(),
+		);
+
+		await a.performSync();
+		expect(snapshot(a).map((b) => b.created)).toEqual([1]);
+		const uploaded = JSON.parse(await remoteBlob());
+		expect(uploaded.bookmarks.map((b: { created: number }) => b.created)).toEqual([1]);
+		expect([...uploaded.deletedIds].sort()).toEqual([2, 3]);
+	});
+});
+
 describe("favicon failures", () => {
 	const icon = "https://example.com/page";
 
@@ -109,6 +154,7 @@ describe("favicon failures", () => {
 		const blob = server.identities.get(syncIdOf(credentials))!.blob.data;
 		expect(Object.keys(JSON.parse(await decrypt(blob, encKey))).sort()).toEqual([
 			"bookmarks",
+			"deletedIds",
 			"favoriteTags",
 			"favoriteTagsMetadata",
 		]);
