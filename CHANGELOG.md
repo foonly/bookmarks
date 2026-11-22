@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.18.0 (2026-11-23)
+
+#### Features
+
+- extension: Publish as Foonly Bookmarks (ac6f55b)
+
+#### Bug Fixes
+
+- sync: Upload bookmarks added from the extension, and follow other tabs (1be8264)
+
 ## 0.17.0 (2026-11-22)
 
 #### Features
