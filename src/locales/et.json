@@ -105,7 +105,8 @@
 		"edit_bookmark": "Muuda järjehoidjat",
 		"add_tag_placeholder": "Kirjuta silt ja vajuta Enter",
 		"suggested_tags_label": "Soovitused",
-		"remove_tag_title": "Eemalda {tag}"
+		"remove_tag_title": "Eemalda {tag}",
+		"already_saved": "Oled selle lehe varem salvestanud. Muuda seda siin või tühista, et see jääks samaks."
 	},
 	"about": {
 		"title": "Järjehoidjatest",

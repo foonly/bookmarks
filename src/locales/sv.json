@@ -105,7 +105,8 @@
 		"edit_bookmark": "Redigera bokmärke",
 		"add_tag_placeholder": "Skriv en tagg och tryck Enter",
 		"suggested_tags_label": "Förslag",
-		"remove_tag_title": "Ta bort {tag}"
+		"remove_tag_title": "Ta bort {tag}",
+		"already_saved": "Du har sparat den här sidan tidigare. Ändra den här, eller avbryt för att behålla den som den är."
 	},
 	"about": {
 		"title": "Om Bokmärken",

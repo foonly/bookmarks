@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { closeModalRoute } from "../utils/navigation";
 import { useBookmarkStore } from "../stores/bookmarkStore";
 import { bookmarkSchema } from "../types";
+import { findByUrl, prefillFromQuery } from "../utils/prefill";
 
 interface Props {
 	id?: number;
@@ -13,6 +14,7 @@ interface Props {
 
 const props = defineProps<Props>();
 const { t } = useI18n();
+const route = useRoute();
 const router = useRouter();
 const store = useBookmarkStore();
 
@@ -27,7 +29,14 @@ const newTag = ref("");
 const urlInput = ref<HTMLInputElement | null>(null);
 const tagInput = ref<HTMLInputElement | null>(null);
 
-const isEdit = computed(() => !!props.id && props.id > 0);
+/**
+ * The bookmark being edited: the one in the route, or an existing bookmark
+ * for the address passed in from the browser extension.
+ */
+const editId = ref(props.id && props.id > 0 ? props.id : 0);
+const isEdit = computed(() => editId.value > 0);
+/** The address passed in was already saved, so that bookmark is shown. */
+const alreadySaved = ref(false);
 
 const availableTags = computed(() =>
 	store.sortedTags.filter((tag) => !form.value.tags.includes(tag)),
@@ -37,22 +46,47 @@ const suggestedTags = computed(() =>
 	store.suggestedTags.filter((tag) => !form.value.tags.includes(tag)),
 );
 
+function loadBookmark(id: number) {
+	const bookmark = store.getBookmarkById(id);
+	if (bookmark) {
+		form.value = {
+			title: bookmark.title,
+			url: bookmark.url,
+			description: bookmark.description,
+			tags: [...bookmark.tags],
+		};
+	}
+}
+
 onMounted(() => {
 	if (isEdit.value) {
-		const bookmark = store.getBookmarkById(props.id!);
-		if (bookmark) {
-			form.value = {
-				title: bookmark.title,
-				url: bookmark.url,
-				description: bookmark.description,
-				tags: [...bookmark.tags],
-			};
-		}
-	} else {
-		if (props.initialTags) form.value.tags = [...props.initialTags];
-		urlInput.value?.focus();
+		loadBookmark(editId.value);
+		return;
 	}
+	const prefill = prefillFromQuery(route.query);
+	const existing = prefill.url ? findByUrl(store.activeBookmarks, prefill.url) : undefined;
+	if (existing) {
+		editId.value = existing.created;
+		alreadySaved.value = true;
+		loadBookmark(existing.created);
+		focusAfterOpen(tagInput);
+		return;
+	}
+	form.value.tags = [...new Set([...(props.initialTags ?? []), ...prefill.tags])];
+	form.value.url = prefill.url;
+	form.value.title = prefill.title;
+	form.value.description = prefill.description;
+	// With the address filled in, tags are usually what is left to add.
+	focusAfterOpen(prefill.url ? tagInput : urlInput);
 });
+
+/**
+ * The dialog moves focus to its first field when it opens, which happens
+ * after this component mounts, so focus is set once that is done.
+ */
+function focusAfterOpen(input: typeof urlInput) {
+	nextTick(() => input.value?.focus());
+}
 
 function addTag(value = newTag.value) {
 	const tag = value.trim().replace(/,$/, "").trim();
@@ -89,7 +123,7 @@ function handleTagInput(event: Event) {
 function handleSubmit() {
 	// A tag typed but not yet added would otherwise be lost.
 	addTag();
-	const existing = isEdit.value ? store.getBookmarkById(props.id!) : undefined;
+	const existing = isEdit.value ? store.getBookmarkById(editId.value) : undefined;
 	if (isEdit.value && !existing) {
 		closeModalRoute(router);
 		return;
@@ -116,6 +150,7 @@ function handleCancel() {
 <template>
 	<form class="bookmarkForm" @submit.prevent="handleSubmit" @reset.prevent="handleCancel">
 		<h2 class="formTitle">{{ isEdit ? t("form.edit_bookmark") : t("form.add_bookmark") }}</h2>
+		<p v-if="alreadySaved" class="formNotice" role="status">{{ t("form.already_saved") }}</p>
 
 		<div class="formField">
 			<label for="url">{{ t("form.url") }}</label>

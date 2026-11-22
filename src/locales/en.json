@@ -105,7 +105,8 @@
 		"edit_bookmark": "Edit bookmark",
 		"add_tag_placeholder": "Type a tag and press Enter",
 		"suggested_tags_label": "Suggested",
-		"remove_tag_title": "Remove {tag}"
+		"remove_tag_title": "Remove {tag}",
+		"already_saved": "You saved this page before. Change it here, or cancel to keep it as it is."
 	},
 	"about": {
 		"title": "About Bookmarks",
