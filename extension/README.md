@@ -7,7 +7,7 @@ A toolbar button for [Bookmarks](https://bookmarks.foonly.dev). The extension st
 
 The shortcuts can be changed in Firefox under *about:addons → ⚙ → Manage Extension Shortcuts*, and in Chrome-based browsers at *chrome://extensions/shortcuts*.
 
-It works in Firefox 128 or later and in current Chrome, Edge, Brave and other Chromium browsers, from the same files.
+It works in Firefox 140 or later and in current Chrome, Edge, Brave and other Chromium browsers, from the same files.
 
 ## Permissions
 
