@@ -53,6 +53,9 @@ export const storageSchema = z.object({
 	bookmarks: bookmarkListSchema,
 	language: z.string().optional(),
 	fetchFavicons: z.boolean().default(false),
+	// Local to this device and never synced: how the bookmark list is shown.
+	// "launcher" suits sites opened often, "list" suits things to remember.
+	layout: z.enum(["launcher", "list"]).catch("launcher"),
 	syncSettings: z
 		.object({
 			enabled: z.boolean().default(false),
@@ -67,3 +70,4 @@ export const storageSchema = z.object({
 });
 
 export type Storage = z.infer<typeof storageSchema>;
+export type Layout = Storage["layout"];

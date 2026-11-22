@@ -1,24 +1,30 @@
 {
 	"nav": {
 		"bookmarks": "Bokmärken",
-		"tags": "Taggar",
 		"about": "Om",
 		"settings": "Inställningar"
 	},
 	"bookmarks": {
-		"add_button_title": "Lägg till bokmärke",
 		"edit_button_title": "Redigera {title}",
 		"delete_button_title": "Ta bort {title}",
 		"filter_all": "Alla",
-		"search_placeholder": "Sök bokmärken...",
+		"search_placeholder": "Sök bland {n} bokmärken",
 		"no_bookmarks": "Inga bokmärken än",
 		"no_bookmarks_tag": "Inga bokmärken med taggen \"{tag}\"",
-		"delete_confirm": "Är du säker på att du vill ta bort detta bokmärke?",
-		"show_more": "Visa fler"
-	},
-	"tags": {
-		"no_tags": "Inga taggar hittades.",
-		"edit": "redigera"
+		"show_more": "Visa fler",
+		"add": "Lägg till",
+		"search_label": "Sök bokmärken",
+		"most_used": "Mest använda",
+		"all": "Alla bokmärken",
+		"matches": "{n} träff | {n} träffar",
+		"keyboard_hint": "↑ ↓ flytta, ↵ öppna",
+		"tags_label": "Taggar",
+		"starred": "Stjärnmärkta",
+		"star_tag": "Stjärnmärk {tag}",
+		"unstar_tag": "Ta bort stjärna från {tag}",
+		"deleted": "Tog bort ”{title}”",
+		"undo": "Ångra",
+		"no_matches": "Inga bokmärken matchar ”{query}”"
 	},
 	"settings": {
 		"language": "Språk",
@@ -57,6 +63,14 @@
 			"credentials_invalid": "Förväntat format: ID:EncKey:Secret.",
 			"credentials_weak": "Uppgifterna är för svaga: krypteringsnyckeln och hemligheten måste vara minst 32 hexadecimala tecken var, som genererade uppgifter. Skapa nya med generera-knappen, som visas när synkroniseringen är avstängd."
 		},
+		"layout": {
+			"title": "Layout",
+			"description": "Hur bokmärken visas på den här enheten.",
+			"launcher": "Startpanel",
+			"launcher_description": "Dina mest använda webbplatser som rutor, sedan en kompakt lista. För verktyg och sidor du öppnar ofta.",
+			"list": "Lista",
+			"list_description": "Titlar, beskrivningar och taggar i en luftig lista, med taggarna i ett sidofält. För saker att komma ihåg eller läsa senare."
+		},
 		"privacy": {
 			"title": "Integritet",
 			"fetch_favicons": "Hämta webbplatsikoner",
@@ -89,11 +103,8 @@
 		"cancel": "Avbryt",
 		"add_bookmark": "Lägg till bokmärke",
 		"edit_bookmark": "Redigera bokmärke",
-		"add_tag_placeholder": "Lägg till en tagg...",
-		"add_tag_button": "Lägg till",
-		"suggested_tags_label": "Föreslagna taggar:",
-		"added_tags_label": "Tillagda taggar:",
-		"no_tags": "Inga",
+		"add_tag_placeholder": "Skriv en tagg och tryck Enter",
+		"suggested_tags_label": "Förslag",
 		"remove_tag_title": "Ta bort {tag}"
 	},
 	"about": {
@@ -111,7 +122,7 @@
 		"usage": {
 			"title": "Användningstips",
 			"items": [
-				"**Taggar**: Använd taggar för att kategorisera dina bokmärken. Du kan filtrera på taggar i huvudvyn eller på den dedikerade fliken Taggar.",
+				"**Taggar**: Gruppera dina bokmärken med taggar. Filtrera på en tagg från taggraden eller sidofältet, och stjärnmärk de taggar du använder mest så att de visas först.",
 				"**Synkronisering**: Konfigurera en synkroniserings-URL och uppgifter i Inställningar för att hålla dina bokmärken säkerhetskopierade och synkroniserade mellan enheter.",
 				"**PWA**: Installera denna app på din startskärm eller ditt skrivbord för en app-liknande upplevelse."
 			]

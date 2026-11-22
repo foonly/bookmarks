@@ -1,12 +1,15 @@
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted, onUnmounted, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBookmarkStore } from "../stores/bookmarkStore";
-import BookmarkItem from "../components/BookmarkItem.vue";
+import type { Bookmark } from "../types";
+import { ui, pendingDelete } from "../ui";
+import { byClicks, matchesQuery } from "../utils/bookmarks";
+import { PAGE_SIZE } from "../constants";
+import LauncherLayout from "../components/LauncherLayout.vue";
+import ListLayout from "../components/ListLayout.vue";
 import Modal from "../components/Modal.vue";
 import BookmarkForm from "../components/BookmarkForm.vue";
-import addIcon from "/bookmark-plus.svg?raw";
-import { PAGE_SIZE } from "../constants";
 
 interface Props {
 	tag?: string;
@@ -18,211 +21,113 @@ const props = defineProps<Props>();
 const { t } = useI18n();
 const store = useBookmarkStore();
 
-const searchQuery = ref("");
-const debouncedSearchQuery = ref("");
-
+const MOST_USED_COUNT = 8;
 const visibleCount = ref(PAGE_SIZE);
 
-let debounceTimeout: number | undefined;
-watch(searchQuery, (newVal) => {
-	if (debounceTimeout) clearTimeout(debounceTimeout);
-	debounceTimeout = window.setTimeout(() => {
-		debouncedSearchQuery.value = newVal;
-	}, 300);
+const searching = computed(() => ui.query.trim() !== "");
+
+/** Bookmarks not waiting to be deleted. */
+const visible = computed(() => {
+	const pendingId = pendingDelete.bookmark?.created;
+	return store.activeBookmarks.filter((b) => b.created !== pendingId);
 });
 
-const sortedBookmarks = computed(() => {
-	let bookmarks = store.activeBookmarks;
+const results = computed(() =>
+	visible.value
+		.filter((b) => !props.tag || b.tags.includes(props.tag))
+		.filter((b) => matchesQuery(b, ui.query))
+		.sort(byClicks),
+);
 
-	if (props.tag) {
-		bookmarks = bookmarks.filter((b) => b.tags.includes(props.tag!));
-	}
+const shown = computed(() => results.value.slice(0, visibleCount.value));
+const hasMore = computed(() => visibleCount.value < results.value.length);
 
-	if (debouncedSearchQuery.value) {
-		const q = debouncedSearchQuery.value.toLowerCase();
-		bookmarks = bookmarks.filter(
-			(b) =>
-				b.title.toLowerCase().includes(q) ||
-				b.url.toLowerCase().includes(q) ||
-				b.description.toLowerCase().includes(q) ||
-				b.tags.some((tag) => tag.toLowerCase().includes(q)),
-		);
-	}
-
-	return [...bookmarks].sort((a, b) => {
-		const clicksA = a.clicks || 0;
-		const clicksB = b.clicks || 0;
-		if (clicksB !== clicksA) {
-			return clicksB - clicksA;
-		}
-		return a.title.localeCompare(b.title);
-	});
+const mostUsed = computed(() => {
+	if (searching.value || props.tag) return [];
+	return visible.value
+		.filter((b) => (b.clicks || 0) > 0)
+		.sort(byClicks)
+		.slice(0, MOST_USED_COUNT);
 });
 
-const paginatedBookmarks = computed(() => {
-	return sortedBookmarks.value.slice(0, visibleCount.value);
+watch([() => props.tag, () => ui.query], () => {
+	visibleCount.value = PAGE_SIZE;
+	ui.selected = 0;
 });
 
-const hasMore = computed(() => {
-	return visibleCount.value < sortedBookmarks.value.length;
-});
-
-function loadMore() {
-	visibleCount.value += PAGE_SIZE;
+function handleOpen(bookmark: Bookmark) {
+	store.incrementClick(bookmark.created);
 }
 
-watch([() => props.tag, debouncedSearchQuery], () => {
-	visibleCount.value = PAGE_SIZE;
-});
-
-const displayedTags = computed(() => {
-	const suggested = store.suggestedTags;
-	if (props.tag && !suggested.includes(props.tag)) {
-		return [...suggested, props.tag].sort();
+/** Arrow keys move through the results and Enter opens one, from the search field. */
+function handleSearchKeys(event: KeyboardEvent) {
+	if ((event.target as HTMLElement | null)?.id !== "search-input" || !searching.value) return;
+	const last = shown.value.length - 1;
+	if (event.key === "ArrowDown") {
+		event.preventDefault();
+		ui.selected = Math.min(ui.selected + 1, last);
+	} else if (event.key === "ArrowUp") {
+		event.preventDefault();
+		ui.selected = Math.max(ui.selected - 1, 0);
+	} else if (event.key === "Enter" && !event.isComposing) {
+		const bookmark = shown.value[ui.selected];
+		if (!bookmark) return;
+		event.preventDefault();
+		handleOpen(bookmark);
+		window.open(bookmark.url, "_blank", "noopener,noreferrer");
+		return;
+	} else {
+		return;
 	}
-	return suggested;
-});
+	nextTick(() => document.querySelector(".selected")?.scrollIntoView({ block: "nearest" }));
+}
 
-const addLink = computed(() => {
-	return props.tag ? `/tag/${encodeURIComponent(props.tag)}/add` : "/add";
-});
+onMounted(() => document.addEventListener("keydown", handleSearchKeys));
+onUnmounted(() => document.removeEventListener("keydown", handleSearchKeys));
 
 const isModalOpen = computed(() => !!props.showModal);
 const initialTags = computed(() => (props.tag ? [props.tag] : []));
+
+const emptyMessage = computed(() => {
+	if (searching.value) return t("bookmarks.no_matches", { query: ui.query.trim() });
+	if (props.tag) return t("bookmarks.no_bookmarks_tag", { tag: props.tag });
+	return t("bookmarks.no_bookmarks");
+});
 </script>
 
 <template>
 	<div class="bookmarks-view">
-		<div class="search-bar">
-			<input
-				type="text"
-				v-model="searchQuery"
-				:placeholder="t('bookmarks.search_placeholder')"
-				class="search-input"
-			/>
-		</div>
+		<component
+			:is="store.layout === 'list' ? ListLayout : LauncherLayout"
+			:bookmarks="shown"
+			:total="results.length"
+			:most-used="mostUsed"
+			:tag="tag"
+			:searching="searching"
+			:selected="ui.selected"
+			@open="handleOpen"
+		>
+			<template #empty>
+				<div class="emptyState">
+					<p>{{ emptyMessage }}</p>
+					<router-link
+						:to="tag ? `/tag/${encodeURIComponent(tag)}/add` : '/add'"
+						class="button primaryButton"
+						>{{ t("bookmarks.add") }}</router-link
+					>
+				</div>
+			</template>
+			<template #more>
+				<div v-if="hasMore" class="showMore">
+					<button type="button" class="button" @click="visibleCount += PAGE_SIZE">
+						{{ t("bookmarks.show_more") }}
+					</button>
+				</div>
+			</template>
+		</component>
 
-		<div class="bookmarks-toolbar">
-			<div class="tag-filter-bar">
-				<router-link to="/" class="tag-filter-item" :class="{ active: !tag }">
-					{{ t("bookmarks.filter_all") }}
-				</router-link>
-				<router-link
-					v-for="tagName in displayedTags"
-					:key="tagName"
-					:to="`/tag/${encodeURIComponent(tagName)}`"
-					class="tag-filter-item"
-					:class="{ active: tag === tagName }"
-				>
-					{{ tagName }}
-				</router-link>
-			</div>
-
-			<router-link
-				:to="addLink"
-				class="bookmarkButton icon"
-				:title="t('bookmarks.add_button_title')"
-				:aria-label="t('bookmarks.add_button_title')"
-			>
-				<span v-html="addIcon"></span>
-			</router-link>
-		</div>
-
-		<div class="card">
-			<div id="bookmarksList">
-				<template v-if="paginatedBookmarks.length > 0">
-					<BookmarkItem
-						v-for="bookmark in paginatedBookmarks"
-						:key="bookmark.created"
-						:bookmark="bookmark"
-						:filter-tag="tag"
-					/>
-					<div v-if="hasMore" class="show-more-container">
-						<button @click="loadMore" class="show-more-button">
-							{{ t("bookmarks.show_more") }}
-						</button>
-					</div>
-				</template>
-				<p v-else class="no-bookmarks">
-					{{
-						tag
-							? t("bookmarks.no_bookmarks_tag", { tag })
-							: t("bookmarks.no_bookmarks")
-					}}
-				</p>
-			</div>
-		</div>
-
-		<!-- Modal for Add/Edit -->
 		<Modal :show="isModalOpen">
-			<BookmarkForm
-				v-if="isModalOpen"
-				:id="bookmarkId"
-				:initial-tags="initialTags"
-			/>
+			<BookmarkForm v-if="isModalOpen" :id="bookmarkId" :initial-tags="initialTags" />
 		</Modal>
 	</div>
 </template>
-
-<style scoped>
-.bookmarks-view {
-	width: 100%;
-}
-
-.search-bar {
-	margin-bottom: 1.5rem;
-}
-
-.search-input {
-	width: 100%;
-	padding: 0.75rem 1rem;
-	border: 1px solid var(--bm-border-color);
-	border-radius: 8px;
-	background-color: var(--bm-input-bg);
-	color: var(--bm-text-color);
-	font-size: 1rem;
-	transition: all 0.2s ease;
-}
-
-.search-input:focus {
-	outline: none;
-	border-color: var(--bm-primary-color);
-	background-color: var(--bm-input-focus-bg);
-	box-shadow: 0 0 0 2px var(--bm-nav-link-hover-bg);
-}
-
-.no-bookmarks {
-	color: var(--bm-text-dim);
-	font-style: italic;
-	padding: 1rem 0;
-}
-
-.icon {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-
-.show-more-container {
-	width: 100%;
-	display: flex;
-	justify-content: center;
-	padding: 1rem 0;
-}
-
-.show-more-button {
-	padding: 0.5rem 1.5rem;
-	background-color: var(--bm-button-secondary-bg);
-	border: 1px solid var(--bm-border-color);
-	border-radius: 4px;
-	color: var(--bm-text-color);
-	font-weight: 600;
-	cursor: pointer;
-	transition: all 0.2s ease;
-}
-
-.show-more-button:hover {
-	background-color: var(--bm-button-secondary-hover-bg);
-	border-color: var(--bm-text-dim);
-}
-</style>

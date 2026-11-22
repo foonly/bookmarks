@@ -1,25 +1,30 @@
 {
 	"nav": {
 		"bookmarks": "Bookmarks",
-		"tags": "Tags",
 		"about": "About",
 		"settings": "Settings"
 	},
 	"bookmarks": {
-		"add_button_title": "Add Bookmark",
 		"edit_button_title": "Edit {title}",
 		"delete_button_title": "Delete {title}",
 		"filter_all": "All",
-		"search_placeholder": "Search bookmarks...",
+		"search_placeholder": "Search {n} bookmarks",
 		"no_bookmarks": "No bookmarks yet",
 		"no_bookmarks_tag": "No bookmarks with tag \"{tag}\"",
-		"delete_confirm": "Are you sure you want to delete this bookmark?",
-		"show_more": "Show more"
-	},
-	"tags": {
-		"no_tags": "No tags found.",
-		"edit": "edit",
-		"toggle_favorite": "toggle favorite"
+		"show_more": "Show more",
+		"add": "Add",
+		"search_label": "Search bookmarks",
+		"most_used": "Most used",
+		"all": "All bookmarks",
+		"matches": "{n} match | {n} matches",
+		"keyboard_hint": "↑ ↓ to move, ↵ to open",
+		"tags_label": "Tags",
+		"starred": "Starred",
+		"star_tag": "Star {tag}",
+		"unstar_tag": "Unstar {tag}",
+		"deleted": "Deleted “{title}”",
+		"undo": "Undo",
+		"no_matches": "No bookmarks match “{query}”"
 	},
 	"settings": {
 		"language": "Language",
@@ -58,6 +63,14 @@
 			"credentials_invalid": "Expected the format ID:EncKey:Secret.",
 			"credentials_weak": "These credentials are too weak: the encryption key and secret must each be at least 32 hexadecimal characters, like generated ones. Create new ones with the generate button, shown while sync is off."
 		},
+		"layout": {
+			"title": "Layout",
+			"description": "How bookmarks are shown on this device.",
+			"launcher": "Launcher",
+			"launcher_description": "Your most used sites as tiles, then a compact list. For tools and pages you open often.",
+			"list": "List",
+			"list_description": "Titles, descriptions and tags in a roomy list, with tags in a sidebar. For things to remember or read later."
+		},
 		"privacy": {
 			"title": "Privacy",
 			"fetch_favicons": "Fetch site icons",
@@ -88,13 +101,10 @@
 		"description": "Description",
 		"save": "Save",
 		"cancel": "Cancel",
-		"add_bookmark": "Add Bookmark",
-		"edit_bookmark": "Edit Bookmark",
-		"add_tag_placeholder": "Add a tag...",
-		"add_tag_button": "Add",
-		"suggested_tags_label": "Suggested tags:",
-		"added_tags_label": "Added tags:",
-		"no_tags": "None",
+		"add_bookmark": "Add bookmark",
+		"edit_bookmark": "Edit bookmark",
+		"add_tag_placeholder": "Type a tag and press Enter",
+		"suggested_tags_label": "Suggested",
 		"remove_tag_title": "Remove {tag}"
 	},
 	"about": {
@@ -112,7 +122,7 @@
 		"usage": {
 			"title": "Usage Tips",
 			"items": [
-				"**Tags**: Use tags to categorize your bookmarks. You can filter by tags in the main view or the dedicated Tags tab.",
+				"**Tags**: Use tags to group your bookmarks. Filter by a tag from the tag row or sidebar, and star the tags you use most so they come first.",
 				"**Sync**: Set up a sync URL and credentials in Settings to keep your bookmarks backed up and synced across devices.",
 				"**PWA**: Install this app on your home screen or desktop for a native-like experience."
 			]

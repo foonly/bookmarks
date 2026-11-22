@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, inject } from "vue";
+import { onMounted, onUnmounted, ref, inject } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { registerSW } from "virtual:pwa-register";
 import { useBookmarkStore } from "./stores/bookmarkStore";
-import AppNavigation from "./components/AppNavigation.vue";
-import { syncStatus, CLOCK_WARNING_SECONDS } from "./syncStatus";
+import AppHeader from "./components/AppHeader.vue";
+import UndoToast from "./components/UndoToast.vue";
 import { reloadWhenNotEditing } from "./utils/navigation";
+import { commitPendingDelete } from "./ui";
 
 const { t, locale } = useI18n();
 const router = useRouter();
@@ -23,15 +24,6 @@ if (store.language) {
 	locale.value = store.language;
 	document.documentElement.lang = store.language;
 }
-
-// Flag the Settings link when sync has a problem the user should look at.
-// Network errors are left out: the offline indicator already covers them.
-const syncNeedsAttention = computed(
-	() =>
-		store.syncSettings.enabled &&
-		((syncStatus.error !== null && syncStatus.error.code !== "network") ||
-			Math.abs(syncStatus.clockOffsetSeconds ?? 0) > CLOCK_WARNING_SECONDS),
-);
 
 // Offline status handling
 const updateOnlineStatus = () => {
@@ -54,23 +46,26 @@ registerSW({
 onMounted(() => {
 	window.addEventListener("online", updateOnlineStatus);
 	window.addEventListener("offline", updateOnlineStatus);
+	// A deletion waiting for Undo goes through when the page is closed.
+	window.addEventListener("pagehide", commitPendingDelete);
 	updateOnlineStatus();
 });
 
 onUnmounted(() => {
 	window.removeEventListener("online", updateOnlineStatus);
 	window.removeEventListener("offline", updateOnlineStatus);
+	window.removeEventListener("pagehide", commitPendingDelete);
 });
 </script>
 
 <template>
+	<div v-if="isOffline" class="offline-indicator">
+		{{ t("system.offline_indicator") }}
+	</div>
+
+	<AppHeader />
+
 	<div class="container">
-		<div v-if="isOffline" class="offline-indicator">
-			{{ t("system.offline_indicator") }}
-		</div>
-
-		<AppNavigation />
-
 		<main id="main-content">
 			<router-view v-slot="{ Component }">
 				<transition name="fade" mode="out-in">
@@ -79,64 +74,11 @@ onUnmounted(() => {
 			</router-view>
 		</main>
 
-		<footer>
-			<router-link to="/about" active-class="active">
-				{{ t("nav.about") }}
-			</router-link>
-			<router-link to="/settings" active-class="active">
-				{{ t("nav.settings") }}
-				<span
-					v-if="syncNeedsAttention"
-					class="attention-marker"
-					role="img"
-					:title="t('settings.sync.needs_attention')"
-					:aria-label="t('settings.sync.needs_attention')"
-					>!</span
-				>
-			</router-link>
-			<div id="version">
-				{{ appVersion }}
-			</div>
+		<footer class="appFooter">
+			<router-link to="/about">{{ t("nav.about") }}</router-link>
+			<span>{{ appVersion }}</span>
 		</footer>
 	</div>
+
+	<UndoToast />
 </template>
-
-<style>
-.container {
-	display: flex;
-	flex-direction: column;
-	min-height: 100vh;
-	main {
-		flex: 1;
-	}
-	footer {
-		display: flex;
-		flex-direction: row;
-		gap: 1rem;
-		align-items: center;
-		justify-content: flex-end;
-
-		a.active {
-			font-weight: bold;
-			text-decoration: underline;
-		}
-	}
-	#version {
-		color: var(--bm-text-dim);
-		font-size: 0.75rem;
-	}
-}
-
-.fade-enter-active,
-.fade-leave-active {
-	transition: opacity 0.15s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-	opacity: 0;
-}
-
-/* Offline indicator logic is partially in style.css,
-   but we ensure the body class is managed by Vue here */
-</style>

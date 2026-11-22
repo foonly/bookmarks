@@ -1,24 +1,30 @@
 {
 	"nav": {
 		"bookmarks": "Kirjanmerkit",
-		"tags": "Tunnisteet",
 		"about": "Tietoja",
 		"settings": "Asetukset"
 	},
 	"bookmarks": {
-		"add_button_title": "Lisää kirjanmerkki",
 		"edit_button_title": "Muokkaa: {title}",
 		"delete_button_title": "Poista: {title}",
 		"filter_all": "Kaikki",
-		"search_placeholder": "Hae kirjanmerkkejä...",
+		"search_placeholder": "Hae {n} kirjanmerkistä",
 		"no_bookmarks": "Ei vielä kirjanmerkkejä",
 		"no_bookmarks_tag": "Ei kirjanmerkkejä tunnisteella \"{tag}\"",
-		"delete_confirm": "Haluatko varmasti poistaa tämän kirjanmerkin?",
-		"show_more": "Näytä lisää"
-	},
-	"tags": {
-		"no_tags": "Tunnisteita ei löytynyt.",
-		"edit": "muokkaa"
+		"show_more": "Näytä lisää",
+		"add": "Lisää",
+		"search_label": "Hae kirjanmerkkejä",
+		"most_used": "Käytetyimmät",
+		"all": "Kaikki kirjanmerkit",
+		"matches": "{n} osuma | {n} osumaa",
+		"keyboard_hint": "↑ ↓ siirry, ↵ avaa",
+		"tags_label": "Tunnisteet",
+		"starred": "Tähdellä merkityt",
+		"star_tag": "Merkitse {tag} tähdellä",
+		"unstar_tag": "Poista tähti: {tag}",
+		"deleted": "Poistettu: {title}",
+		"undo": "Kumoa",
+		"no_matches": "Haulla ”{query}” ei löytynyt kirjanmerkkejä"
 	},
 	"settings": {
 		"language": "Kieli",
@@ -57,6 +63,14 @@
 			"credentials_invalid": "Odotettu muoto on ID:EncKey:Secret.",
 			"credentials_weak": "Synkronointitiedot ovat liian heikot: salausavaimessa ja salaisuudessa on oltava kummassakin vähintään 32 heksadesimaalimerkkiä, kuten luoduissa tiedoissa. Luo uudet tiedot luontipainikkeella, joka näkyy, kun synkronointi ei ole käytössä."
 		},
+		"layout": {
+			"title": "Asettelu",
+			"description": "Miten kirjanmerkit näytetään tällä laitteella.",
+			"launcher": "Pikavalikko",
+			"launcher_description": "Käytetyimmät sivustot ruutuina ja sen alla tiivis lista. Usein avattaville työkaluille ja sivuille.",
+			"list": "Lista",
+			"list_description": "Otsikot, kuvaukset ja tunnisteet väljässä listassa, tunnisteet sivupalkissa. Muistettaville ja myöhemmin luettaville."
+		},
 		"privacy": {
 			"title": "Yksityisyys",
 			"fetch_favicons": "Hae sivustojen kuvakkeet",
@@ -89,11 +103,8 @@
 		"cancel": "Peruuta",
 		"add_bookmark": "Lisää kirjanmerkki",
 		"edit_bookmark": "Muokkaa kirjanmerkkiä",
-		"add_tag_placeholder": "Lisää tunniste...",
-		"add_tag_button": "Lisää",
-		"suggested_tags_label": "Ehdotetut tunnisteet:",
-		"added_tags_label": "Lisätyt tunnisteet:",
-		"no_tags": "Ei mitään",
+		"add_tag_placeholder": "Kirjoita tunniste ja paina Enter",
+		"suggested_tags_label": "Ehdotukset",
 		"remove_tag_title": "Poista {tag}"
 	},
 	"about": {
@@ -111,7 +122,7 @@
 		"usage": {
 			"title": "Käyttövinkkejä",
 			"items": [
-				"**Tunnisteet**: Käytä tunnisteita kirjanmerkkiesi luokitteluun. Voit suodattaa tunnisteiden perusteella päänäkymässä tai erillisellä Tunnisteet-välilehdellä.",
+				"**Tunnisteet**: Ryhmittele kirjanmerkkejä tunnisteilla. Suodata tunnisteen mukaan tunnisterivistä tai sivupalkista, ja merkitse eniten käyttämäsi tunnisteet tähdellä, niin ne näkyvät ensimmäisinä.",
 				"**Synkronointi**: Määritä synkronointiosoite ja tunnukset asetuksissa, jotta kirjanmerkkisi pysyvät varmuuskopioituina ja synkronoituina laitteiden välillä.",
 				"**PWA**: Asenna tämä sovellus aloitusnäytöllesi tai työpöydällesi saadaksesi natiivisovelluksen kaltaisen kokemuksen."
 			]

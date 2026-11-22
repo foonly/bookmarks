@@ -1,6 +1,5 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import BookmarksView from "./views/BookmarksView.vue";
-import TagsView from "./views/TagsView.vue";
 import SettingsView from "./views/SettingsView.vue";
 import AboutView from "./views/AboutView.vue";
 
@@ -55,22 +54,9 @@ const routes = [
 			bookmarkId: parseInt(route.params.id),
 		}),
 	},
-	{
-		path: "/tags",
-		name: "tags",
-		component: TagsView,
-		props: false,
-	},
-	{
-		path: "/tags/edit/:id",
-		name: "tags-edit-bookmark",
-		meta: { modal: true },
-		component: TagsView,
-		props: (route: any) => ({
-			showModal: "edit",
-			bookmarkId: parseInt(route.params.id),
-		}),
-	},
+	// The Tags page was replaced by tag filters in both layouts.
+	{ path: "/tags", redirect: "/" },
+	{ path: "/tags/edit/:id", redirect: (to: any) => `/edit/${to.params.id}` },
 	{
 		path: "/settings",
 		name: "settings",

@@ -292,3 +292,38 @@ describe("loadStore", () => {
 		expect(localStorage.getItem(backupKey!)).toBe("{not json");
 	});
 });
+
+describe("tagList", () => {
+	beforeEach(() => setActivePinia(createPinia()));
+
+	it("lists starred tags first, then by bookmark count, then by name", () => {
+		const store = useBookmarkStore();
+		store.bookmarks.push(
+			bookmark(1, { tags: ["dev", "news"] }),
+			bookmark(2, { tags: ["dev", "cooking"] }),
+			bookmark(3, { tags: ["dev", "news"] }),
+			bookmark(4, { tags: ["art"] }),
+		);
+		store.favoriteTags = ["cooking", "unused"];
+		expect(store.tagList).toEqual([
+			{ tag: "cooking", count: 1, favorite: true },
+			{ tag: "unused", count: 0, favorite: true },
+			{ tag: "dev", count: 3, favorite: false },
+			{ tag: "news", count: 2, favorite: false },
+			{ tag: "art", count: 1, favorite: false },
+		]);
+	});
+});
+
+describe("setLayout", () => {
+	beforeEach(() => {
+		localStorage.clear();
+		setActivePinia(createPinia());
+	});
+
+	it("is saved on this device", () => {
+		const store = useBookmarkStore();
+		store.setLayout("list");
+		expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!).layout).toBe("list");
+	});
+});

@@ -1,24 +1,30 @@
 {
 	"nav": {
 		"bookmarks": "Järjehoidjad",
-		"tags": "Sildid",
 		"about": "Teave",
 		"settings": "Seaded"
 	},
 	"bookmarks": {
-		"add_button_title": "Lisa järjehoidja",
 		"edit_button_title": "Muuda: {title}",
 		"delete_button_title": "Kustuta: {title}",
 		"filter_all": "Kõik",
-		"search_placeholder": "Otsi järjehoidjaid...",
+		"search_placeholder": "Otsi {n} järjehoidja seast",
 		"no_bookmarks": "Järjehoidjaid veel pole",
 		"no_bookmarks_tag": "Sildiga \"{tag}\" järjehoidjaid ei leitud",
-		"delete_confirm": "Kas oled kindel, et soovid selle järjehoidja kustutada?",
-		"show_more": "Näita rohkem"
-	},
-	"tags": {
-		"no_tags": "Silte ei leitud.",
-		"edit": "muuda"
+		"show_more": "Näita rohkem",
+		"add": "Lisa",
+		"search_label": "Otsi järjehoidjaid",
+		"most_used": "Enim kasutatud",
+		"all": "Kõik järjehoidjad",
+		"matches": "{n} vaste | {n} vastet",
+		"keyboard_hint": "↑ ↓ liigu, ↵ ava",
+		"tags_label": "Sildid",
+		"starred": "Tärniga",
+		"star_tag": "Märgi {tag} tärniga",
+		"unstar_tag": "Eemalda tärn: {tag}",
+		"deleted": "Kustutatud: {title}",
+		"undo": "Võta tagasi",
+		"no_matches": "Otsingule „{query}” ei vasta ükski järjehoidja"
 	},
 	"settings": {
 		"language": "Keel",
@@ -57,6 +63,14 @@
 			"credentials_invalid": "Oodatud kuju: ID:EncKey:Secret.",
 			"credentials_weak": "Need andmed on liiga nõrgad: krüpteerimisvõti ja saladus peavad kumbki olema vähemalt 32 kuueteistkümnendsüsteemi märki pikad, nagu genereeritud andmed. Loo uued genereerimisnupuga, mis on nähtav, kui sünkroonimine on välja lülitatud."
 		},
+		"layout": {
+			"title": "Paigutus",
+			"description": "Kuidas järjehoidjaid selles seadmes näidatakse.",
+			"launcher": "Kiirvalik",
+			"launcher_description": "Enim kasutatud saidid ruutudena, nende all kompaktne loend. Tööriistadele ja lehtedele, mida avad sageli.",
+			"list": "Loend",
+			"list_description": "Pealkirjad, kirjeldused ja sildid avaras loendis, sildid külgribal. Asjadele, mida meeles pidada või hiljem lugeda."
+		},
 		"privacy": {
 			"title": "Privaatsus",
 			"fetch_favicons": "Hangi saidi ikoonid",
@@ -89,11 +103,8 @@
 		"cancel": "Tühista",
 		"add_bookmark": "Lisa järjehoidja",
 		"edit_bookmark": "Muuda järjehoidjat",
-		"add_tag_placeholder": "Lisa silt...",
-		"add_tag_button": "Lisa",
-		"suggested_tags_label": "Soovitatud sildid:",
-		"added_tags_label": "Lisatud sildid:",
-		"no_tags": "Puuduvad",
+		"add_tag_placeholder": "Kirjuta silt ja vajuta Enter",
+		"suggested_tags_label": "Soovitused",
 		"remove_tag_title": "Eemalda {tag}"
 	},
 	"about": {
@@ -111,7 +122,7 @@
 		"usage": {
 			"title": "Kasutusnõuanded",
 			"items": [
-				"**Sildid**: Kasuta silte järjehoidjate kategoriseerimiseks. Saad filtreerida siltide järgi peavaates või spetsiaalsel Siltide vahekaardil.",
+				"**Sildid**: Rühmita järjehoidjaid siltidega. Filtreeri sildi järgi siltide realt või külgribalt ning märgi enim kasutatud sildid tärniga, et need oleksid eespool.",
 				"**Sünkroonimine**: Seadista seadetes sünkroonimise URL ja andmed, et hoida oma järjehoidjad varundatuna ja sünkroonituna seadmete vahel.",
 				"**PWA**: Installi see rakendus oma avaekraanile või töölauale, et saada natiivse rakendusega sarnane kogemus."
 			]

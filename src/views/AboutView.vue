@@ -13,7 +13,7 @@ function formatItem(item: string) {
 </script>
 
 <template>
-	<div class="about-view card">
+	<div class="about-view">
 		<h1>{{ t("about.title") }}</h1>
 
 		<p class="description">{{ t("about.description") }}</p>

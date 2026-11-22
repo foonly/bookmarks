@@ -31,6 +31,7 @@ describe("storageSchema", () => {
 			faviconFailures: {},
 			bookmarks: [],
 			fetchFavicons: false,
+			layout: "launcher",
 			syncSettings: { enabled: false, credentials: "", lastSynced: 0 },
 		});
 	});
@@ -50,6 +51,11 @@ describe("storageSchema", () => {
 		expect(parsed.bookmarks.map((b) => b.created)).toEqual([1, 3]);
 		expect(parsed.favoriteTags).toEqual(["kept"]);
 		expect(console.warn).toHaveBeenCalledTimes(3);
+	});
+
+	it("falls back to the launcher layout for an unknown value", () => {
+		expect(storageSchema.parse({ layout: "grid" }).layout).toBe("launcher");
+		expect(storageSchema.parse({ layout: "list" }).layout).toBe("list");
 	});
 
 	it("still fails when the store itself is malformed", () => {

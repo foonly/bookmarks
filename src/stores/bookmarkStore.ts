@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { STORAGE_KEY } from "../constants";
 import { storageSchema } from "../types";
-import type { Bookmark, Storage } from "../types";
+import type { Bookmark, Layout, Storage } from "../types";
 import { encrypt, decrypt } from "../crypto";
 import { fetchLatest, upload, SyncHttpError } from "../syncClient";
 import { syncStatus } from "../syncStatus";
@@ -104,6 +104,27 @@ export const useBookmarkStore = defineStore("bookmarks", {
 			return (tag: string): Bookmark[] => {
 				return state.bookmarks.filter((b) => b.tags.includes(tag));
 			};
+		},
+
+		/**
+		 * Every tag with its bookmark count: starred tags first, then the most
+		 * used, then alphabetically.
+		 */
+		tagList: (state): { tag: string; count: number; favorite: boolean }[] => {
+			const counts: Record<string, number> = {};
+			for (const tag of state.favoriteTags) counts[tag] = 0;
+			for (const bookmark of state.bookmarks) {
+				for (const tag of bookmark.tags) counts[tag] = (counts[tag] || 0) + 1;
+			}
+			const favorites = new Set(state.favoriteTags);
+			return Object.entries(counts)
+				.map(([tag, count]) => ({ tag, count, favorite: favorites.has(tag) }))
+				.sort(
+					(a, b) =>
+						Number(b.favorite) - Number(a.favorite) ||
+						b.count - a.count ||
+						a.tag.localeCompare(b.tag),
+				);
 		},
 
 		isFavoriteTag: (state) => {
@@ -232,6 +253,11 @@ export const useBookmarkStore = defineStore("bookmarks", {
 
 		setLanguage(lang: string) {
 			this.language = lang;
+			this.saveStore();
+		},
+
+		setLayout(layout: Layout) {
+			this.layout = layout;
 			this.saveStore();
 		},
 

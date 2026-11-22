@@ -6,7 +6,8 @@ A secure, responsive web application to manage your bookmarks with local-first s
 
 - **Bookmark Management**: Easily add, edit, and delete bookmarks.
 - **Tagging System**: Organize your bookmarks using a flexible tagging system.
-- **Categorized Views**: Filter and view bookmarks by specific tags or see an overview in the Tags grid.
+- **Two Layouts**: *Launcher* (the default) shows your most used sites as tiles above a compact list, and opens the top search result with Enter. *List* shows titles, descriptions and tags in a roomier list with a tag sidebar, for things to remember or read later. Switch from the header or in Settings; the choice is kept per device.
+- **Tag Filters**: Filter by a tag from the tag row or sidebar, and star the tags you use most so they come first.
 - **Encrypted Sync**: Synchronize your data across devices using a decentralized ID/Key system.
   - Data is encrypted client-side using **AES-GCM (Web Crypto API)** before being sent to the backend.
   - The sync server never sees your raw data or your secret key.

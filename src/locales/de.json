@@ -1,24 +1,30 @@
 {
 	"nav": {
 		"bookmarks": "Lesezeichen",
-		"tags": "Tags",
 		"about": "Über",
 		"settings": "Einstellungen"
 	},
 	"bookmarks": {
 		"show_more": "Mehr anzeigen",
-		"add_button_title": "Lesezeichen hinzufügen",
 		"edit_button_title": "{title} bearbeiten",
 		"delete_button_title": "{title} löschen",
 		"filter_all": "Alle",
-		"search_placeholder": "Lesezeichen suchen...",
+		"search_placeholder": "{n} Lesezeichen durchsuchen",
 		"no_bookmarks": "Noch keine Lesezeichen",
 		"no_bookmarks_tag": "Keine Lesezeichen mit dem Tag \"{tag}\"",
-		"delete_confirm": "Sind Sie sicher, dass Sie dieses Lesezeichen löschen möchten?"
-	},
-	"tags": {
-		"no_tags": "Keine Tags gefunden.",
-		"edit": "bearbeiten"
+		"add": "Hinzufügen",
+		"search_label": "Lesezeichen suchen",
+		"most_used": "Meistgenutzt",
+		"all": "Alle Lesezeichen",
+		"matches": "{n} Treffer | {n} Treffer",
+		"keyboard_hint": "↑ ↓ wechseln, ↵ öffnen",
+		"tags_label": "Tags",
+		"starred": "Markiert",
+		"star_tag": "{tag} markieren",
+		"unstar_tag": "Markierung von {tag} entfernen",
+		"deleted": "„{title}“ gelöscht",
+		"undo": "Rückgängig",
+		"no_matches": "Keine Lesezeichen passen zu „{query}“"
 	},
 	"settings": {
 		"language": "Sprache",
@@ -57,6 +63,14 @@
 			"credentials_invalid": "Erwartetes Format: ID:EncKey:Secret.",
 			"credentials_weak": "Diese Zugangsdaten sind zu schwach: Verschlüsselungsschlüssel und Secret müssen jeweils mindestens 32 Hexadezimalzeichen lang sein, wie generierte Zugangsdaten. Erzeugen Sie neue mit der Generieren-Schaltfläche, die bei deaktivierter Synchronisierung angezeigt wird."
 		},
+		"layout": {
+			"title": "Ansicht",
+			"description": "Wie Lesezeichen auf diesem Gerät angezeigt werden.",
+			"launcher": "Schnellstart",
+			"launcher_description": "Ihre meistgenutzten Seiten als Kacheln, darunter eine kompakte Liste. Für Werkzeuge und Seiten, die Sie oft öffnen.",
+			"list": "Liste",
+			"list_description": "Titel, Beschreibungen und Tags in einer großzügigen Liste, mit den Tags in einer Seitenleiste. Für Dinge zum Merken oder Später-Lesen."
+		},
 		"privacy": {
 			"title": "Datenschutz",
 			"fetch_favicons": "Website-Icons abrufen",
@@ -89,11 +103,8 @@
 		"cancel": "Abbrechen",
 		"add_bookmark": "Lesezeichen hinzufügen",
 		"edit_bookmark": "Lesezeichen bearbeiten",
-		"add_tag_placeholder": "Tag hinzufügen...",
-		"add_tag_button": "Hinzufügen",
-		"suggested_tags_label": "Vorgeschlagene Tags:",
-		"added_tags_label": "Hinzugefügte Tags:",
-		"no_tags": "Keine",
+		"add_tag_placeholder": "Tag eingeben und Enter drücken",
+		"suggested_tags_label": "Vorschläge",
 		"remove_tag_title": "{tag} entfernen"
 	},
 	"about": {
@@ -111,7 +122,7 @@
 		"usage": {
 			"title": "Nutzungshinweise",
 			"items": [
-				"**Tags**: Verwenden Sie Tags, um Ihre Lesezeichen zu kategorisieren. Sie können in der Hauptansicht oder im dedizierten Tags-Tab nach Tags filtern.",
+				"**Tags**: Gruppieren Sie Ihre Lesezeichen mit Tags. Filtern Sie über die Tag-Leiste oder die Seitenleiste, und markieren Sie Ihre wichtigsten Tags mit einem Stern, damit sie zuerst erscheinen.",
 				"**Synchronisierung**: Richten Sie in den Einstellungen eine Sync-URL und Zugangsdaten ein, um Ihre Lesezeichen zu sichern und über Geräte hinweg zu synchronisieren.",
 				"**PWA**: Installieren Sie diese App auf Ihrem Startbildschirm oder Desktop für ein nativ-ähnliches Erlebnis."
 			]

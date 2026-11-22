@@ -34,6 +34,8 @@ const language = computed({
 	},
 });
 
+const layouts = ["launcher", "list"] as const;
+
 const fetchFavicons = computed({
 	get: () => store.fetchFavicons,
 	set: (val: boolean) => store.toggleFetchFavicons(val),
@@ -192,9 +194,7 @@ function formatDate(timestamp: number) {
 
 <template>
 	<div class="settings-view card">
-		<div class="bookmarks-toolbar">
-			<h1>{{ t("nav.settings") }}</h1>
-		</div>
+		<h1 class="pageTitle">{{ t("nav.settings") }}</h1>
 
 		<!-- Sync Section -->
 		<section class="settings-section">
@@ -303,6 +303,27 @@ function formatDate(timestamp: number) {
 			</template>
 		</section>
 
+		<!-- Layout Section -->
+		<section class="settings-section">
+			<h2 id="layout-heading">{{ t("settings.layout.title") }}</h2>
+			<p class="settings-description">{{ t("settings.layout.description") }}</p>
+			<div class="layoutOptions" role="radiogroup" aria-labelledby="layout-heading">
+				<label v-for="option in layouts" :key="option" class="layoutOption">
+					<input
+						type="radio"
+						name="layout"
+						:value="option"
+						:checked="store.layout === option"
+						@change="store.setLayout(option)"
+					/>
+					<span>
+						<strong>{{ t(`settings.layout.${option}`) }}</strong>
+						<span>{{ t(`settings.layout.${option}_description`) }}</span>
+					</span>
+				</label>
+			</div>
+		</section>
+
 		<!-- Language Section -->
 		<section class="settings-section">
 			<h2>{{ t("settings.language") }}</h2>
@@ -362,16 +383,6 @@ function formatDate(timestamp: number) {
 </template>
 
 <style scoped>
-h1 {
-	margin: 0;
-	font-size: 1.5rem;
-}
-
-.settings-view {
-	max-width: 800px;
-	margin: 0 auto;
-}
-
 .copied-indicator {
 	font-size: 0.75rem;
 	font-weight: bold;
@@ -386,13 +397,5 @@ h1 {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-}
-
-select {
-	padding: 0.5rem;
-	border-radius: 4px;
-	background-color: var(--bm-input-bg);
-	color: var(--bm-text-color);
-	border: 1px solid var(--bm-border-color);
 }
 </style>
