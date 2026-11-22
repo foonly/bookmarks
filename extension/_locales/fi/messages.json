@@ -1,0 +1,20 @@
+{
+	"extName": {
+		"message": "Kirjanmerkit"
+	},
+	"extDescription": {
+		"message": "Avaa Kirjanmerkit-sovellus ja lisää avoinna oleva sivu tunnisteineen ja kuvauksineen."
+	},
+	"actionTitle": {
+		"message": "Avaa Kirjanmerkit (lisää tämä sivu oikealla napsautuksella)"
+	},
+	"addPage": {
+		"message": "Lisää tämä sivu Kirjanmerkkeihin"
+	},
+	"commandOpen": {
+		"message": "Avaa Kirjanmerkit"
+	},
+	"commandAdd": {
+		"message": "Lisää nykyinen sivu Kirjanmerkkeihin"
+	}
+}

@@ -1,0 +1,20 @@
+{
+	"extName": {
+		"message": "Bookmarks"
+	},
+	"extDescription": {
+		"message": "Open your Bookmarks app and add the page you are on, with tags and a description."
+	},
+	"actionTitle": {
+		"message": "Open Bookmarks (right-click to add this page)"
+	},
+	"addPage": {
+		"message": "Add this page to Bookmarks"
+	},
+	"commandOpen": {
+		"message": "Open Bookmarks"
+	},
+	"commandAdd": {
+		"message": "Add the current page to Bookmarks"
+	}
+}

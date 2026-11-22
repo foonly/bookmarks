@@ -1,0 +1,20 @@
+{
+	"extName": {
+		"message": "Lesezeichen"
+	},
+	"extDescription": {
+		"message": "Öffnet Ihre Lesezeichen-App und fügt die aktuelle Seite mit Tags und einer Beschreibung hinzu."
+	},
+	"actionTitle": {
+		"message": "Lesezeichen öffnen (Rechtsklick fügt diese Seite hinzu)"
+	},
+	"addPage": {
+		"message": "Diese Seite zu Lesezeichen hinzufügen"
+	},
+	"commandOpen": {
+		"message": "Lesezeichen öffnen"
+	},
+	"commandAdd": {
+		"message": "Aktuelle Seite zu Lesezeichen hinzufügen"
+	}
+}

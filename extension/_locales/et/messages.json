@@ -1,0 +1,20 @@
+{
+	"extName": {
+		"message": "Järjehoidjad"
+	},
+	"extDescription": {
+		"message": "Ava Järjehoidjate rakendus ja lisa leht, millel oled, koos siltide ja kirjeldusega."
+	},
+	"actionTitle": {
+		"message": "Ava Järjehoidjad (paremklõps lisab selle lehe)"
+	},
+	"addPage": {
+		"message": "Lisa see leht Järjehoidjatesse"
+	},
+	"commandOpen": {
+		"message": "Ava Järjehoidjad"
+	},
+	"commandAdd": {
+		"message": "Lisa praegune leht Järjehoidjatesse"
+	}
+}
