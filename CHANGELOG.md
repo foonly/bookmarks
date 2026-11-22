@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.16.0 (2026-11-22)
+
+#### Features
+
+- Redesign the bookmark list with Launcher and List layouts (7777276)
+
 ## 0.15.0 (2026-11-21)
 
 #### Features
