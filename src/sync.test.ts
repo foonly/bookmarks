@@ -95,6 +95,24 @@ describe("syncing between devices", () => {
 	});
 });
 
+describe("flushSync", () => {
+	it("uploads a change made while a sync was already running", async () => {
+		const { device } = await loadApp();
+		const a = device(credentials, [bookmark(1)]);
+		const b = device(credentials);
+
+		// The add tab's startup sync is still running when the form is saved.
+		const startup = a.performSync();
+		a.updateBookmark(bookmark(2));
+		expect(await a.performSync()).toBeNull(); // skipped: a round is running
+		expect(await a.flushSync()).toBeNull();
+		await startup;
+
+		await b.performSync();
+		expect(snapshot(b).map((x) => x.created)).toEqual([1, 2]);
+	});
+});
+
 describe("deleting", () => {
 	const encKey = () => credentials.split(":")[1];
 	const remoteBlob = async () =>

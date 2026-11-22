@@ -106,7 +106,8 @@
 		"add_tag_placeholder": "Kirjoita tunniste ja paina Enter",
 		"suggested_tags_label": "Ehdotukset",
 		"remove_tag_title": "Poista {tag}",
-		"already_saved": "Olet tallentanut tämän sivun aiemmin. Muokkaa sitä tässä tai peruuta, niin se pysyy ennallaan."
+		"already_saved": "Olet tallentanut tämän sivun aiemmin. Muokkaa sitä tässä tai peruuta, niin se pysyy ennallaan.",
+		"saving": "Tallennetaan…"
 	},
 	"about": {
 		"title": "Tietoja Bookmarks-sovelluksesta",

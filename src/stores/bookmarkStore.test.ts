@@ -327,3 +327,35 @@ describe("setLayout", () => {
 		expect(JSON.parse(localStorage.getItem(STORAGE_KEY)!).layout).toBe("list");
 	});
 });
+
+describe("loadFromOtherTab", () => {
+	beforeEach(() => {
+		localStorage.clear();
+		setActivePinia(createPinia());
+	});
+
+	it("takes over the state another tab saved, including removals", () => {
+		const store = useBookmarkStore();
+		store.bookmarks.push(bookmark(1));
+		store.faviconFailures = { "a.example": 1, "b.example": 2 };
+
+		const other = storageSchema.parse({
+			bookmarks: [bookmark(1), bookmark(2)],
+			faviconFailures: { "a.example": 1 },
+			layout: "list",
+		});
+		store.loadFromOtherTab(JSON.stringify(other));
+
+		expect(store.bookmarks.map((b) => b.created)).toEqual([1, 2]);
+		expect(store.faviconFailures).toEqual({ "a.example": 1 });
+		expect(store.layout).toBe("list");
+	});
+
+	it("keeps its state when the saved data cannot be read", () => {
+		vi.spyOn(console, "error").mockImplementation(() => {});
+		const store = useBookmarkStore();
+		store.bookmarks.push(bookmark(1));
+		store.loadFromOtherTab("{not json");
+		expect(store.bookmarks.map((b) => b.created)).toEqual([1]);
+	});
+});

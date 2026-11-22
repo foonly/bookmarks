@@ -37,6 +37,11 @@ const editId = ref(props.id && props.id > 0 ? props.id : 0);
 const isEdit = computed(() => editId.value > 0);
 /** The address passed in was already saved, so that bookmark is shown. */
 const alreadySaved = ref(false);
+/** Waiting for the new bookmark to upload before the form closes. */
+const saving = ref(false);
+
+/** Longest wait for the upload; the bookmark is kept locally regardless. */
+const UPLOAD_WAIT_MS = 5000;
 
 const availableTags = computed(() =>
 	store.sortedTags.filter((tag) => !form.value.tags.includes(tag)),
@@ -120,7 +125,8 @@ function handleTagInput(event: Event) {
 	}
 }
 
-function handleSubmit() {
+async function handleSubmit() {
+	if (saving.value) return;
 	// A tag typed but not yet added would otherwise be lost.
 	addTag();
 	const existing = isEdit.value ? store.getBookmarkById(editId.value) : undefined;
@@ -139,6 +145,18 @@ function handleSubmit() {
 		return;
 	}
 	store.updateBookmark(result.data);
+
+	// A form opened from a link (the browser extension or a bookmarklet) is
+	// usually in a tab that closes as soon as the form does, before the
+	// delayed automatic sync would run. Upload first, so the bookmark reaches
+	// other devices now rather than on the next visit.
+	if (Object.keys(route.query).length > 0 && store.syncSettings.enabled) {
+		saving.value = true;
+		await Promise.race([
+			store.flushSync(),
+			new Promise((resolve) => setTimeout(resolve, UPLOAD_WAIT_MS)),
+		]);
+	}
 	closeModalRoute(router);
 }
 
@@ -221,9 +239,9 @@ function handleCancel() {
 		</div>
 
 		<div class="buttonBar">
-			<button type="reset" class="button">{{ t("form.cancel") }}</button>
-			<button type="submit" class="button primaryButton">
-				{{ isEdit ? t("form.save") : t("form.add_bookmark") }}
+			<button type="reset" class="button" :disabled="saving">{{ t("form.cancel") }}</button>
+			<button type="submit" class="button primaryButton" :disabled="saving">
+				{{ saving ? t("form.saving") : isEdit ? t("form.save") : t("form.add_bookmark") }}
 			</button>
 		</div>
 	</form>

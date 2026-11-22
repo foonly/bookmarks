@@ -287,6 +287,11 @@ kbd {
 	}
 }
 
+.button:disabled {
+	opacity: 0.6;
+	cursor: progress;
+}
+
 .primaryButton {
 	background-color: var(--bm-primary-color);
 	border-color: var(--bm-primary-color);

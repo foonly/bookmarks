@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, inject } from "vue";
+import { onMounted, onUnmounted, ref, inject, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { registerSW } from "virtual:pwa-register";
@@ -17,13 +17,19 @@ const appVersion = inject<string>("appVersion", "");
 
 // Initialize store and sync
 store.loadStore();
+store.listenToOtherTabs();
 store.initAutoSync();
 
-// Sync locale from store
-if (store.language) {
-	locale.value = store.language;
-	document.documentElement.lang = store.language;
-}
+// Sync locale from store, also when another tab changes the language.
+watch(
+	() => store.language,
+	(language) => {
+		if (!language) return;
+		locale.value = language;
+		document.documentElement.lang = language;
+	},
+	{ immediate: true },
+);
 
 // Offline status handling
 const updateOnlineStatus = () => {

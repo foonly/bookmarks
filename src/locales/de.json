@@ -106,7 +106,8 @@
 		"add_tag_placeholder": "Tag eingeben und Enter drücken",
 		"suggested_tags_label": "Vorschläge",
 		"remove_tag_title": "{tag} entfernen",
-		"already_saved": "Sie haben diese Seite bereits gespeichert. Ändern Sie sie hier, oder brechen Sie ab, um sie unverändert zu lassen."
+		"already_saved": "Sie haben diese Seite bereits gespeichert. Ändern Sie sie hier, oder brechen Sie ab, um sie unverändert zu lassen.",
+		"saving": "Wird gespeichert…"
 	},
 	"about": {
 		"title": "Über Bookmarks",

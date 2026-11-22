@@ -8,7 +8,8 @@ import { syncStatus } from "../syncStatus";
 import { parseCredentials } from "../credentials";
 import type { SyncError } from "../syncStatus";
 
-let syncInProgress = false;
+/** The sync round in progress, if any. */
+let currentSync: Promise<SyncError | null> | null = null;
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -462,21 +463,61 @@ export const useBookmarkStore = defineStore("bookmarks", {
 		 * the UI shows. Returns null on success, or why the sync failed.
 		 */
 		async performSync(): Promise<SyncError | null> {
-			if (syncInProgress || !this.syncSettings.enabled) {
+			if (currentSync || !this.syncSettings.enabled) {
 				return null;
 			}
-			syncInProgress = true;
+			const round = (async () => {
+				try {
+					const error = await this.syncOnce();
+					syncStatus.error = error;
+					return error;
+				} catch (error) {
+					console.error("Sync error:", error);
+					syncStatus.error = syncErrorFrom(error);
+					return syncStatus.error;
+				} finally {
+					currentSync = null;
+				}
+			})();
+			currentSync = round;
+			return round;
+		},
+
+		/**
+		 * Syncs the current state now. Unlike performSync, which skips while a
+		 * round is running, this waits for that round (it may have started
+		 * before the latest change) and then syncs again.
+		 */
+		async flushSync(): Promise<SyncError | null> {
+			if (currentSync) await currentSync;
+			return this.performSync();
+		},
+
+		/**
+		 * Takes over the state another tab saved. Every change is saved to
+		 * localStorage at once, so the stored state is the newest; keeping the
+		 * old state in memory would let this tab write it back over the change.
+		 */
+		loadFromOtherTab(raw: string) {
+			let parsed: Storage;
 			try {
-				const error = await this.syncOnce();
-				syncStatus.error = error;
-				return error;
+				parsed = storageSchema.parse(JSON.parse(raw));
 			} catch (error) {
-				console.error("Sync error:", error);
-				syncStatus.error = syncErrorFrom(error);
-				return syncStatus.error;
-			} finally {
-				syncInProgress = false;
+				console.error("Could not read the store saved by another tab:", error);
+				return;
 			}
+			// Replace each part rather than $patch(parsed), which would merge
+			// objects and keep keys the other tab removed.
+			this.$patch((state) => Object.assign(state, parsed));
+		},
+
+		/** Follows changes saved in other tabs of the app. */
+		listenToOtherTabs() {
+			window.addEventListener("storage", (event) => {
+				if (event.key === STORAGE_KEY && event.newValue) {
+					this.loadFromOtherTab(event.newValue);
+				}
+			});
 		},
 
 		/** One sync round. Use performSync, which guards and records it. */
