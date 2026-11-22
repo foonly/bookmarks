@@ -12,7 +12,7 @@ A secure, responsive web application to manage your bookmarks with local-first s
   - Data is encrypted client-side using **AES-GCM (Web Crypto API)** before being sent to the backend.
   - The sync server never sees your raw data or your secret key.
 - **Responsive Design**: Fully functional on desktop and mobile devices.
-- **Browser Extension**: A toolbar button for Firefox and Chromium browsers that opens the app and adds the page you are on (see [extension/README.md](extension/README.md)).
+- **Browser Extension**: *Foonly Bookmarks*, a toolbar button for Firefox and Chromium browsers that opens the app and adds the page you are on (see [extension/README.md](extension/README.md)).
 - **Import/Export**: Move your data freely with JSON import and export functionality.
 - **Local-First**: All data is stored in your browser's `localStorage` for immediate access even when offline.
 

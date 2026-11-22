@@ -1,6 +1,6 @@
-# Bookmarks browser extension
+# Foonly Bookmarks browser extension
 
-A toolbar button for [Bookmarks](https://bookmarks.foonly.dev). The extension stores no bookmarks of its own: it opens the web app, where your bookmarks, tags and sync already live.
+A toolbar button for the [Bookmarks](https://bookmarks.foonly.dev) web app, published as *Foonly Bookmarks*. The extension stores no bookmarks of its own: it opens the web app, where your bookmarks, tags and sync already live.
 
 - **Click the button** (or press <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>B</kbd>) to open Bookmarks. If it is already open in a tab, that tab comes to the front.
 - **Right-click the button**, or right-click the page, and choose *Add this page to Bookmarks* (or press <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>A</kbd>). The add form opens in a tab next to the page, with the address and title filled in. Add tags and a description, then save. The tab closes and you are back on the page. If the page is already saved, the form shows that bookmark so you can change it instead.
