@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.17.0 (2026-11-22)
+
+#### Features
+
+- extension: Add a browser extension for Firefox and Chromium (4c75b4c)
+- form: Fill in the add form from the link (b122b21)
+
+#### Bug Fixes
+
+- extension: Require the Firefox versions that read data_collection_permissions (46d8fc7)
+
 ## 0.16.0 (2026-11-22)
 
 #### Features
